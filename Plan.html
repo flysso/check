@@ -498,7 +498,7 @@
         <thead>
           <tr>
             <th>날짜</th><th>주요방문지</th><th>내용</th><th>예정금액</th><th>화폐</th>
-            <th>실제금액</th><th>원화로</th><th></th>
+            <th>사용금액</th><th>원화로</th><th></th>
           </tr>
         </thead>
         <tbody id="rowsBody"></tbody>
@@ -506,7 +506,7 @@
           <tr>
             <td colspan="4" style="text-align:right;">합계</td>
             <td id="footPlanned" data-label="예정 합계">-</td>
-            <td id="footActual" data-label="실제 합계">-</td>
+            <td id="footActual" data-label="사용 합계">-</td>
             <td id="footKrw" data-label="원화 합계">₩0</td>
             <td></td>
           </tr>
@@ -590,7 +590,7 @@ function makeDefaultPlan(){
 let plan;
 let storageAvailable = true;
 
-// 예전 버전(실제금액을 단일 숫자로 저장)에서 저장된 데이터를 spends 배열 방식으로 자동 변환
+// 예전 버전(사용금액을 단일 숫자로 저장)에서 저장된 데이터를 spends 배열 방식으로 자동 변환
 function migrateRow(row){
   if(!Array.isArray(row.spends)){
     row.spends = (row.actual!=='' && row.actual!=null && !isNaN(Number(row.actual)) && Number(row.actual)!==0)
@@ -773,7 +773,7 @@ function renderRows(){
         <option value="GBP" ${row.currency==='GBP'?'selected':''}>£ 파운드</option>
         <option value="EUR" ${row.currency==='EUR'?'selected':''}>€ 유로</option>
       </select></td>
-      <td class="col-amt col-spend" data-label="실제금액">
+      <td class="col-amt col-spend" data-label="사용금액">
         <div class="spend-summary">
           <span class="spend-total">${spends.length ? (sym+total.toLocaleString('ko-KR')) : '-'}</span>
           ${spends.length>1 ? `<span class="spend-count">${spends.length}건</span>` : ''}
@@ -875,7 +875,7 @@ $('#spendAddConfirmBtn').addEventListener('click', ()=>{
   renderRows(); renderDashboard();
   showToast('사용 금액이 추가되었습니다 💸');
 
-  // 8/2(일) 유로 행에 실제금액(사용 내역)을 넣는 순간에도, 남은 파운드가 있으면 옮길지 물어봄 (세션당 한 번만)
+  // 8/2(일) 유로 행에 사용금액(사용 내역)을 넣는 순간에도, 남은 파운드가 있으면 옮길지 물어봄 (세션당 한 번만)
   if(row.date==='8/2(일)' && row.currency==='EUR' && !eurCarrySuggested){
     maybeSuggestEurCarryOver();
   }
@@ -929,7 +929,7 @@ function onRowFieldChange(e){
   }
 }
 
-// 파운드 예산이 남아있으면 유로로 옮길지 물어봄 (세션당 한 번만) — 예정금액이든 실제금액이든 8/2(일)/유로 행에 금액을 넣는 순간 호출됨
+// 파운드 예산이 남아있으면 유로로 옮길지 물어봄 (세션당 한 번만) — 예정금액이든 사용금액이든 8/2(일)/유로 행에 금액을 넣는 순간 호출됨
 function maybeSuggestEurCarryOver(){
   if(eurCarrySuggested) return;
   eurCarrySuggested = true;
