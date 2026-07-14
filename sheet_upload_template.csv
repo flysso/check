@@ -1,0 +1,81 @@
+﻿category,name,luggage,school
+clothes,학교 생활복 상의 2벌,checked,TRUE
+clothes,학교 생활복 하의(반바지) 2벌,checked,TRUE
+clothes,WAVE 단체티 6벌,checked,TRUE
+clothes,일반 반바지 3벌(지유는 4벌),checked,TRUE
+clothes,"팬티(8박, 지유는 10벌)",checked,TRUE
+clothes,"런닝(8박, 지유는 6벌)",checked,TRUE
+clothes,"양말(8박, 지유는 10켤레)",checked,TRUE
+clothes,잠옷(지유는 2벌),checked,TRUE
+clothes,겉옷(바람막이 1벌),carryon,TRUE
+clothes,학교 모자,checked,TRUE
+clothes,일반 모자(여분 1개),checked,FALSE
+toilet,수건 1개(지유는 2개),checked,TRUE
+toilet,칫솔,checked,TRUE
+toilet,치약,checked,TRUE
+toilet,선크림,both,TRUE
+toilet,로션,checked,TRUE
+shoes,슬리퍼(크록스 가능),checked,TRUE
+medic,개인 복용약,checked,TRUE
+medic,멀미약,checked,TRUE
+medic,모기약,checked,TRUE
+medic,모기기피제,checked,FALSE
+etc,"검정 비닐봉지(쓰레기용, 3매)",checked,TRUE
+etc,"비닐봉지(멀미용, 8매)",carryon,TRUE
+etc,이너백,checked,TRUE
+etc,지퍼백,checked,TRUE
+etc,캐리어 키링(리본으로 고정),checked,TRUE
+etc,일회용 우비 2개,checked,TRUE
+device,휴대폰,carryon,TRUE
+device,보조배터리(지유는 2개),carryon,TRUE
+device,유럽용 멀티어댑터,checked,TRUE
+device,손목시계/알람시계,checked,TRUE
+device,충전기,carryon,TRUE
+device,충전 케이블,both,TRUE
+doc,여권(학교제출),carryon,TRUE
+doc,학생증,carryon,TRUE
+toilet,마스크,both,TRUE
+toilet,티슈,both,TRUE
+toilet,물티슈,both,TRUE
+toilet,손소독티슈,both,FALSE
+etc,이어폰,carryon,TRUE
+etc,필기구,carryon,TRUE
+etc,메모수첩,carryon,TRUE
+etc,선글라스(선택),carryon,TRUE
+snack,"간식(젤리, 포장스낵)",checked,TRUE
+etc,접의식 우산,checked,TRUE
+doc,지갑,carryon,FALSE
+doc,체크카드,carryon,FALSE
+doc,환전(파운드30/유로30),carryon,FALSE
+clothes,손수건 2개,checked,FALSE
+shoes,운동화(여분 1개),checked,FALSE
+toilet,샴푸,checked,FALSE
+toilet,린스,checked,FALSE
+toilet,바디워시,checked,FALSE
+toilet,세안제,checked,FALSE
+toilet,바디로션,checked,FALSE
+toilet,알로에젤(햇빛대비),checked,FALSE
+toilet,진정마스크팩(햇빛대비),checked,FALSE
+toilet,빗,checked,FALSE
+toilet,머리 고무줄,checked,FALSE
+toilet,머리띠,checked,FALSE
+medic,해열제 2종류,checked,FALSE
+medic,"소화제(베나치오, 매실)",both,FALSE
+medic,챔프 알러논,both,FALSE
+medic,밴드,both,FALSE
+medic,챔큐,checked,FALSE
+medic,유산균,checked,FALSE
+medic,비타민C,checked,FALSE
+medic,장생천시럽,checked,FALSE
+medic,ORS 수분보충제,checked,FALSE
+medic,휴족시간,checked,FALSE
+snack,물(6병),checked,FALSE
+etc,장바구니,checked,FALSE
+etc,목베개,carryon,FALSE
+etc,배게커버(일회용),checked,FALSE
+etc,안대,both,FALSE
+etc,텀블러,checked,FALSE
+etc,텀블러세척제,checked,FALSE
+etc,진드기 패드,checked,FALSE
+device,손선풍기 2개,carryon,FALSE
+device,미니 드라이기,checked,FALSE
