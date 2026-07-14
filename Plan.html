@@ -734,9 +734,15 @@ function onRowFieldChange(e){
   }
   row[field] = val;
   savePlan();
-  // 금액/화폐가 바뀌면 원화 값과 합계도 다시 계산
+  // 금액/화폐가 바뀌면 이 행의 "원화로" 표시만 갱신한다.
+  // (renderRows()로 표 전체를 다시 그리면 입력 중이던 input이 통째로 새로 만들어지면서
+  //  모바일에서 포커스가 끊겨 키보드가 닫혀버리는 문제가 있어, 필요한 부분만 직접 수정한다)
   if(['planned','currency'].includes(field)){
-    renderRows();
+    const krwCell = tr.querySelector('.col-krw');
+    if(krwCell){
+      const isEstimated = (row.spends||[]).length===0;
+      krwCell.innerHTML = `${fmtWon(rowKRW(row))}${isEstimated?' <span style="font-size:10px;color:var(--text-faint);font-weight:600;">(예상)</span>':''}`;
+    }
     renderDashboard();
   }
 }
