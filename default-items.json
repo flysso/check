@@ -21,6 +21,7 @@
     ["clothes", "겉옷(바람막이 1벌)", "carryon", true],
     ["clothes", "학교 모자", "checked", true],
     ["clothes", "일반 모자(여분 1개)", "checked", false],
+    ["clothes", "팔토시 2개", "checked", false],    
     ["toilet", "수건 1개(지유는 2개)", "checked", true],
     ["toilet", "칫솔", "checked", true],
     ["toilet", "치약", "checked", true],
