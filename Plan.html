@@ -1216,13 +1216,13 @@ $('#resetBtn').addEventListener('click', ()=>{
   eurCarrySuggested = false;
   savePlan();
   renderAll();
-  showToast('전체 예정 금액이 0원으로 초기화되었습니다 🔄');
+  showToast('전체 예정, 사용 내역이 초기화되었습니다 🔄');
 });
 
 /* ---------- 지유 셋팅 버튼: 여행 정보(제목/여행지/관리자)는 그대로 두고,
    날짜/주요방문지/내용/예정금액과 사용 내역만 지유 기본값으로 되돌림 ---------- */
 $('#jiyuPresetBtn').addEventListener('click', ()=>{
-  if(!confirm('⚠️ 예정금액을 지유 기본값으로 되돌리고, 사용 내역을 초기화할까요?\n날짜/주요방문지/내용과 여행 정보는 그대로 유지됩니다.\n이 작업은 되돌릴 수 없습니다.')) return;
+  if(!confirm('⚠️ 예정금액을 지유 기준으로 되돌리고, 사용 내역을 초기화할까요?\n날짜/주요방문지/내용과 여행 정보는 그대로 유지됩니다.\n이 작업은 되돌릴 수 없습니다.')) return;
   const rows = [...plan.rows].sort((a,b)=>a.order-b.order);
   rows.forEach((row,i)=>{
     if(DEFAULT_ROWS[i]){
@@ -1234,7 +1234,7 @@ $('#jiyuPresetBtn').addEventListener('click', ()=>{
   eurCarrySuggested = false;
   savePlan();
   renderAll();
-  showToast('예정금액을 지유 기본값으로 되돌리고 사용 내역을 초기화했습니다 🐱');
+  showToast('예정금액을 지유 기준으로 되돌리고 사용 내역을 초기화했습니다 🐱');
 });
 
 /* ---------- 유틸 ---------- */
