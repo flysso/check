@@ -605,7 +605,7 @@ async function fetchLiveRates(){
     savePlan();
     renderRateInputs();
     renderAll();
-    showToast('실시간 환율을 불러왔습니다 💱');
+    showToast('실시간 환율을 불러왔어요 💱');
   }catch(e){
     console.warn('실시간 환율 불러오기 실패, 기존/기본값 유지:', e);
     showToast('⚠️ 인터넷 환율을 불러오지 못해 기존 값을 유지합니다');
@@ -1031,9 +1031,17 @@ $('#importImageFile').addEventListener('change', async e=>{
         }
       }
     });
-    $('#importInput').value = data.text.trim();
-    statusEl.innerHTML = '✅ 이미지에서 텍스트를 읽어왔어요. <b>아래 텍스트를 꼭 확인/수정</b>한 뒤 "표 불러오기"를 눌러주세요. (손글씨 숫자는 특히 틀리기 쉬워요)';
-    showToast('이미지 인식 완료 🖼️ 내용을 확인해주세요');
+    const text = data.text.trim();
+    $('#importInput').value = text;
+    showToast('이미지 인식 완료 🖼️ 바로 표로 정리할게요');
+
+    // 인식된 텍스트를 바로 파싱해서 미리보기까지 자동으로 띄워줌 (별도로 "표 불러오기"를 누를 필요 없음)
+    const parsedRows = parseImportTable(text);
+    if(parsedRows.length===0){
+      statusEl.innerHTML = '⚠️ 사진에서 표 형태의 내용을 찾지 못했어요. 아래 텍스트 칸을 직접 정리한 뒤 "✨ 표 불러오기"를 눌러주세요.';
+    }else{
+      renderImportPreview(parsedRows);
+    }
   }catch(err){
     console.error('OCR 실패:', err);
     statusEl.innerHTML = '⚠️ 이미지 인식에 실패했습니다. 인터넷 연결을 확인하시거나, 아래 칸에 직접 내용을 입력/붙여넣어 주세요.';
@@ -1050,8 +1058,36 @@ function parseAmountAndCurrency(text, fallbackCurrency){
   return { amount: parseFloat(s.replace(/[^0-9.\-]/g,''))||0, currency: fallbackCurrency };
 }
 
-// 탭 또는 쉼표로 구분된 표 텍스트를 파싱해서 행 배열로 변환
-function parseImportTable(text){
+// 표 형식이 아닌 자유 형식 텍스트(사진 OCR 결과 등)에서 "날짜 → 내용/금액" 패턴으로 추출하는 보조 파서
+function parseFreeformItinerary(text){
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  const dateRe = /(\d{1,2}\s*[\/.]\s*\d{1,2})|(\d{1,2}\s*월\s*\d{1,2}\s*일)/;
+  const rows = [];
+  let current = null;
+  lines.forEach(line=>{
+    const dm = line.match(dateRe);
+    if(dm){
+      if(current) rows.push(current);
+      current = { date: dm[0].replace(/\s+/g,''), place:'', content:'', currency:'GBP', planned:0, spends:[] };
+      const rest = line.replace(dm[0],'').trim();
+      if(rest) current.place = rest;
+      return;
+    }
+    if(!current) return; // 날짜가 나오기 전의 텍스트(제목 등)는 무시
+    const hasMoney = /[£€]|파운드|유로|GBP|EUR/i.test(line);
+    if(hasMoney){
+      const amt = parseAmountAndCurrency(line, current.currency);
+      if(amt.amount>0){ current.planned = amt.amount; current.currency = amt.currency; }
+    }else{
+      current.content = current.content ? current.content+' '+line : line;
+    }
+  });
+  if(current) rows.push(current);
+  return rows.filter(r=>r.date);
+}
+
+// 탭 또는 쉼표로 구분된 표 텍스트를 파싱해서 행 배열로 변환 (실패 시 자유 형식 파서로 자동 대체)
+function parseTableStrict(text){
   const lines = text.split('\n').map(l=>l.replace(/\r$/,'')).filter(l=>l.trim()!=='');
   if(lines.length===0) return [];
 
@@ -1100,6 +1136,19 @@ function parseImportTable(text){
     const parsed = parseAmountAndCurrency(plannedRaw, fallbackCur);
     return { date, place, content, currency: parsed.currency, planned: parsed.amount, spends:[] };
   });
+}
+
+// 표(탭/쉼표) 파싱을 먼저 시도하고, 결과가 부실하면 자유 형식(날짜 기준) 파서로 자동 전환
+function parseImportTable(text){
+  const hasTab = text.split('\n')[0].includes('\t');
+  if(hasTab){
+    // 엑셀/구글시트에서 복사한 탭 구분 표는 엄격 파서가 훨씬 정확함
+    return parseTableStrict(text);
+  }
+  // 탭이 없는 경우(사진 OCR, 자유롭게 붙여넣은 텍스트 등)는 날짜 기준 자유 형식 파서를 우선 사용
+  const freeform = parseFreeformItinerary(text);
+  if(freeform.length>0) return freeform;
+  return parseTableStrict(text);
 }
 
 let pendingImportRows = null;
