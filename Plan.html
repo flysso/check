@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>💰 W.A.V.E 용돈 매니져</title>
+<title>💰 W.A.V.E 용돈 사용 매니져</title>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -340,7 +340,8 @@
       flex-direction:row; align-items:center; gap:8px;
     }
     td.col-cur::before, td.col-planned::before{ flex:0 0 68px; font-size:11px; }
-    td.col-cur select{ flex:1 1 auto; width:auto; min-width:0; max-width:100%; }
+    td.col-cur::before{ flex:0 0 40px; }
+    td.col-cur select{ flex:1 1 auto; width:auto; min-width:0; max-width:100%; padding-left:4px;padding-right:2px; }
     td.col-planned input{ flex:1 1 auto; width:auto; min-width:0; max-width:100%; }
     td.col-krw{
       flex:1 1 100%;
@@ -363,7 +364,7 @@
 
   /* ---------------- 인쇄용 PDF 요약 ---------------- */
   #printSummary{display:none;}
-  .ps-page{width:190mm;margin:0 auto;padding:8mm;font-family:var(--font-main);color:#1f2d3a;}
+  .ps-page{width:190mm;margin:0 auto;padding:8mm;font-family:var(--font-main);color:#1f2d3a;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
   .ps-border{border:2px solid #3fb6e0;border-radius:14px;padding:10px 14px;background:linear-gradient(160deg,#f3fbfd 0%,#f0fbf7 100%);}
   .ps-header{text-align:center;margin-bottom:6px;}
   .ps-title{font-size:18px;font-weight:900;color:#1a3f52;margin:0 0 2px;}
@@ -385,6 +386,12 @@
     #printSummary{display:block !important;}
     .ps-page{width:auto;padding:6mm;}
     .ps-table tr{page-break-inside:avoid;}
+    /* 일부 모바일 브라우저가 작은 글씨를 인쇄할 때도 읽기 편하게 자동으로 확대해버려서
+       내용이 넘치고 여러 페이지로 나뉘는 문제가 있어, 강제로 확대를 꺼둔다 */
+    #printSummary, #printSummary *{
+      -webkit-text-size-adjust:100% !important;
+      text-size-adjust:100% !important;
+    }
   }
 </style>
 </head>
@@ -394,7 +401,7 @@
 
 <div class="topbar">
   <div class="title-btn-group">
-    <h1>💰 W.A.V.E 용돈 매니져</h1>
+    <h1>💰 W.A.V.E 용돈 사용 매니져</h1>
     <button class="icon-btn" id="darkToggle">🌙</button>
     <button class="icon-btn" id="jiyuPresetBtn" title="예정금액만 지유 기본값으로 되돌리고 사용 내역을 초기화합니다 (날짜/내용/여행 정보는 유지)">🐱 지유 셋팅</button>
   </div>
@@ -1260,6 +1267,10 @@ function renderAll(){
 
 /* ---------- 초기화 ---------- */
 async function boot(){
+  // 브라우저가 새로고침 시 이전 스크롤 위치를 기억해서 엉뚱한 섹션으로 열리는 것을 방지
+  if('scrollRestoration' in history){ history.scrollRestoration = 'manual'; }
+  window.scrollTo(0, 0);
+
   plan = loadPlan();
   const isNew = !plan;
   if(!plan){
@@ -1270,6 +1281,7 @@ async function boot(){
   bindTripInfo();
   renderRateInputs();
   renderAll();
+  window.scrollTo(0, 0);
 
   // 환전 계산기 기본 화폐: 8/1까지는 파운드, 8/2부터는 유로
   const today = new Date();
