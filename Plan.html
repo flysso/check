@@ -156,17 +156,6 @@
   }
   .export-row button:hover{border-color:var(--sky);color:var(--text);}
 
-  /* 파일 불러오기 카드 */
-  .hidden{display:none !important;}
-  #importToggleHeader.collapsed #importCaret{transform:rotate(-90deg);}
-  #importInput{
-    width:100%;min-height:90px;border:1px solid var(--border-strong);border-radius:10px;padding:10px;
-    background:var(--card-bg-soft);color:var(--text);font-size:13px;font-family:inherit;resize:vertical;
-  }
-  .ai-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center;}
-  .ai-actions input[type=file]{font-size:12.5px;color:var(--text-soft);}
-  .ai-result{margin-top:10px;font-size:12.5px;color:var(--text-soft);background:var(--card-bg-soft);border-radius:10px;padding:10px;display:none;}
-
   /* 실제금액 칸: 합계 + 건수 + 추가버튼 */
   .col-spend .spend-summary{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;}
   .spend-total{font-weight:800;font-size:13px;color:var(--text);white-space:nowrap;}
@@ -315,7 +304,8 @@
 <div class="topbar">
   <h1>💰 용돈 사용 계획서</h1>
   <button class="icon-btn" id="darkToggle">🌙</button>
-  <button class="icon-btn" id="resetBtn" title="저장된 데이터를 지우고 처음으로 되돌립니다">🔄 초기화</button>
+  <button class="icon-btn" id="jiyuPresetBtn" title="지유 기본값(정해진 날짜/내용/예정금액)으로 되돌립니다">👧 지유 셋팅</button>
+  <button class="icon-btn" id="resetBtn" title="모든 예정금액/사용금액을 0원으로 만듭니다 (날짜/내용은 유지)">🔄 초기화 (전체 예산 0원 셋팅)</button>
 </div>
 
 <div class="wrap">
@@ -345,37 +335,6 @@
     <div class="rate-meta" id="rateMeta">환율 정보를 불러오는 중...</div>
   </div>
 
-  <div class="card">
-    <h2 id="importToggleHeader" style="cursor:pointer;user-select:none;">
-      <span>📂 용돈사용계획 불러오기</span>
-      <span style="margin-left:auto;font-size:12px;color:var(--text-soft);font-weight:600;">(선택 기능)</span>
-      <span id="importCaret" style="transition:transform .2s ease;color:var(--text-faint);">▾</span>
-    </h2>
-    <div id="importBody" class="hidden">
-      <p style="font-size:12.5px;color:var(--text-soft);margin:-6px 0 10px;">
-        <b>① 사진으로 불러오기</b>: 일정표를 찍은 사진을 올리면 사진 속 글자를 자동으로 읽어서 아래 칸에 채워줘요.
-        (인쇄된 글자는 잘 인식하지만, <b>손글씨 숫자(예: 금액)는 잘못 인식될 수 있어</b> 꼭 확인 후 수정해주세요)<br>
-        <b>② 표로 붙여넣기</b>: 엑셀/구글시트에서 <b>날짜, 주요방문지, 내용, 화폐, 예정금액</b> 순서로 표를 복사해서 붙여넣거나 CSV/TSV 파일을 올려도 돼요.
-      </p>
-      <div class="ai-actions" style="margin-bottom:6px;">
-        <label style="font-size:12.5px;color:var(--text-soft);font-weight:700;">📷 사진 업로드:</label>
-        <input type="file" id="importImageFile" accept="image/*">
-      </div>
-      <p style="font-size:12px;color:var(--sky-strong);font-weight:700;margin:4px 0 10px;">
-        💡 이미 작성한 용돈 사용 계획서 사진을 업로드 하면 내용과 예상금액이 업데이트 돼요.
-      </p>
-      <textarea id="importInput" placeholder="여기에 표를 붙여넣으세요. 예)
-7/28(화)&#9;공항, 기내, 런던&#9;물, 간식 등&#9;£10
-7/29(수)&#9;대영박물관 등&#9;기념품, 간식 등&#9;£25"></textarea>
-      <div class="ai-actions">
-        <label style="font-size:12.5px;color:var(--text-soft);font-weight:700;">📄 CSV/TSV 파일:</label>
-        <input type="file" id="importFile" accept=".csv,.tsv,.txt">
-        <button class="rate-refresh-btn" id="importParseBtn">✨ 표 불러오기</button>
-      </div>
-      <div class="ai-result" id="importResult"></div>
-    </div>
-  </div>
-
   <div class="dash-grid">
     <div class="dash-card budget"><div class="lbl">총 예산금액</div><div class="val" id="dashBudget">-</div></div>
     <div class="dash-card used"><div class="lbl">사용 금액</div><div class="val" id="dashUsed">-</div></div>
@@ -386,7 +345,7 @@
   <div class="card">
     <h2>🔁 예산 옮기기 (파운드 → 유로)</h2>
     <p style="font-size:12.5px;color:var(--text-soft);margin:-6px 0 10px;">
-      파운드 예산이 남으면 유로 예산으로 옮겨서 쓸 수 있어요. 현재 환율(파운드/유로 교차 환율)로 자동 환산됩니다.
+      파운드 예산이 남으면 유로 예산으로 옮겨서 쓸 수 있어요. 환율 계산 없이 숫자 그대로 더해집니다 (예: £160 → €160).
     </p>
     <div class="carry-row">
       <div class="carry-info">남은 파운드 예산: <b id="carryAvailGBP">£0</b></div>
@@ -605,7 +564,7 @@ async function fetchLiveRates(){
     savePlan();
     renderRateInputs();
     renderAll();
-    showToast('실시간 환율을 불러왔어요 💱');
+    showToast('실시간 환율을 불러왔습니다 💱');
   }catch(e){
     console.warn('실시간 환율 불러오기 실패, 기존/기본값 유지:', e);
     showToast('⚠️ 인터넷 환율을 불러오지 못해 기존 값을 유지합니다');
@@ -839,11 +798,6 @@ function renderDashboard(){
 /* ---------- 예산 옮기기 (파운드 → 유로) ---------- */
 let availableGBPBudget = 0;
 
-function crossRateGbpToEur(){
-  // 파운드 1개가 유로로 몇 개인지 (원화 환율을 거쳐 교차 계산)
-  if(!plan.rateEUR) return 0;
-  return (plan.rateGBP||0) / plan.rateEUR;
-}
 function renderCarryOverCard(availableGBP){
   const avail = Math.max(0, Math.floor(availableGBP));
   availableGBPBudget = avail;
@@ -879,8 +833,8 @@ function updateCarryPreview(){
     gbpAmount = availableGBPBudget;
     input.value = availableGBPBudget>0 ? availableGBPBudget : '';
   }
-  const eurEquivalent = gbpAmount * crossRateGbpToEur();
-  $('#carryPreviewEUR').textContent = fmtCurrency(Math.round(eurEquivalent), 'EUR');
+  // 환율 계산 없이 숫자 그대로 유로에 더함 (예: £160 → €160)
+  $('#carryPreviewEUR').textContent = fmtCurrency(gbpAmount, 'EUR');
 }
 $('#carryAmountInput').addEventListener('input', updateCarryPreview);
 $('#carryApplyBtn').addEventListener('click', ()=>{
@@ -890,7 +844,7 @@ $('#carryApplyBtn').addEventListener('click', ()=>{
     showToast(`⚠️ 남은 파운드 예산(${fmtCurrency(availableGBPBudget,'GBP')})보다 많이 옮길 수 없어요`);
     return;
   }
-  const eurEquivalent = Math.round(gbpAmount * crossRateGbpToEur());
+  const eurEquivalent = gbpAmount; // 환율 변환 없이 숫자 그대로 이동
   if(!plan.carryOver) plan.carryOver = { gbp:0, eur:0 };
   plan.carryOver.gbp += gbpAmount;
   plan.carryOver.eur += eurEquivalent;
@@ -990,239 +944,22 @@ $('#printBtn').addEventListener('click', ()=>{
   setTimeout(()=> window.print(), 50);
 });
 
-/* ---------- 파일/표 불러오기 ---------- */
-$('#importToggleHeader').addEventListener('click', ()=>{
-  const collapsed = $('#importToggleHeader').classList.toggle('collapsed');
-  $('#importBody').classList.toggle('hidden', collapsed);
-});
-$('#importFile').addEventListener('change', e=>{
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ()=>{ $('#importInput').value = reader.result; };
-  reader.readAsText(file, 'utf-8');
-});
-
-/* 사진(이미지) 업로드 → OCR로 글자 인식 → 텍스트 칸에 채워서 사용자가 확인/수정할 수 있게 함.
-   Tesseract.js는 용량이 커서 이미지를 실제로 올릴 때만 CDN에서 불러온다. */
-function loadTesseractScript(){
-  return new Promise((resolve, reject)=>{
-    if(window.Tesseract){ resolve(); return; }
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
-    s.onload = ()=>resolve();
-    s.onerror = ()=>reject(new Error('OCR 라이브러리(tesseract.js)를 불러오지 못했습니다'));
-    document.head.appendChild(s);
+/* ---------- 초기화 버튼: 날짜/내용은 그대로 두고 예정금액·사용금액만 0으로 ---------- */
+$('#resetBtn').addEventListener('click', ()=>{
+  if(!confirm('⚠️ 모든 예정금액과 사용금액을 0원으로 초기화할까요?\n날짜/주요방문지/내용은 그대로 유지됩니다.')) return;
+  plan.rows.forEach(row=>{
+    row.planned = 0;
+    row.spends = [];
   });
-}
-
-$('#importImageFile').addEventListener('change', async e=>{
-  const file = e.target.files[0]; if(!file) return;
-  const statusEl = $('#importResult');
-  statusEl.style.display = 'block';
-  statusEl.innerHTML = '⏳ OCR 라이브러리를 불러오는 중...';
-  try{
-    await loadTesseractScript();
-    statusEl.innerHTML = '⏳ 이미지에서 글자를 인식하는 중입니다... (처음 실행 시 언어 데이터 다운로드로 시간이 좀 걸려요)';
-    const { data } = await Tesseract.recognize(file, 'kor+eng', {
-      logger: m=>{
-        if(m.status){
-          const pct = (m.progress!=null) ? ` ${Math.round(m.progress*100)}%` : '';
-          statusEl.innerHTML = `⏳ 인식 중... (${m.status}${pct})`;
-        }
-      }
-    });
-    const text = data.text.trim();
-    $('#importInput').value = text;
-    showToast('이미지 인식 완료 🖼️ 바로 표로 정리할게요');
-
-    // 인식된 텍스트를 바로 파싱해서 미리보기까지 자동으로 띄워줌 (별도로 "표 불러오기"를 누를 필요 없음)
-    const parsedRows = parseImportTable(text);
-    if(parsedRows.length===0){
-      statusEl.innerHTML = '⚠️ 사진에서 표 형태의 내용을 찾지 못했어요. 아래 텍스트 칸을 직접 정리한 뒤 "✨ 표 불러오기"를 눌러주세요.';
-    }else{
-      renderImportPreview(parsedRows);
-    }
-  }catch(err){
-    console.error('OCR 실패:', err);
-    statusEl.innerHTML = '⚠️ 이미지 인식에 실패했습니다. 인터넷 연결을 확인하시거나, 아래 칸에 직접 내용을 입력/붙여넣어 주세요.';
-    showToast('이미지 인식에 실패했어요');
-  }
-});
-
-// 금액 텍스트에서 화폐(£/€)와 숫자를 함께 인식 (예: "£10", "10파운드", "€ 20", "20유로", "10")
-function parseAmountAndCurrency(text, fallbackCurrency){
-  const s = String(text||'').trim();
-  if(!s) return { amount:0, currency:fallbackCurrency };
-  if(/[£]|GBP|파운드/i.test(s)) return { amount: parseFloat(s.replace(/[^0-9.\-]/g,''))||0, currency:'GBP' };
-  if(/[€]|EUR|유로/i.test(s)) return { amount: parseFloat(s.replace(/[^0-9.\-]/g,''))||0, currency:'EUR' };
-  return { amount: parseFloat(s.replace(/[^0-9.\-]/g,''))||0, currency: fallbackCurrency };
-}
-
-// 표 형식이 아닌 자유 형식 텍스트(사진 OCR 결과 등)에서 "날짜 → 내용/금액" 패턴으로 추출하는 보조 파서
-function parseFreeformItinerary(text){
-  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
-  const dateRe = /(\d{1,2}\s*[\/.]\s*\d{1,2})|(\d{1,2}\s*월\s*\d{1,2}\s*일)/;
-  const rows = [];
-  let current = null;
-  lines.forEach(line=>{
-    const dm = line.match(dateRe);
-    if(dm){
-      if(current) rows.push(current);
-      current = { date: dm[0].replace(/\s+/g,''), place:'', content:'', currency:'GBP', planned:0, spends:[] };
-      const rest = line.replace(dm[0],'').trim();
-      if(rest) current.place = rest;
-      return;
-    }
-    if(!current) return; // 날짜가 나오기 전의 텍스트(제목 등)는 무시
-    const hasMoney = /[£€]|파운드|유로|GBP|EUR/i.test(line);
-    if(hasMoney){
-      const amt = parseAmountAndCurrency(line, current.currency);
-      if(amt.amount>0){ current.planned = amt.amount; current.currency = amt.currency; }
-    }else{
-      current.content = current.content ? current.content+' '+line : line;
-    }
-  });
-  if(current) rows.push(current);
-  return rows.filter(r=>r.date);
-}
-
-// 탭 또는 쉼표로 구분된 표 텍스트를 파싱해서 행 배열로 변환 (실패 시 자유 형식 파서로 자동 대체)
-function parseTableStrict(text){
-  const lines = text.split('\n').map(l=>l.replace(/\r$/,'')).filter(l=>l.trim()!=='');
-  if(lines.length===0) return [];
-
-  const delim = lines[0].includes('\t') ? '\t' : ',';
-  const splitLine = (line)=>{
-    if(delim==='\t') return line.split('\t').map(c=>c.trim());
-    // 쉼표 구분이면 간단한 인용부호 처리
-    const cells=[]; let cur=''; let inQ=false;
-    for(let i=0;i<line.length;i++){
-      const c=line[i];
-      if(c==='"'){ inQ=!inQ; }
-      else if(c===',' && !inQ){ cells.push(cur.trim()); cur=''; }
-      else cur+=c;
-    }
-    cells.push(cur.trim());
-    return cells;
-  };
-
-  let rows = lines.map(splitLine);
-
-  // 첫 줄이 머리글(날짜/주요방문지/내용/화폐/예정금액 등 텍스트)인지 확인
-  const headerKeywords = ['날짜','방문지','내용','화폐','예정','실제','금액','date','place','content','currency','planned','actual'];
-  const firstRowText = rows[0].join(' ');
-  let colIndex = { date:0, place:1, content:2, currency:-1, planned:3, actual:-1 };
-  if(headerKeywords.some(k=>firstRowText.includes(k))){
-    const header = rows[0].map(h=>h.trim());
-    const find = (...names)=> header.findIndex(h=> names.some(n=>h.includes(n)));
-    colIndex = {
-      date: find('날짜','date'),
-      place: find('방문지','place','장소'),
-      content: find('내용','content'),
-      currency: find('화폐','currency'),
-      planned: find('예정','planned'),
-      actual: find('실제','actual')
-    };
-    rows = rows.slice(1);
-  }
-
-  return rows.filter(r=>r.length>=2 && r.some(c=>c!=='')).map(r=>{
-    const date = colIndex.date>=0 ? (r[colIndex.date]||'') : '';
-    const place = colIndex.place>=0 ? (r[colIndex.place]||'') : '';
-    const content = colIndex.content>=0 ? (r[colIndex.content]||'') : '';
-    const explicitCurrency = colIndex.currency>=0 ? (r[colIndex.currency]||'').toUpperCase() : '';
-    const plannedRaw = colIndex.planned>=0 ? (r[colIndex.planned]||'') : '';
-    const fallbackCur = (explicitCurrency==='GBP'||explicitCurrency==='EUR') ? explicitCurrency : 'GBP';
-    const parsed = parseAmountAndCurrency(plannedRaw, fallbackCur);
-    return { date, place, content, currency: parsed.currency, planned: parsed.amount, spends:[] };
-  });
-}
-
-// 표(탭/쉼표) 파싱을 먼저 시도하고, 결과가 부실하면 자유 형식(날짜 기준) 파서로 자동 전환
-function parseImportTable(text){
-  const hasTab = text.split('\n')[0].includes('\t');
-  if(hasTab){
-    // 엑셀/구글시트에서 복사한 탭 구분 표는 엄격 파서가 훨씬 정확함
-    return parseTableStrict(text);
-  }
-  // 탭이 없는 경우(사진 OCR, 자유롭게 붙여넣은 텍스트 등)는 날짜 기준 자유 형식 파서를 우선 사용
-  const freeform = parseFreeformItinerary(text);
-  if(freeform.length>0) return freeform;
-  return parseTableStrict(text);
-}
-
-let pendingImportRows = null;
-
-function renderImportPreview(parsedRows){
-  pendingImportRows = parsedRows;
-  const result = $('#importResult');
-  result.style.display = 'block';
-  const tableRows = parsedRows.map((r,i)=>`
-    <tr>
-      <td style="padding:4px 8px;border-bottom:1px solid var(--border);">${i+1}</td>
-      <td style="padding:4px 8px;border-bottom:1px solid var(--border);">${escapeHtml(r.date)}</td>
-      <td style="padding:4px 8px;border-bottom:1px solid var(--border);">${escapeHtml(r.place)}</td>
-      <td style="padding:4px 8px;border-bottom:1px solid var(--border);">${escapeHtml(r.content)}</td>
-      <td style="padding:4px 8px;border-bottom:1px solid var(--border);white-space:nowrap;">${r.currency==='GBP'?'£':'€'} ${r.planned}</td>
-    </tr>`).join('');
-  result.innerHTML = `
-    <div style="margin-bottom:8px;font-weight:700;">🔍 <b>${parsedRows.length}</b>개 행이 인식됐어요. 아래에서 내용을 확인해주세요 (틀린 부분은 위 텍스트를 고친 뒤 다시 "표 불러오기"를 눌러주세요).</div>
-    <div style="max-height:220px;overflow:auto;border:1px solid var(--border-strong);border-radius:8px;margin-bottom:10px;">
-      <table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:480px;">
-        <thead><tr style="background:var(--card-bg-soft);">
-          <th style="padding:4px 8px;text-align:left;">#</th><th style="padding:4px 8px;text-align:left;">날짜</th>
-          <th style="padding:4px 8px;text-align:left;">주요방문지</th><th style="padding:4px 8px;text-align:left;">내용</th>
-          <th style="padding:4px 8px;text-align:left;">예정금액</th>
-        </tr></thead>
-        <tbody>${tableRows}</tbody>
-      </table>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="rate-refresh-btn" id="confirmReplaceBtn">✅ 확인했어요, 새로 채우기</button>
-      <button class="rate-refresh-btn" id="confirmAppendBtn" style="background:linear-gradient(100deg,var(--mint),var(--sky));">➕ 확인했어요, 기존 표에 추가하기</button>
-      <button id="cancelImportBtn" style="border:1px solid var(--border-strong);background:var(--card-bg-soft);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:700;color:var(--text-soft);">취소</button>
-    </div>
-  `;
-  $('#confirmReplaceBtn').addEventListener('click', ()=> commitImport(true));
-  $('#confirmAppendBtn').addEventListener('click', ()=> commitImport(false));
-  $('#cancelImportBtn').addEventListener('click', ()=>{
-    pendingImportRows = null;
-    result.style.display = 'none';
-    result.innerHTML = '';
-  });
-}
-
-function commitImport(replace){
-  if(!pendingImportRows) return;
-  if(replace){
-    plan.rows = pendingImportRows.map((r,i)=>({ id:uid(), ...r, order:i }));
-  }else{
-    const maxOrder = plan.rows.reduce((m,r)=>Math.max(m,r.order),-1);
-    pendingImportRows.forEach((r,i)=>{
-      plan.rows.push({ id:uid(), ...r, order:maxOrder+1+i });
-    });
-  }
-  const count = pendingImportRows.length;
+  plan.carryOver = { gbp:0, eur:0 };
   savePlan();
   renderAll();
-
-  const result = $('#importResult');
-  result.innerHTML = `✅ <b>${count}</b>개 행을 ${replace?'새로':'추가로'} 최종 반영했습니다. 표에서 화폐·금액이 맞게 들어갔는지 한 번 더 확인해주세요.`;
-  pendingImportRows = null;
-  showToast('표를 최종 반영했습니다 📂');
-}
-
-$('#importParseBtn').addEventListener('click', ()=>{
-  const text = $('#importInput').value.trim();
-  if(!text){ showToast('붙여넣을 표 내용이나 파일을 먼저 넣어주세요'); return; }
-  const parsedRows = parseImportTable(text);
-  if(parsedRows.length===0){ showToast('표에서 유효한 행을 찾지 못했어요'); return; }
-  renderImportPreview(parsedRows);
+  showToast('전체 예산이 0원으로 초기화되었습니다 🔄');
 });
 
-/* ---------- 초기화 버튼 ---------- */
-$('#resetBtn').addEventListener('click', ()=>{
-  if(!confirm('⚠️ 저장된 계획을 모두 삭제하고 기본값으로 되돌릴까요?\n이 작업은 되돌릴 수 없습니다.')) return;
+/* ---------- 지유 셋팅 버튼: 저장된 데이터를 모두 지우고 기본(지유) 값으로 되돌림 ---------- */
+$('#jiyuPresetBtn').addEventListener('click', ()=>{
+  if(!confirm('⚠️ 지금 입력된 내용을 모두 지우고 지유 기본값(날짜/내용/예정금액)으로 되돌릴까요?\n이 작업은 되돌릴 수 없습니다.')) return;
   try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
   location.reload();
 });
@@ -1254,10 +991,6 @@ async function boot(){
   if(isNew || plan.rateSource!=='live'){
     fetchLiveRates();
   }
-
-  // 파일 불러오기 카드는 필수 기능이 아니므로 기본 접힘 상태로 시작
-  $('#importToggleHeader').classList.add('collapsed');
-  $('#importBody').classList.add('hidden');
 }
 boot();
 </script>
