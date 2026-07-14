@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>💰 W.A.V.E 용돈 사용 매니져</title>
+<title>💰 W.A.V.E 용돈 매니져</title>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -401,12 +401,12 @@
 
 <div class="topbar">
   <div class="title-btn-group">
-    <h1>💰 W.A.V.E 용돈 사용 매니져</h1>
+    <h1>💰 W.A.V.E 용돈 매니져</h1>
     <button class="icon-btn" id="darkToggle">🌙</button>
     <button class="icon-btn" id="jiyuPresetBtn" title="예정금액만 지유 기본값으로 되돌리고 사용 내역을 초기화합니다 (날짜/내용/여행 정보는 유지)">🐱 지유 셋팅</button>
   </div>
   <div class="reset-summary-group">
-    <button class="icon-btn" id="resetBtn" title="모든 예정 금액/사용금액을 0원으로 만듭니다 (날짜/내용은 유지)">🔄 초기화(예정금액0원)</button>
+    <button class="icon-btn" id="resetBtn" title="모든 예정 금액/사용금액을 0원으로 만듭니다 (날짜/내용은 유지)">🔄 초기화(예정/사용금액)</button>
     <div class="topbar-mini-summary" id="topbarMiniSummary">
       <a href="#usageSummarySection" class="topbar-nav-link" id="navUsageLink">📊 총 사용현황</a>
       <a href="#expenseTableSection" class="topbar-nav-link" id="navTableLink">📋 지출 계획표</a>
@@ -453,7 +453,7 @@
   </div>
 
   <div class="card" id="usageSummarySection">
-    <h2 style="font-size:14px;margin-bottom:10px;">📊 총 사용 현황</h2>
+    <h2 style="font-size:14px;margin-bottom:10px;">📊 총 용돈 사용 현황</h2>
     <div class="usage-gauge-row">
       <span class="usage-gauge-pct" id="usageGaugePct">0%</span>
       <span class="usage-gauge-sub"><b id="usageGaugeUsed" class="used-color">0</b> / <span id="usageGaugeBudget">0</span> 사용</span>
