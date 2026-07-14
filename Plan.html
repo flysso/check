@@ -304,8 +304,8 @@
 <div class="topbar">
   <h1>💰 용돈 사용 계획서</h1>
   <button class="icon-btn" id="darkToggle">🌙</button>
-  <button class="icon-btn" id="jiyuPresetBtn" title="지유 기본값(정해진 날짜/내용/예정금액)으로 되돌립니다">👧 지유 셋팅</button>
-  <button class="icon-btn" id="resetBtn" title="모든 예정금액/사용금액을 0원으로 만듭니다 (날짜/내용은 유지)">🔄 초기화 (전체 예산 0원 셋팅)</button>
+  <button class="icon-btn" id="jiyuPresetBtn" title="지유 기본값(정해진 날짜/내용/예정금액)으로 되돌립니다">🐱 지유</button>
+  <button class="icon-btn" id="resetBtn" title="모든 예정 금액/사용금액을 0원으로 만듭니다 (날짜/내용은 유지)">🔄 초기화 (전체 예정 금액 0원 셋팅)</button>
 </div>
 
 <div class="wrap">
@@ -336,19 +336,19 @@
   </div>
 
   <div class="dash-grid">
-    <div class="dash-card budget"><div class="lbl">총 예산금액</div><div class="val" id="dashBudget">-</div></div>
+    <div class="dash-card budget"><div class="lbl">총 예정 금액</div><div class="val" id="dashBudget">-</div></div>
     <div class="dash-card used"><div class="lbl">사용 금액</div><div class="val" id="dashUsed">-</div></div>
     <div class="dash-card remain"><div class="lbl">남은 금액</div><div class="val" id="dashRemain">-</div></div>
     <div class="dash-card krw"><div class="lbl">원화 총 금액</div><div class="val" id="dashKrw">-</div></div>
   </div>
 
   <div class="card">
-    <h2>🔁 예산 옮기기 (파운드 → 유로)</h2>
+    <h2>🔁 예정 금액 옮기기 (파운드 → 유로)</h2>
     <p style="font-size:12.5px;color:var(--text-soft);margin:-6px 0 10px;">
-      파운드 예산이 남으면 유로 예산으로 옮겨서 쓸 수 있어요. 환율 계산 없이 숫자 그대로 더해집니다 (예: £160 → €160).
+      파운드 예정 금액이 남으면 유로 예정 금액으로 옮겨서 쓸 수 있어요. 환율 계산 없이 숫자 그대로 더해집니다 (예: £160 → €160).
     </p>
     <div class="carry-row">
-      <div class="carry-info">남은 파운드 예산: <b id="carryAvailGBP">£0</b></div>
+      <div class="carry-info">남은 파운드 예정 금액: <b id="carryAvailGBP">£0</b></div>
       <div class="carry-input-row">
         <span class="won">£</span>
         <input type="number" id="carryAmountInput" step="1" placeholder="옮길 파운드 금액">
@@ -816,7 +816,7 @@ function renderCarryOverCard(availableGBP){
   if(carry.gbp>0){
     statusEl.innerHTML = `지금까지 <b>${fmtCurrency(carry.gbp,'GBP')} → ${fmtCurrency(carry.eur,'EUR')}</b> 옮김 <span class="reset-link" id="carryResetLink">되돌리기</span>`;
     $('#carryResetLink').addEventListener('click', ()=>{
-      if(!confirm('옮겼던 내용을 취소하고 원래 예산으로 되돌릴까요?')) return;
+      if(!confirm('옮겼던 내용을 취소하고 원래 예정 금액으로 되돌릴까요?')) return;
       plan.carryOver = { gbp:0, eur:0 };
       savePlan();
       renderDashboard();
@@ -841,7 +841,7 @@ $('#carryApplyBtn').addEventListener('click', ()=>{
   const gbpAmount = Number($('#carryAmountInput').value);
   if(!gbpAmount || gbpAmount<=0){ showToast('옮길 파운드 금액을 입력해주세요'); return; }
   if(gbpAmount > availableGBPBudget){
-    showToast(`⚠️ 남은 파운드 예산(${fmtCurrency(availableGBPBudget,'GBP')})보다 많이 옮길 수 없어요`);
+    showToast(`⚠️ 남은 파운드 예정 금액(${fmtCurrency(availableGBPBudget,'GBP')})보다 많이 옮길 수 없어요`);
     return;
   }
   const eurEquivalent = gbpAmount; // 환율 변환 없이 숫자 그대로 이동
@@ -923,7 +923,7 @@ function buildPrintSummary(){
         </div>
         <hr class="ps-divider">
         <div class="ps-summary">
-          <div class="ps-sum-box"><div class="ps-lbl">총 예산금액</div><div class="ps-val">${fmtPair(budget)}</div></div>
+          <div class="ps-sum-box"><div class="ps-lbl">총 예정 금액</div><div class="ps-val">${fmtPair(budget)}</div></div>
           <div class="ps-sum-box"><div class="ps-lbl">사용 금액</div><div class="ps-val">${fmtPair(used)}</div></div>
           <div class="ps-sum-box"><div class="ps-lbl">남은 금액</div><div class="ps-val">${fmtPair(remain)}</div></div>
           <div class="ps-sum-box"><div class="ps-lbl">원화 총 금액</div><div class="ps-val">${fmtWon(totalKRW)}</div></div>
@@ -954,7 +954,7 @@ $('#resetBtn').addEventListener('click', ()=>{
   plan.carryOver = { gbp:0, eur:0 };
   savePlan();
   renderAll();
-  showToast('전체 예산이 0원으로 초기화되었습니다 🔄');
+  showToast('전체 예정 금액이 0원으로 초기화되었습니다 🔄');
 });
 
 /* ---------- 지유 셋팅 버튼: 저장된 데이터를 모두 지우고 기본(지유) 값으로 되돌림 ---------- */
