@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>💰 W.A.V.E 용돈 매니져</title>
+<title>💰 W.A.V.E 용돈 사용 매니져</title>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -82,7 +82,7 @@
   }
   .manager-row input:focus{outline:none;border-color:var(--sky);box-shadow:0 0 0 3px var(--sky-light);}
   .manager-row .trip-character-img{flex:0 0 auto;margin-left:0;}
-  #usageSummarySection, #expenseTableSection{ scroll-margin-top: 110px; }
+
   .card-compact{padding:14px 16px;margin-bottom:14px;}
   .trip-character-img{margin-left:auto;height:44px;width:auto;border-radius:10px;}
 
@@ -114,20 +114,21 @@
   .rate-meta{font-size:11.5px;color:var(--text-faint);margin-top:8px;}
   .quick-convert-title{font-size:13px;font-weight:800;color:var(--text);margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
   .quick-convert-row{
-    display:flex;align-items:center;gap:8px;margin-top:8px;
-    flex-wrap:wrap;
+    display:flex;align-items:center;gap:6px;margin-top:8px;
+    flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
   }
+  .qc-label{font-size:11px;font-weight:700;color:var(--text-soft);flex:0 0 auto;white-space:nowrap;}
   .quick-convert-row select{
-    border:1px solid var(--border-strong);border-radius:8px;padding:8px 10px;
+    border:1px solid var(--border-strong);border-radius:8px;padding:8px 6px;
     background:var(--card-bg-soft);color:var(--text);font-size:13px;flex:0 0 auto;
   }
   .quick-convert-row input{
-    border:1px solid var(--border-strong);border-radius:8px;padding:8px 10px;
-    background:var(--card-bg-soft);color:var(--text);font-size:13px;width:90px;flex:0 0 auto;
+    border:1px solid var(--border-strong);border-radius:8px;padding:8px 8px;
+    background:var(--card-bg-soft);color:var(--text);font-size:13px;width:70px;flex:0 0 auto;
   }
   .quick-convert-row input:focus, .quick-convert-row select:focus{outline:none;border-color:var(--sky);}
-  .convert-eq{color:var(--text-faint);font-weight:800;font-size:14px;}
-  .convert-result{font-weight:900;color:var(--mint-strong);font-size:15px;white-space:nowrap;}
+  .convert-eq{color:var(--text-faint);font-weight:800;font-size:14px;flex:0 0 auto;}
+  .convert-result{font-weight:900;color:var(--mint-strong);font-size:15px;white-space:nowrap;flex:0 0 auto;}
   .rate-refresh-btn{
     border:none;border-radius:10px;padding:10px 16px;font-weight:800;color:#fff;font-size:13px;
     background:linear-gradient(100deg,var(--sky),var(--mint));box-shadow:0 3px 0 var(--mint-strong);
@@ -148,16 +149,24 @@
   }
   .usage-gauge-inner.over{background:linear-gradient(90deg,var(--warning),var(--danger));}
 
-  .dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
-  .dash-card{background:var(--card-bg);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-sm);border:1px solid var(--border);text-align:center;}
-  .dash-card .lbl{font-size:12px;color:var(--text-soft);font-weight:700;margin-bottom:4px;}
-  .dash-card .val{font-size:18px;font-weight:800;}
-  .dash-card.budget .val{color:var(--sky-strong);}
-  .dash-card.used .val{color:var(--warning);}
-  .dash-card.remain .val{color:var(--success);}
-  .dash-card.krw{background:linear-gradient(100deg,var(--sky),var(--mint));border-color:transparent;}
-  .dash-card.krw .lbl{color:rgba(255,255,255,.85);}
-  .dash-card.krw .val{color:#fff;font-size:22px;}
+  .summary-stat-grid{
+    display:flex;flex-direction:column;gap:8px;
+    margin-top:14px;padding-top:14px;border-top:1px solid var(--border);
+  }
+  .summary-stat{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:8px 12px;border-radius:10px;background:var(--card-bg-soft);
+  }
+  .summary-stat .lbl{font-size:12.5px;color:var(--text-soft);font-weight:700;margin-bottom:0;}
+  .summary-stat .val{font-size:16px;font-weight:800;}
+  .budget-color{color:var(--sky-strong);}
+  .used-color{color:var(--warning);}
+  .remain-color{color:var(--success);}
+  .summary-stat.krw-box{
+    background:linear-gradient(100deg,var(--sky),var(--mint));border-radius:10px;
+  }
+  .summary-stat.krw-box .lbl{color:rgba(255,255,255,.85);}
+  .summary-stat.krw-box .val{color:#fff;font-size:17px;}
 
   /* 테이블 */
   .table-wrap{overflow-x:auto;}
@@ -168,13 +177,16 @@
   }
   tbody td{padding:6px;border-bottom:1px solid var(--border);vertical-align:middle;}
   tbody tr:hover{background:var(--card-bg-soft);}
-  tbody input, tbody select{
+  tbody input, tbody select, tbody textarea{
     width:100%;border:1px solid var(--border-strong);border-radius:8px;padding:7px 8px;
-    background:var(--card-bg-soft);color:var(--text);font-size:13px;
+    background:var(--card-bg-soft);color:var(--text);font-size:13px;font-family:inherit;
   }
-  tbody input:focus, tbody select:focus{outline:none;border-color:var(--sky);}
-  td.col-date input{width:90px;}
-  td.col-place input{min-width:160px;}
+  tbody input:focus, tbody select:focus, tbody textarea:focus{outline:none;border-color:var(--sky);}
+  td.col-date input{width:80px;}
+  .outfit-tag{font-size:11.5px;font-weight:700;color:var(--text-soft);white-space:nowrap;margin-left:6px;}
+  td.col-place textarea{
+    min-width:160px;resize:none;overflow:hidden;min-height:34px;line-height:1.4;display:block;
+  }
   td.col-content input{min-width:140px;}
   td.col-cur select{min-width:0;}
   td.col-amt input{width:80px;text-align:right;}
@@ -286,7 +298,6 @@
   .reset-summary-group #resetBtn{flex:0 0 auto;}
   .reset-summary-group .topbar-mini-summary{flex:0 0 auto;flex-wrap:nowrap;}
   @media (max-width:720px){
-    .dash-grid{grid-template-columns:repeat(2,1fr);}
     .trip-info-grid{grid-template-columns:1fr;}
     .rate-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
     .rate-box{padding:10px 12px;}
@@ -299,9 +310,6 @@
     .topbar-nav-link{font-size:10.5px;padding:5px 10px;gap:3px;}
   }
   @media (max-width:480px){
-    .dash-grid{grid-template-columns:1fr;}
-    .dash-card{display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 14px;}
-    .dash-card .lbl{margin-bottom:0;}
     .rate-box input{font-size:15px;}
   }
 
@@ -324,15 +332,16 @@
     tbody td::before{
       content: attr(data-label); flex:0 0 68px; font-size:11px; color:var(--text-soft); font-weight:800;
     }
-    td.col-date input, td.col-place input, td.col-content input, td.col-cur select, td.col-amt input{width:100%;min-width:0;}
-    /* 화폐와 예정금액은 좁은 화면에서도 한 줄에 나란히 표시 (tr이 flex-wrap이라 안정적으로 붙음)
-       라벨을 옆이 아니라 위에 두어서 입력창 너비를 최대한 확보 (숫자가 잘리지 않도록) */
+    td.col-date input, td.col-place textarea, td.col-content input, td.col-cur select, td.col-amt input{width:100%;min-width:0;}
+    td.col-date input{width:45%;flex:0 0 auto;}
+    /* 화폐와 예정금액은 좁은 화면에서도 "라벨+박스"가 각각 한 줄에, 두 쌍이 같은 줄에 나란히 표시됨 */
     td.col-cur, td.col-planned{
       flex:1 1 48%;
-      flex-direction:column; align-items:flex-start; gap:2px;
+      flex-direction:row; align-items:center; gap:8px;
     }
-    td.col-cur::before, td.col-planned::before{ flex:0 0 auto; }
-    td.col-cur select, td.col-planned input{ width:100%; }
+    td.col-cur::before, td.col-planned::before{ flex:0 0 68px; font-size:11px; }
+    td.col-cur select{ flex:1 1 auto; width:auto; min-width:0; max-width:100%; }
+    td.col-planned input{ flex:1 1 auto; width:auto; min-width:0; max-width:100%; }
     td.col-krw{
       flex:1 1 100%;
       justify-content:flex-start; font-size:14px; padding-top:8px; border-top:1px dashed var(--border); margin-top:4px;
@@ -385,15 +394,15 @@
 
 <div class="topbar">
   <div class="title-btn-group">
-    <h1>💰 W.A.V.E 용돈 매니져</h1>
+    <h1>💰 W.A.V.E 용돈 사용 매니져</h1>
     <button class="icon-btn" id="darkToggle">🌙</button>
     <button class="icon-btn" id="jiyuPresetBtn" title="예정금액만 지유 기본값으로 되돌리고 사용 내역을 초기화합니다 (날짜/내용/여행 정보는 유지)">🐱 지유 셋팅</button>
   </div>
   <div class="reset-summary-group">
     <button class="icon-btn" id="resetBtn" title="모든 예정 금액/사용금액을 0원으로 만듭니다 (날짜/내용은 유지)">🔄 초기화(예정금액0원)</button>
     <div class="topbar-mini-summary" id="topbarMiniSummary">
-      <a href="#usageSummarySection" class="topbar-nav-link">📊 총 사용현황</a>
-      <a href="#expenseTableSection" class="topbar-nav-link">📋 지출 계획표</a>
+      <a href="#usageSummarySection" class="topbar-nav-link" id="navUsageLink">📊 총 사용현황</a>
+      <a href="#expenseTableSection" class="topbar-nav-link" id="navTableLink">📋 지출 계획표</a>
     </div>
   </div>
 </div>
@@ -424,30 +433,32 @@
     <div class="rate-meta" id="rateMeta">환율 정보를 불러오는 중...</div>
     <div class="quick-convert-title">📱 환율 계산기</div>
     <div class="quick-convert-row">
+      <label class="qc-label">지폐단위</label>
       <select id="convertCurrency">
         <option value="GBP">£ 파운드</option>
         <option value="EUR">€ 유로</option>
       </select>
+      <label class="qc-label">금액</label>
       <input type="number" id="convertAmount" placeholder="금액" step="1">
       <span class="convert-eq">=</span>
       <span class="convert-result" id="convertResult">₩0</span>
     </div>
   </div>
 
-  <div class="card card-compact" id="usageSummarySection">
-    <h2 style="font-size:13px;margin-bottom:8px;">📊 총 사용 현황</h2>
+  <div class="card" id="usageSummarySection">
+    <h2 style="font-size:14px;margin-bottom:10px;">📊 총 사용 현황</h2>
     <div class="usage-gauge-row">
       <span class="usage-gauge-pct" id="usageGaugePct">0%</span>
-      <span class="usage-gauge-sub" id="usageGaugeSub">0 / 0 사용</span>
+      <span class="usage-gauge-sub"><b id="usageGaugeUsed" class="used-color">0</b> / <span id="usageGaugeBudget">0</span> 사용</span>
     </div>
     <div class="usage-gauge-outer"><div class="usage-gauge-inner" id="usageGaugeBar" style="width:0%"></div></div>
-  </div>
 
-  <div class="dash-grid">
-    <div class="dash-card budget"><div class="lbl">총 예정 금액</div><div class="val" id="dashBudget">-</div></div>
-    <div class="dash-card used"><div class="lbl">사용 금액</div><div class="val" id="dashUsed">-</div></div>
-    <div class="dash-card remain"><div class="lbl">남은 금액</div><div class="val" id="dashRemain">-</div></div>
-    <div class="dash-card krw"><div class="lbl">원화 총 금액</div><div class="val" id="dashKrw">-</div></div>
+    <div class="summary-stat-grid">
+      <div class="summary-stat"><div class="lbl">총 예정 금액</div><div class="val budget-color" id="dashBudget">-</div></div>
+      <div class="summary-stat"><div class="lbl">사용 금액</div><div class="val used-color" id="dashUsed">-</div></div>
+      <div class="summary-stat"><div class="lbl">남은 금액</div><div class="val remain-color" id="dashRemain">-</div></div>
+      <div class="summary-stat krw-box"><div class="lbl">원화 총 금액</div><div class="val" id="dashKrw">-</div></div>
+    </div>
   </div>
 
   <div class="card">
@@ -479,8 +490,8 @@
       <table>
         <thead>
           <tr>
-            <th>날짜</th><th>주요방문지</th><th>내용</th><th>화폐</th>
-            <th>예정금액</th><th>실제금액</th><th>원화로</th><th></th>
+            <th>날짜</th><th>주요방문지</th><th>내용</th><th>예정금액</th><th>화폐</th>
+            <th>실제금액</th><th>원화로</th><th></th>
           </tr>
         </thead>
         <tbody id="rowsBody"></tbody>
@@ -715,6 +726,26 @@ function fmtCurrency(amount, currency){
   return sym + Number(amount||0).toLocaleString('ko-KR');
 }
 
+// 날짜별 단체복 색상 표시 (고정된 일정에 맞춰 자동으로 보여줌, 사용자가 수정하는 값이 아님)
+const DATE_OUTFIT_MAP = {
+  '7/28': '<span style="color:#1F3A5F;">■</span> 네이비',
+  '7/29': '<span style="color:#1F3A5F;">■</span> 네이비',
+  '7/30': '<span style="color:#800020;">■</span> 버건디',
+  '7/31': '👕 생활복',
+  '8/1':  '👕 생활복',
+  '8/2':  '<span style="color:#2563EB;">■</span> 블루',
+  '8/3':  '<span style="color:#16A34A;">■</span> 그린',
+  '8/4':  '<span style="color:#FFFFFF; -webkit-text-stroke:1px #ccc;">■</span> 화이트',
+  '8/5':  '<span style="color:#808080;">■</span> 그레이',
+  '8/6':  '<span style="color:#808080;">■</span> 그레이'
+};
+function getOutfitTag(dateStr){
+  if(!dateStr) return '';
+  const m = String(dateStr).match(/\d{1,2}\/\d{1,2}/);
+  if(!m) return '';
+  return DATE_OUTFIT_MAP[m[0]] || '';
+}
+
 function renderRows(){
   const body = $('#rowsBody');
   body.innerHTML = '';
@@ -727,14 +758,14 @@ function renderRows(){
     const total = spendsTotal(row);
     const sym = row.currency==='GBP' ? '£' : '€';
     tr.innerHTML = `
-      <td class="col-date" data-label="날짜"><input type="text" data-f="date" value="${escapeHtml(row.date)}"></td>
-      <td class="col-place" data-label="방문지"><input type="text" data-f="place" value="${escapeHtml(row.place)}"></td>
+      <td class="col-date" data-label="날짜"><input type="text" data-f="date" value="${escapeHtml(row.date)}"><span class="outfit-tag">${getOutfitTag(row.date)}</span></td>
+      <td class="col-place" data-label="방문지"><textarea data-f="place" rows="1">${escapeHtml(row.place)}</textarea></td>
       <td class="col-content" data-label="내용"><input type="text" data-f="content" value="${escapeHtml(row.content)}"></td>
-      <td class="col-cur" data-label="화폐"><select data-f="currency">
-        <option value="GBP" ${row.currency==='GBP'?'selected':''}>£</option>
-        <option value="EUR" ${row.currency==='EUR'?'selected':''}>€</option>
-      </select></td>
       <td class="col-amt col-planned" data-label="예정금액"><input type="number" data-f="planned" value="${row.planned}" step="1"></td>
+      <td class="col-cur" data-label="화폐"><select data-f="currency">
+        <option value="GBP" ${row.currency==='GBP'?'selected':''}>£ 파운드</option>
+        <option value="EUR" ${row.currency==='EUR'?'selected':''}>€ 유로</option>
+      </select></td>
       <td class="col-amt col-spend" data-label="실제금액">
         <div class="spend-summary">
           <span class="spend-total">${spends.length ? (sym+total.toLocaleString('ko-KR')) : '-'}</span>
@@ -749,10 +780,12 @@ function renderRows(){
   });
 
   // 입력 변경 바인딩
-  body.querySelectorAll('input[data-f], select[data-f]').forEach(el=>{
+  body.querySelectorAll('input[data-f], select[data-f], textarea[data-f]').forEach(el=>{
     el.addEventListener('input', onRowFieldChange);
     el.addEventListener('change', onRowFieldChange);
   });
+  // 방문지(textarea)는 줄바꿈이 되면 높이가 자동으로 늘어나도록 함
+  body.querySelectorAll('td.col-place textarea').forEach(autoResizeTextarea);
   body.querySelectorAll('[data-act="del"]').forEach(btn=>{
     btn.addEventListener('click', e=>{
       const id = e.target.closest('tr').dataset.id;
@@ -834,6 +867,11 @@ $('#spendAddConfirmBtn').addEventListener('click', ()=>{
   renderSpendModalList();
   renderRows(); renderDashboard();
   showToast('사용 금액이 추가되었습니다 💸');
+
+  // 8/2(일) 유로 행에 실제금액(사용 내역)을 넣는 순간에도, 남은 파운드가 있으면 옮길지 물어봄 (세션당 한 번만)
+  if(row.date==='8/2(일)' && row.currency==='EUR' && !eurCarrySuggested){
+    maybeSuggestEurCarryOver();
+  }
 });
 $('#spendAmountInput').addEventListener('keydown', e=>{
   if(e.key==='Enter'){ e.preventDefault(); $('#spendAddConfirmBtn').click(); }
@@ -841,6 +879,13 @@ $('#spendAmountInput').addEventListener('keydown', e=>{
 $('#spendMemoInput').addEventListener('keydown', e=>{
   if(e.key==='Enter'){ e.preventDefault(); $('#spendAddConfirmBtn').click(); }
 });
+
+// 방문지 textarea가 줄바꿈될 때 스크롤 없이 높이 자체가 늘어나도록 함
+function autoResizeTextarea(el){
+  if(!el) return;
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
 
 function onRowFieldChange(e){
   const tr = e.target.closest('tr');
@@ -854,6 +899,11 @@ function onRowFieldChange(e){
   }
   row[field] = val;
   savePlan();
+
+  // 방문지(textarea)는 입력하는 동안 줄바꿈에 맞춰 높이를 계속 늘려줌
+  if(field==='place'){
+    autoResizeTextarea(e.target);
+  }
   // 금액/화폐가 바뀌면 이 행의 "원화로" 표시만 갱신한다.
   // (renderRows()로 표 전체를 다시 그리면 입력 중이던 input이 통째로 새로 만들어지면서
   //  모바일에서 포커스가 끊겨 키보드가 닫혀버리는 문제가 있어, 필요한 부분만 직접 수정한다)
@@ -866,20 +916,26 @@ function onRowFieldChange(e){
     renderDashboard();
   }
 
-  // 화폐를 유로로 처음 바꾸는 순간, 남은 파운드가 있으면 유로로 옮길지 물어봄 (세션당 한 번만)
-  if(field==='currency' && val==='EUR' && !eurCarrySuggested){
-    eurCarrySuggested = true;
-    if(availableGBPBudget > 0){
-      const gbpLeft = availableGBPBudget;
-      const ok = confirm('파운드 예정 금액이 남았어요. 남은 금액을 유로 예정 금액으로 옮길까요?');
-      if(ok){
-        if(!plan.carryOver) plan.carryOver = { gbp:0, eur:0 };
-        plan.carryOver.gbp += gbpLeft;
-        plan.carryOver.eur += gbpLeft; // 환율 계산 없이 숫자 그대로 이동
-        savePlan();
-        renderDashboard();
-        showToast(`£${gbpLeft} → €${gbpLeft} 옮기기 완료 🔁`);
-      }
+  // 8/2(일)부터 유로로 넘어가는 날 예정금액을 입력하는 순간, 남은 파운드가 있으면 유로로 옮길지 물어봄 (세션당 한 번만)
+  if(field==='planned' && row.date==='8/2(일)' && row.currency==='EUR' && val!=='' && Number(val)>0 && !eurCarrySuggested){
+    maybeSuggestEurCarryOver();
+  }
+}
+
+// 파운드 예산이 남아있으면 유로로 옮길지 물어봄 (세션당 한 번만) — 예정금액이든 실제금액이든 8/2(일)/유로 행에 금액을 넣는 순간 호출됨
+function maybeSuggestEurCarryOver(){
+  if(eurCarrySuggested) return;
+  eurCarrySuggested = true;
+  if(availableGBPBudget > 0){
+    const gbpLeft = availableGBPBudget;
+    const ok = confirm('파운드 예정 금액이 남았어요. 남은 금액을 유로 예정 금액으로 옮길까요?');
+    if(ok){
+      if(!plan.carryOver) plan.carryOver = { gbp:0, eur:0 };
+      plan.carryOver.gbp += gbpLeft;
+      plan.carryOver.eur += gbpLeft; // 환율 계산 없이 숫자 그대로 이동
+      savePlan();
+      renderDashboard();
+      showToast(`£${gbpLeft} → €${gbpLeft} 옮기기 완료 🔁`);
     }
   }
 }
@@ -946,7 +1002,8 @@ function renderDashboard(){
   $('#usageGaugePct').classList.toggle('over', isOver);
   $('#usageGaugeBar').style.width = Math.min(100, usagePct) + '%';
   $('#usageGaugeBar').classList.toggle('over', isOver);
-  $('#usageGaugeSub').textContent = `${Math.round(combinedUsed).toLocaleString('ko-KR')} / ${Math.round(combinedBudget).toLocaleString('ko-KR')} 사용`;
+  $('#usageGaugeUsed').textContent = Math.round(combinedUsed).toLocaleString('ko-KR');
+  $('#usageGaugeBudget').textContent = Math.round(combinedBudget).toLocaleString('ko-KR');
 
   renderCarryOverCard(remain.GBP);
   checkBudgetAlerts(budget, used, remain);
@@ -1177,6 +1234,24 @@ $('#jiyuPresetBtn').addEventListener('click', ()=>{
 function escapeHtml(str){
   return String(str||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
+
+/* ---------- 상단 이동 링크: sticky topbar 높이를 실측해서 정확히 그 아래로 스크롤 ---------- */
+function scrollToSection(targetId){
+  const target = document.getElementById(targetId);
+  const topbar = document.querySelector('.topbar');
+  if(!target) return;
+  const topbarHeight = topbar ? topbar.getBoundingClientRect().height : 0;
+  const targetTop = target.getBoundingClientRect().top + window.scrollY;
+  window.scrollTo({ top: targetTop - topbarHeight - 14, behavior:'smooth' });
+}
+$('#navUsageLink').addEventListener('click', e=>{
+  e.preventDefault();
+  scrollToSection('usageSummarySection');
+});
+$('#navTableLink').addEventListener('click', e=>{
+  e.preventDefault();
+  scrollToSection('expenseTableSection');
+});
 
 function renderAll(){
   renderRows();
