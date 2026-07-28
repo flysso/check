@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>🐱 지유의 To do list</title>
+  <title>✅ To do list</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
@@ -352,7 +352,7 @@
 <body>
 
 <div class="topbar">
-  <h1>지유의 To do list</h1>
+  <h1>To do list</h1>
   <select class="person-select" id="personSelect"></select>
   <button class="icon-btn" id="newPersonBtn">➕ 새 사람</button>
   <button class="icon-btn danger" id="resetBtn" title="이 사람의 모든 체크를 해제하고 기본 목록으로 되돌립니다">🔄 처음으로 돌리기</button>
@@ -369,7 +369,7 @@
   </div>
 
   <div class="letter-card">
-    지구 반대편에 있는 사랑하는 우리 딸 지유 💛<br>
+    지구 반대편에 있는 사랑하는 우리 딸 <span id="letterName">지유</span> 💛<br>
     넓고 큰 세상을 마음껏 보고, 느끼고, 행복한 추억 가득 담아오렴.<br>
     건강하고 안전하게 다녀와! 사랑해 ❤️
   </div>
@@ -967,6 +967,7 @@
   function renderAll(){
     renderPersonSelect();
     $('#whoName').textContent = currentPerson().name;
+    if($('#letterName')) $('#letterName').textContent = currentPerson().name;
     renderBanner();
     renderDateNav();
     renderCategories();
