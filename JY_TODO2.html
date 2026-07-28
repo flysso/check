@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>✅ To do list</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       디자인 토큰 (라이트 & 다크 모드) — 여행 준비물 체크리스트 톤 계승
+       ============================================================ */
+    :root{
+      --bg:#eef8fb;
+      --bg-grad: linear-gradient(160deg,#eaf7fb 0%,#e7fbf5 100%);
+      --card-bg:#ffffff;
+      --card-bg-soft:#f4fbfd;
+      --sky:#3fb6e0;
+      --sky-strong:#2a9fcb;
+      --sky-light:#dbf2fb;
+      --mint:#3fd6bf;
+      --mint-strong:#22b39d;
+      --mint-light:#dcf9f2;
+      --text:#1f2d3a;
+      --text-soft:#6b7f8c;
+      --text-faint:#9db0bb;
+      --border:#e1eef2;
+      --border-strong:#c9dfe6;
+      --shadow-sm:0 2px 8px rgba(31,64,80,.06);
+      --shadow-md:0 8px 24px rgba(31,64,80,.10);
+      --shadow-lg:0 16px 40px rgba(31,64,80,.16);
+      --radius-sm:10px;
+      --radius-md:16px;
+      --radius-lg:22px;
+      --danger:#f0645f;
+      --danger-light:#fde6e5;
+      --warning:#f5a623;
+      --warning-light:#fff3dc;
+      --gold:#e8b400;
+      --success:#2fbf87;
+      --font-main: 'Jua', -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+    html[data-theme="dark"]{
+      --bg:#0e1620;
+      --bg-grad: linear-gradient(160deg,#0d1620 0%,#0d1c1c 100%);
+      --card-bg:#161f2a;
+      --card-bg-soft:#131b25;
+      --sky:#4fc3ec;
+      --sky-strong:#6fd0f0;
+      --sky-light:#16303a;
+      --mint:#3fe0c6;
+      --mint-strong:#4fe8d0;
+      --mint-light:#123028;
+      --text:#e8f1f5;
+      --text-soft:#9fb3bf;
+      --text-faint:#6d8390;
+      --border:#233240;
+      --border-strong:#2e4250;
+      --shadow-sm:0 2px 8px rgba(0,0,0,.25);
+      --shadow-md:0 8px 24px rgba(0,0,0,.35);
+      --shadow-lg:0 16px 40px rgba(0,0,0,.5);
+      --danger:#ff6b66;
+      --danger-light:#3a1f20;
+      --warning:#ffb84d;
+      --warning-light:#3a2c14;
+      --gold:#ffd166;
+      --success:#3fdb9a;
+    }
+
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;}
+    body{
+      font-family:var(--font-main);
+      background:var(--bg-grad);
+      color:var(--text);
+      min-height:100vh;
+      transition:background .3s ease,color .3s ease;
+      -webkit-tap-highlight-color:transparent;
+      padding-bottom:60px;
+    }
+    ::selection{background:var(--mint-light);}
+    h1,h2,h3,h4{margin:0;font-family:var(--font-main);}
+    button{font-family:inherit;cursor:pointer;}
+    input,select,textarea{font-family:inherit;}
+
+    /* ---------------- 상단 고정 바 ---------------- */
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter:blur(14px) saturate(160%);
+      background:color-mix(in srgb, var(--bg) 78%, transparent);
+      border-bottom:1px solid var(--border);
+      padding:14px 20px;
+      display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    }
+    .topbar h1{
+      font-size:20px;font-weight:800;letter-spacing:-.3px;
+      display:flex;align-items:center;gap:8px;margin-right:auto;
+      background:linear-gradient(100deg,var(--sky-strong),var(--mint-strong));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      white-space:nowrap;
+    }
+    .topbar .icon-btn{
+      border:1px solid var(--border-strong);background:var(--card-bg);
+      border-radius:12px;padding:9px 12px;font-size:14px;color:var(--text);
+      display:flex;align-items:center;gap:6px;transition:all .15s ease;
+      box-shadow:var(--shadow-sm);white-space:nowrap;
+    }
+    .topbar .icon-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);border-color:var(--sky);}
+    .topbar .icon-btn.danger:hover{border-color:var(--danger);color:var(--danger);}
+    .person-select{
+      border:1px solid var(--border-strong);background:var(--card-bg);border-radius:12px;
+      padding:9px 12px;font-size:14px;color:var(--text);max-width:180px;box-shadow:var(--shadow-sm);
+    }
+
+    .wrap{max-width:820px;margin:0 auto;padding:18px 16px 40px;}
+
+    /* ---------------- 이름/타이틀 카드 ---------------- */
+    .name-card{
+      background:var(--card-bg);border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-md);padding:18px 20px;margin-bottom:16px;
+      border:1px solid var(--border);position:relative;
+      display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+      animation:fadeUp .35s ease both;
+    }
+    .name-card::before{
+      content:"";position:absolute;top:-11px;left:50%;width:76px;height:20px;
+      transform:translateX(-50%) rotate(-3deg);
+      background:repeating-linear-gradient(45deg, rgba(255,255,255,.55) 0 5px, rgba(63,182,224,.35) 5px 10px);
+      border:1px solid rgba(63,182,224,.35);border-radius:2px;
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+    .name-title{font-size:22px;font-weight:800;letter-spacing:-.4px;display:flex;align-items:center;gap:8px;}
+    .todo-character-img{height:46px;width:auto;border-radius:10px;flex:0 0 auto;margin-left:4px;}
+    .name-title .who{color:var(--mint-strong);}
+    .name-edit-btn{
+      border:1px solid var(--border-strong);background:var(--card-bg-soft);border-radius:10px;
+      padding:7px 12px;font-size:13px;color:var(--text-soft);margin-left:auto;box-shadow:var(--shadow-sm);
+    }
+    .name-edit-btn:hover{border-color:var(--sky);color:var(--text);}
+
+    /* ---------------- 엄마 편지 ---------------- */
+    .letter-card{
+      background:linear-gradient(160deg,#fff8f0 0%,var(--card-bg) 100%);
+      border:1px solid var(--warning);border-radius:var(--radius-md);
+      padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow-sm);
+      font-size:14.5px;line-height:1.7;font-weight:600;color:var(--text);text-align:center;
+    }
+    html[data-theme="dark"] .letter-card{background:linear-gradient(160deg,#241d12 0%,var(--card-bg) 100%);}
+
+    /* ---------------- 전체 진행 배너 ---------------- */
+    .progress-banner{
+      background:linear-gradient(110deg,var(--sky),var(--mint));
+      color:#fff;border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:16px;
+      box-shadow:var(--shadow-lg);
+    }
+    .progress-banner .pb-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .progress-banner .pb-label{font-size:14px;font-weight:700;opacity:.95;}
+    .progress-banner .pb-pct{font-size:34px;font-weight:900;letter-spacing:-1px;}
+    .pb-outer{background:rgba(255,255,255,.32);border-radius:20px;height:14px;overflow:hidden;margin-top:12px;}
+    .pb-inner{height:100%;border-radius:20px;background:#fff;transition:width .6s cubic-bezier(.4,0,.2,1);}
+    .pb-sub{font-size:13px;opacity:.92;font-weight:600;margin-top:8px;}
+
+    /* ---------------- 날짜 네비게이션 ---------------- */
+    .datenav-card{
+      background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-md);
+      padding:12px 14px;margin-bottom:16px;box-shadow:var(--shadow-sm);
+    }
+    .datenav-card .dn-title{font-size:12px;color:var(--text-soft);font-weight:700;margin-bottom:8px;}
+    .datenav-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;}
+    .datenav-chip{
+      flex:0 0 auto;border:1px solid var(--border-strong);background:var(--card-bg-soft);
+      border-radius:14px;padding:8px 14px;font-size:13px;font-weight:800;color:var(--text-soft);
+      transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:6px;
+    }
+    .datenav-chip:hover{border-color:var(--sky);color:var(--text);transform:translateY(-1px);}
+    .datenav-chip .dn-dot{width:8px;height:8px;border-radius:50%;background:var(--sky);}
+    .datenav-chip.done .dn-dot{background:var(--success);}
+    .datenav-chip.today{border-color:var(--mint-strong);color:var(--mint-strong);box-shadow:0 0 0 2px var(--mint-light);}
+    .datenav-chip.past{opacity:.5;}
+
+    /* ---------------- 지난 일정 구분선 ---------------- */
+    .past-divider{
+      display:flex;align-items:center;gap:10px;margin:22px 2px 12px;
+      color:var(--text-faint);font-size:13px;font-weight:800;
+    }
+    .past-divider::before,.past-divider::after{content:"";flex:1;height:1px;background:var(--border-strong);}
+
+    /* ---------------- 카테고리(일자 카드) ---------------- */
+    .category-group{
+      background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-md);
+      margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow-sm);scroll-margin-top:72px;
+      animation:fadeUp .3s ease both;
+    }
+    .category-group{position:relative;}
+    .category-group.past{opacity:.62;}
+    .category-group.complete{border-color:var(--success);}
+    .category-group.flash{animation:flashHl 1.1s ease;}
+    @keyframes flashHl{0%{box-shadow:0 0 0 3px var(--mint);}100%{box-shadow:var(--shadow-sm);}}
+
+    /* 100% 완료 도장 스탬프 */
+    .stamp{
+      position:absolute;bottom:12px;right:14px;z-index:5;pointer-events:none;
+      font-size:15px;font-weight:900;letter-spacing:.5px;
+      color:var(--success);border:2.5px solid var(--success);border-radius:10px;
+      padding:5px 12px;transform:rotate(-14deg);text-transform:uppercase;
+      background:color-mix(in srgb, var(--success) 12%, var(--card-bg));
+      box-shadow:0 1px 3px rgba(0,0,0,.08);opacity:.92;
+      animation:stampIn .45s cubic-bezier(.2,1.4,.4,1) both;
+    }
+    .stamp::before{content:"✓ ";}
+    @keyframes stampIn{
+      0%{opacity:0;transform:rotate(-14deg) scale(2.4);}
+      60%{opacity:.92;transform:rotate(-14deg) scale(.9);}
+      100%{opacity:.92;transform:rotate(-14deg) scale(1);}
+    }
+    .category-header{
+      display:flex;align-items:flex-start;gap:10px;padding:14px 16px;cursor:pointer;user-select:none;
+    }
+    .category-header:hover{background:var(--card-bg-soft);}
+    .cat-date{
+      flex:0 0 auto;background:var(--sky-light);color:var(--sky-strong);
+      border-radius:10px;padding:6px 8px;font-size:15px;font-weight:800;min-width:56px;text-align:center;
+      display:flex;flex-direction:column;line-height:1.15;
+    }
+    .cat-date small{font-size:9.5px;font-weight:700;opacity:.8;margin-top:1px;}
+    .cat-outfit{font-size:9.5px;font-weight:800;margin-top:3px;display:flex;align-items:center;gap:3px;justify-content:center;color:var(--text-soft);white-space:nowrap;}
+    .cat-outfit .oc{width:9px;height:9px;border-radius:2px;display:inline-block;flex:0 0 auto;border:1px solid rgba(0,0,0,.15);}
+    .cat-main{flex:1 1 auto;min-width:0;}
+    .cat-place{
+      font-size:12.5px;color:var(--text-soft);font-weight:700;line-height:1.4;margin-bottom:2px;
+      word-break:break-word;cursor:pointer;display:flex;align-items:flex-start;gap:4px;
+    }
+    .cat-place .cp-text{
+      flex:1 1 auto;min-width:0;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
+    .cat-place.expanded .cp-text{white-space:normal;overflow:visible;}
+    .cat-place .cp-caret{flex:0 0 auto;transition:transform .2s ease;color:var(--text-faint);font-size:11px;margin-top:1px;}
+    .cat-place.expanded .cp-caret{transform:rotate(180deg);}
+    .cat-title{font-size:15.5px;font-weight:800;line-height:1.35;}
+    .cat-progress-line{display:flex;align-items:center;gap:8px;margin-top:7px;}
+    .cat-mini-outer{flex:1 1 auto;background:var(--border);border-radius:20px;height:8px;overflow:hidden;max-width:220px;}
+    .cat-mini-inner{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--sky),var(--mint));transition:width .5s;}
+    .cat-count{font-size:12px;color:var(--text-soft);font-weight:800;white-space:nowrap;}
+    .cat-count.complete{color:var(--success);}
+    .caret{flex:0 0 auto;color:var(--text-faint);transition:transform .2s ease;font-size:14px;margin-top:2px;}
+    .category-header.collapsed .caret{transform:rotate(-90deg);}
+    .cat-actions{flex:0 0 auto;display:flex;gap:2px;}
+    .cat-actions button{border:none;background:none;color:var(--text-faint);font-size:15px;padding:3px 5px;border-radius:6px;}
+    .cat-actions button:hover{background:var(--card-bg-soft);color:var(--text);}
+    .cat-actions .del:hover{color:var(--danger);}
+
+    .category-body{padding:2px 12px 12px;}
+    .category-body.hidden{display:none;}
+
+    /* ---------------- 섹션 (아침/저녁 등) ---------------- */
+    .section{
+      border:1px solid var(--border);border-radius:12px;margin-top:10px;overflow:hidden;
+      background:var(--card-bg-soft);
+    }
+    .section-header{
+      display:flex;align-items:center;gap:8px;padding:10px 12px;
+      font-size:14px;font-weight:800;color:var(--text);background:color-mix(in srgb,var(--sky-light) 55%,transparent);
+    }
+    html[data-theme="dark"] .section-header{background:color-mix(in srgb,var(--sky-light) 70%,transparent);}
+    .section-header .sec-icon{font-size:15px;}
+    .section-header .sec-count{margin-left:auto;font-size:11.5px;font-weight:800;color:var(--text-soft);
+      background:var(--card-bg);border-radius:10px;padding:2px 8px;}
+    .section-header .sec-count.complete{color:var(--success);}
+    .section-header .sec-actions{display:flex;gap:2px;}
+    .section-header .sec-actions button{border:none;background:none;color:var(--text-faint);font-size:13px;padding:3px 4px;border-radius:6px;}
+    .section-header .sec-actions button:hover{background:var(--card-bg);color:var(--text);}
+    .section-header .sec-actions .del:hover{color:var(--danger);}
+    .section-body{padding:4px 8px 8px;}
+
+    .item-row{
+      display:flex;align-items:center;gap:10px;padding:10px 6px;border-radius:10px;transition:background .15s ease;
+    }
+    .item-row:hover{background:var(--card-bg);}
+    .item-check{
+      width:23px;height:23px;border-radius:8px;border:2px solid var(--border-strong);flex:0 0 auto;
+      display:flex;align-items:center;justify-content:center;transition:all .15s;color:#fff;font-size:14px;background:var(--card-bg);
+    }
+    .item-check:hover{border-color:var(--sky);}
+    .item-check.done{background:linear-gradient(100deg,var(--sky),var(--mint));border-color:transparent;}
+    .item-name{flex:1 1 auto;min-width:0;font-size:14.5px;font-weight:600;line-height:1.4;word-break:break-word;}
+    .item-row.done .item-name{color:var(--text-faint);text-decoration:line-through;text-decoration-thickness:2px;}
+    .item-name-input{flex:1;border:1px solid var(--sky);border-radius:8px;padding:7px 9px;font-size:14.5px;background:var(--card-bg);color:var(--text);}
+    .row-actions{display:flex;gap:2px;flex:0 0 auto;}
+    .row-actions button{border:none;background:none;color:var(--text-faint);font-size:14px;padding:4px 6px;border-radius:6px;}
+    .row-actions button:hover{background:var(--card-bg);color:var(--text);}
+    .row-actions .del:hover{color:var(--danger);}
+    .empty-msg{color:var(--text-faint);font-size:13px;padding:12px 8px;text-align:center;}
+
+    /* 섹션 내 항목 추가 인풋 */
+    .add-item-row{display:flex;gap:8px;padding:6px;}
+    .add-item-row input{
+      flex:1;border:1px dashed var(--border-strong);border-radius:10px;padding:9px 11px;
+      background:var(--card-bg);color:var(--text);font-size:14px;
+    }
+    .add-item-row input:focus{outline:none;border-color:var(--sky);border-style:solid;box-shadow:0 0 0 3px var(--sky-light);}
+    .add-item-row button{
+      border:none;border-radius:10px;padding:0 15px;font-weight:800;color:#fff;font-size:14px;
+      background:linear-gradient(100deg,var(--sky),var(--mint));box-shadow:0 3px 0 var(--mint-strong);
+    }
+    .add-item-row button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--mint-strong);}
+
+    /* 섹션 추가 버튼 */
+    .add-section-btn{
+      display:block;width:100%;margin-top:10px;border:1px dashed var(--border-strong);
+      background:var(--card-bg-soft);color:var(--text-soft);border-radius:12px;padding:10px;
+      font-size:13px;font-weight:800;transition:all .15s;
+    }
+    .add-section-btn:hover{border-color:var(--sky);color:var(--text);}
+
+    /* ---------------- 새 카테고리(일자) 추가 폼 ---------------- */
+    .add-cat-form{
+      display:flex;flex-wrap:wrap;gap:8px;background:var(--card-bg);border:1px dashed var(--border-strong);
+      border-radius:var(--radius-md);padding:14px;margin-bottom:16px;box-shadow:var(--shadow-sm);align-items:center;
+    }
+    .add-cat-form .ac-date{flex:0 0 100px;border:1px solid var(--border-strong);border-radius:10px;padding:10px;background:var(--card-bg-soft);color:var(--text);font-size:14px;}
+    .add-cat-form .ac-title{flex:1 1 200px;border:1px solid var(--border-strong);border-radius:10px;padding:10px 12px;background:var(--card-bg-soft);color:var(--text);font-size:14px;}
+    .add-cat-form button{
+      border:none;border-radius:10px;padding:10px 18px;font-weight:800;color:#fff;font-size:14px;
+      background:linear-gradient(100deg,var(--sky),var(--mint));box-shadow:0 3px 0 var(--mint-strong);transition:transform .1s;
+    }
+    .add-cat-form button:hover{transform:translateY(-1px);}
+    .add-cat-form button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--mint-strong);}
+
+    /* ---------------- 하단 통계 ---------------- */
+    .stats-card{
+      background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);
+      padding:20px;box-shadow:var(--shadow-md);
+    }
+    .stats-card h2{font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+    .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;}
+    .stats-bar .stat b{display:block;font-size:20px;}
+    .stats-bar .stat span{font-size:11.5px;color:var(--text-soft);}
+
+    /* ---------------- 상단 이동 버튼 ---------------- */
+    .back-top{
+      position:fixed;bottom:22px;right:22px;width:46px;height:46px;border-radius:50%;
+      background:linear-gradient(100deg,var(--sky),var(--mint));color:#fff;border:none;font-size:18px;
+      box-shadow:var(--shadow-lg);display:none;align-items:center;justify-content:center;z-index:60;
+    }
+    .back-top.show{display:flex;}
+
+    /* ---------------- 토스트 ---------------- */
+    .toast{
+      position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+      background:var(--text);color:var(--bg);padding:10px 20px;border-radius:30px;font-size:13.5px;font-weight:700;
+      box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:all .3s ease;z-index:200;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    @media (max-width:600px){
+      .stats-bar{grid-template-columns:repeat(2,1fr);}
+      .topbar h1{font-size:17px;}
+      .name-title{font-size:19px;}
+      .cat-mini-outer{max-width:120px;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>To do list</h1>
+  <select class="person-select" id="personSelect"></select>
+  <button class="icon-btn" id="newPersonBtn">➕ 새 사람</button>
+  <button class="icon-btn danger" id="resetBtn" title="이 사람의 모든 체크를 해제하고 기본 목록으로 되돌립니다">🔄 처음으로 돌리기</button>
+  <button class="icon-btn danger" id="clearAllBtn" title="이 사람의 카테고리와 할 일을 모두 삭제합니다">🧹 모두 지우기</button>
+  <button class="icon-btn" id="darkToggle">🌙</button>
+</div>
+
+<div class="wrap">
+
+  <div class="name-card">
+    <div class="name-title"><span class="who" id="whoName">지유</span><span>'s To do list</span></div>
+    <img src="data:image/webp;base64,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" alt="여행 캐릭터" class="todo-character-img">
+    <button class="name-edit-btn" id="editNameInline">이름 바꾸기</button>
+  </div>
+
+  <div class="letter-card">
+    지구 반대편에 있는 사랑하는 우리 딸 <span id="letterName">지유</span> 💛<br>
+    넓고 큰 세상을 마음껏 보고, 느끼고, <br>
+    행복한 추억 가득 담아오렴.<br>
+    건강하고 안전하게 다녀와! 사랑해 ❤️
+  </div>
+
+  <div class="progress-banner">
+    <div class="pb-row">
+      <span class="pb-label" id="pbLabel">할 일 진행 현황</span>
+      <span class="pb-pct" id="pbPct">0%</span>
+    </div>
+    <div class="pb-outer"><div class="pb-inner" id="pbInner" style="width:0%"></div></div>
+    <div class="pb-sub" id="pbSub">0 / 0 완료</div>
+  </div>
+
+  <div class="datenav-card" id="dateNavCard">
+    <div class="dn-title">📅 날짜를 누르면 해당 일자로 이동해요 · 지난 날짜는 뒤로 넘어가요.</div>
+    <div class="datenav-scroll" id="dateNavScroll"></div>
+  </div>
+
+  <div id="categoriesContainer"></div>
+
+  <form class="add-cat-form" id="addCatForm">
+    <input class="ac-date" type="text" id="newCatDate" placeholder="날짜 (예:8/6)">
+    <input class="ac-title" type="text" id="newCatTitle" placeholder="일자 설명 (예: 귀국일 / 비워두면 날짜만)">
+    <button type="submit">＋ 일자 추가</button>
+  </form>
+
+  <div class="stats-card">
+    <h2>📊 통계</h2>
+    <div class="stats-bar" id="statsBar"></div>
+  </div>
+
+</div>
+
+<button class="back-top" id="backTop">↑</button>
+<div class="toast" id="toast"></div>
+
+<script>
+  /* =====================================================================
+     ✅ [누구]'s To do list — Vanilla JS · 단일 파일 · LocalStorage 기반
+     일자(카테고리) → 섹션(아침/저녁/이벤트) → 할 일(items) 구조
+     ===================================================================== */
+
+  const STORAGE_KEY = 'personTodoListApp_jy_v2';
+
+  /* ---------- 할 일 템플릿 ---------- */
+  const MORNING = [
+    '선크림 바르기',
+    '코 보호하는 스프레이 뿌리기',
+    '선풍기 교체 (배터리 있는 것, 무거우니 하나만 들고 다니기)',
+    '보조배터리 교체 (무거우니 하나만 들고 다니기)',
+    '간식 챙기기 (왼쪽칸)',
+    '비닐, 소독제, 티슈 옆가방에 리필 (왼쪽칸)',
+    '모자 챙기기 (오른쪽칸)',
+    '선글라스 챙기기 (오른쪽칸)',
+    '텀블러 챙기기 (짐될 것 같으면 X)',
+    '무거운 건 캐리어에 빼고 가기',
+  ];
+  const EVENING = [
+    '핸드폰, 보조배터리 충전',
+    '옷 벗어서 큰 비닐에 모아두기',
+    '씻기 (선크림 티슈로 얼굴 꼭!)',
+    '잠옷 갈아 입기',
+    '텀블러 세척',
+    '영양제 먹기',
+    '피곤하다 싶으면 챔큐 2포 더 먹기',
+    '땀을 많이 흘렸으면 ORS 먹기',
+    '코세척',
+    '모기 물린 데 약 바르기',
+    '얼굴에 뭐가 났으면 스팟밴드 붙이기',
+    '코 보호하는 스프레이 뿌리기',
+    '자기 전 팔 밴드 착용',
+    '자기 전 휴족시간 붙이기',
+  ];
+  const ARRIVE_LONDON = [
+    '캐리어 자리 선정, 열기',
+    '캐리어 비닐커버 캐리어에 넣어두기',
+    '빈대 확인 (침대 끝 모서리에 검정 가루 같은게 있는지 보기)',
+    '진드기 패드 붙이기',
+    '런던용 세면도구 세면대 옆에',
+    '회색 방수 주머니에서 필터 샤워기 꺼내서 바꾸기',
+    '호텔 샤워기 뺀 건 세면대 잘 보이는 곳에 두기',
+    '하늘 고양이 세면 파우치 침대 앞 잘 보이는 곳에 두기',
+    '베개커버 씌우기',
+    '멀티어댑터 셋팅',
+  ];
+  const CHECKOUT_LONDON = [
+    '쓰고 난 일회용품은 버리기(챙기지 말 것)',
+    '멀티어댑터 캐리어 넣기',
+    '드라이기 캐리어 넣기',
+    '유로 꺼내서 지갑에 넣기(가운데 주머니)',
+    '필터 샤워기 빼서 캐리어에 넣기',
+    '호텔 샤워기 원래대로 해놓기',
+    '방 나가기 전에 물건 있는지 체크',
+  ];
+  const ARRIVE_PARIS = [
+    '캐리어 자리 선정, 열기',
+    '빈대 확인 (침대 끝 모서리에 검정 가루 같은게 있는지 보기)',
+    '런던용 세면도구 세면대 옆에',
+    '회색 방수 주머니에서 필터 샤워기 바꾸기',
+    '호텔 샤워기 뺀 건 세면대 잘 보이는 곳에 두기',
+    '파란 고양이 파우치 침대 앞 잘 보이는 곳에 두기',
+    '베개커버 씌우기',
+    '멀티어댑터 셋팅',
+  ];
+  const CHECKOUT_PARIS = [
+    '쓰고 난 일회용품은 버리기(챙기지 말 것), 물 특히!)',
+    '안 쓴 일회용품 버리기(우비, 물티슈, 소독티슈, 비데티슈, ))',
+    '필터 샤워기 챙겨서 캐리어에 넣기(필터 버리기, 샤워기+헬퍼만)',
+    '호텔 샤워기 원래대로 해놓기',
+    '멀티어댑터 캐리어 넣기',
+    '드라이기 캐리어 넣기',
+    '보조배터리, 선풍기 다 보조가방에 챙기기',
+    '캐리어 비닐커버 하기',
+    '방 나가기 전에 물건 있는지 체크',
+  ];
+
+  // 여행 기간(7/28~8/5)을 하루 1카테고리로. 하루 안에 섹션(아침/이벤트/저녁) 배치.
+  const TRIP_DATES = [[7,28],[7,29],[7,30],[7,31],[8,1],[8,2],[8,3],[8,4],[8,5]];
+  function defaultCategories(){
+    const cats = [];
+    TRIP_DATES.forEach(([mm,dd], idx)=>{
+      const key = mm*100+dd;
+      const disp = mm+'/'+dd;
+      const dayNum = idx+1;
+      const sections = [];
+      // 아침 (7/28 제외하고 매일)
+      if(key!==728) sections.push({ icon:'🌅', title:'아침에 할 일', items: MORNING });
+      // 이벤트
+      if(key===728) sections.push({ icon:'🛬', title:'런던 호텔 체크인 하고 할 일', items: ARRIVE_LONDON });
+      if(key===801){
+        sections.push({ icon:'🧳', title:'런던 호텔 체크아웃 전 할 일', items: CHECKOUT_LONDON });
+        sections.push({ icon:'🛬', title:'파리 호텔 체크인 하고 할 일', items: ARRIVE_PARIS });
+      }
+      if(key===805) sections.push({ icon:'🧳', title:'파리 호텔 체크아웃 전 할 일', items: CHECKOUT_PARIS });
+      // 저녁 (8/5 제외하고 매일)
+      if(key!==805) sections.push({ icon:'🌙', title:'저녁에 할 일', items: EVENING });
+      cats.push({ date:disp, dayNum, title:'', sections });
+    });
+    return cats;
+  }
+
+  /* ---------- 유틸 ---------- */
+  const $ = (sel,root=document)=>root.querySelector(sel);
+  const $$ = (sel,root=document)=>Array.from(root.querySelectorAll(sel));
+  const uid = ()=> 'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
+  function escapeHtml(str){
+    return String(str||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+  function showToast(msg){
+    const t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(showToast._tm);
+    showToast._tm = setTimeout(()=>t.classList.remove('show'), 1800);
+  }
+  function dateSortKey(date){
+    const m = String(date||'').match(/(\d{1,2})\s*\/\s*(\d{1,2})/);
+    if(!m) return Infinity;
+    return parseInt(m[1],10)*100 + parseInt(m[2],10);
+  }
+
+  /* ---------- 날짜별 단체복 색상 & 주요 방문지 (용돈계획서와 동일) ---------- */
+  // 단체복: 색상칩(dot)이 있으면 color 지정, 생활복은 👕 아이콘으로 표시
+  const DATE_OUTFIT = {
+    '7/28': { label:'네이비', color:'#1F3A5F' },
+    '7/29': { label:'네이비', color:'#1F3A5F' },
+    '7/30': { label:'버건디', color:'#800020' },
+    '7/31': { label:'생활복', icon:'👕' },
+    '8/1':  { label:'생활복', icon:'👕' },
+    '8/2':  { label:'블루',   color:'#2563EB' },
+    '8/3':  { label:'그린',   color:'#16A34A' },
+    '8/4':  { label:'화이트', color:'#FFFFFF' },
+    '8/5':  { label:'그레이', color:'#808080' },
+    '8/6':  { label:'그레이', color:'#808080' },
+  };
+  const DATE_PLACE = {
+    '7/28': '인천공항, 런던',
+    '7/29': '대영 박물관, 런던 자연사 박물관, 버킹엄 궁전, 빅벤, 런던아이, 타워브리지',
+    '7/30': '옥스퍼드, 카팩스 타워, 보틀리안 도서관, 윈저성, 이튼 스쿨',
+    '7/31': '캠브리지 펀팅, 킹스 칼리지 런던, 퀸스 칼리지, 라이언킹 뮤지컬',
+    '8/1':  '그리니치 천문대, 유람선, 내셔널 갤러리, 유로스타 타고 파리로',
+    '8/2':  '에펠탑, 센강 유람선, 개선문, 샹젤리제 거리, 콩코드 광장, 유학생 간담회',
+    '8/3':  '디즈니랜드',
+    '8/4':  '몽마르뜨 언덕, 사크레쾨르 대성당, 테르트르 광장, 마트 쇼핑, 베르사유 궁전',
+    '8/5':  '루브르 박물관, 라빌레드 과학관, 파리 공항',
+    '8/6':  '인천공항, 학교',
+  };
+  function dateKeyStr(date){
+    const m = String(date||'').match(/(\d{1,2})\s*\/\s*(\d{1,2})/);
+    return m ? (parseInt(m[1],10)+'/'+parseInt(m[2],10)) : '';
+  }
+  // 단체복 표기 HTML (칩 색상 or 생활복 아이콘)
+  function outfitHtml(date){
+    const o = DATE_OUTFIT[dateKeyStr(date)];
+    if(!o) return '';
+    const mark = o.icon ? `<span>${o.icon}</span>` : `<span class="oc" style="background:${o.color}"></span>`;
+    return `<span class="cat-outfit">${mark}${escapeHtml(o.label)}</span>`;
+  }
+  function placeText(date){ return DATE_PLACE[dateKeyStr(date)] || ''; }
+  // 특정 시간대의 (월, 일)을 구함 — 기기(폰) 시간대와 무관하게 현지 날짜를 계산
+  function ymdInTZ(tz){
+    try{
+      const parts = new Intl.DateTimeFormat('en-CA', { timeZone:tz, month:'2-digit', day:'2-digit' }).formatToParts(new Date());
+      const m = +parts.find(p=>p.type==='month').value;
+      const d = +parts.find(p=>p.type==='day').value;
+      return { m, d };
+    }catch(e){
+      const now = new Date();
+      return { m: now.getMonth()+1, d: now.getDate() };
+    }
+  }
+  // 여행 현지 날짜 기준 오늘 키(월*100+일).
+  // 8/1 전까지는 영국(런던), 그 뒤로는 프랑스(파리) 시간대로 계산.
+  function todayKey(){
+    const rough = ymdInTZ('Europe/Paris');
+    const tz = (rough.m*100 + rough.d) < 801 ? 'Europe/London' : 'Europe/Paris';
+    const { m, d } = ymdInTZ(tz);
+    return m*100 + d;
+  }
+  function isPastDate(date){
+    const k = dateSortKey(date);
+    return k !== Infinity && k < todayKey();
+  }
+
+  /* ---------- 상태 ----------
+  state = { darkMode, currentPersonId, people:{ [id]:person } }
+  person = { id, name, categories:[ cat ] }
+  cat = { id, date, dayNum, title, collapsed, sections:[ sec ] }
+  sec = { id, icon, title, collapsed, items:[ {id,text,done} ] }
+  --------------------------- */
+  let state;
+  let storageAvailable = true;
+  let memoryFallback = null;
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        if(parsed && parsed.people) return parsed;
+      }
+    }catch(e){
+      console.warn('localStorage 사용 불가, 메모리 모드로 전환:', e);
+      storageAvailable = false;
+      if(memoryFallback) return memoryFallback;
+    }
+    return null;
+  }
+  function saveState(){
+    if(storageAvailable){
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); return; }
+      catch(e){ console.warn('저장 실패, 메모리 모드로 전환:', e); storageAvailable = false; }
+    }
+    memoryFallback = state;
+  }
+
+  function makeDefaultPerson(name){
+    return {
+      id: uid(),
+      name: name || '나',
+      categories: defaultCategories().map(c=>({
+        id: uid(), date:c.date, dayNum:c.dayNum, title:c.title||'', collapsed:false,
+        sections: c.sections.map(s=>({
+          id: uid(), icon:s.icon, title:s.title, collapsed:false,
+          items: s.items.map(text=>({ id:uid(), text, done:false }))
+        }))
+      }))
+    };
+  }
+  function currentPerson(){ return state.people[state.currentPersonId]; }
+
+  /* ---------- 다크모드 ---------- */
+  function applyTheme(){
+    document.documentElement.setAttribute('data-theme', state.darkMode ? 'dark':'light');
+    $('#darkToggle').textContent = state.darkMode ? '☀️' : '🌙';
+  }
+  $('#darkToggle').addEventListener('click', ()=>{
+    state.darkMode = !state.darkMode; saveState(); applyTheme();
+  });
+
+  /* ---------- 사람 선택/추가/이름변경 ---------- */
+  function renderPersonSelect(){
+    const sel = $('#personSelect');
+    sel.innerHTML = Object.values(state.people).map(p=>
+            `<option value="${p.id}" ${p.id===state.currentPersonId?'selected':''}>${escapeHtml(p.name)}</option>`
+    ).join('');
+  }
+  $('#personSelect').addEventListener('change', e=>{
+    state.currentPersonId = e.target.value; saveState(); renderAll();
+  });
+  $('#newPersonBtn').addEventListener('click', ()=>{
+    const name = prompt('새 사람 이름을 입력하세요 (빈 목록으로 생성됩니다)', '');
+    if(name===null) return;
+    const p = { id: uid(), name: name.trim() || '이름없음', categories: [] };
+    state.people[p.id] = p;
+    saveState(); renderAll();
+    showToast(`${p.name} 님이 추가되었어요 · 위 목록에서 선택하세요 ✅`);
+  });
+  function renamePerson(){
+    const p = currentPerson();
+    const name = prompt('이름을 입력하세요', p.name);
+    if(name===null) return;
+    p.name = name.trim() || p.name;
+    saveState(); renderAll();
+    showToast('이름이 변경되었어요 ✏️');
+  }
+  $('#editNameInline').addEventListener('click', renamePerson);
+
+  /* ---------- 전체 리셋 ---------- */
+  $('#resetBtn').addEventListener('click', ()=>{
+    const p = currentPerson();
+    const ok = confirm(`⚠️ "${p.name}" 님의 목록을 기본 할 일로 되돌리고\n모든 체크를 해제합니다.\n계속할까요?`);
+    if(!ok) return;
+    // 저장된 캐시(localStorage)를 완전히 지우고 기본 상태로 되돌린 뒤 새로고침
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){ console.warn('캐시 삭제 실패:', e); }
+    memoryFallback = null;
+    location.reload();
+  });
+
+  /* ---------- 모든 항목 지우기: 카테고리·할 일 싹 삭제 ---------- */
+  $('#clearAllBtn').addEventListener('click', ()=>{
+    const p = currentPerson();
+    const ok = confirm('처음 셋팅 된 카테고리, 할일들이 다 지워져요.\n그래도 지울까요?');
+    if(!ok) return;
+    p.categories = [];
+    saveState(); renderAll();
+    showToast('모든 항목이 지워졌어요 🧹');
+  });
+
+  /* ---------- 진행률 계산 ---------- */
+  function secStats(sec){
+    const total = sec.items.length;
+    const done = sec.items.filter(i=>i.done).length;
+    return { total, done, pct: total?Math.round(done/total*100):0 };
+  }
+  function catStats(cat){
+    const items = cat.sections.flatMap(s=>s.items);
+    const total = items.length, done = items.filter(i=>i.done).length;
+    return { total, done, pct: total?Math.round(done/total*100):0 };
+  }
+  function personStats(){
+    const items = currentPerson().categories.flatMap(c=>c.sections.flatMap(s=>s.items));
+    const total = items.length, done = items.filter(i=>i.done).length;
+    return { total, done, pct: total?Math.round(done/total*100):0 };
+  }
+
+  /* ---------- 전체 진행 배너 ---------- */
+  function renderBanner(){
+    const p = currentPerson();
+    const { total, done, pct } = personStats();
+    $('#pbLabel').textContent = `${p.name} 님의 할 일 진행 현황`;
+    $('#pbPct').textContent = pct + '%';
+    $('#pbInner').style.width = pct + '%';
+    $('#pbSub').textContent = `${done} / ${total} 완료` + (total && done===total ? ' · 모두 끝났어요! 🎉' : '');
+  }
+
+  /* ---------- 날짜 정렬: 지난 날짜는 뒤로 ---------- */
+  function sortedCategories(){
+    const cats = currentPerson().categories.map((c,i)=>({ c, i }));
+    const tk = todayKey();
+    cats.sort((a,b)=>{
+      const ka = dateSortKey(a.c.date), kb = dateSortKey(b.c.date);
+      const pa = (ka!==Infinity && ka<tk) ? 1 : 0;
+      const pb = (kb!==Infinity && kb<tk) ? 1 : 0;
+      if(pa!==pb) return pa-pb;
+      if(ka!==kb) return ka-kb;
+      return a.i-b.i;
+    });
+    return cats.map(x=>x.c);
+  }
+
+  /* ---------- 날짜 네비게이션 ---------- */
+  function renderDateNav(){
+    const cats = sortedCategories();
+    const nav = $('#dateNavScroll');
+    const card = $('#dateNavCard');
+    if(cats.length===0){ card.style.display='none'; return; }
+    card.style.display='block';
+
+    const tk = todayKey();
+    nav.innerHTML = cats.map(cat=>{
+      const s = catStats(cat);
+      const allDone = s.total>0 && s.done===s.total;
+      const k = dateSortKey(cat.date);
+      const cls = [ allDone?'done':'', (k===tk)?'today':'', (k!==Infinity && k<tk)?'past':'' ].filter(Boolean).join(' ');
+      return `<button class="datenav-chip ${cls}" data-target="${cat.id}">
+      <span class="dn-dot"></span>${escapeHtml(cat.date||'기타')}${cat.dayNum?` <small style="opacity:.7">${cat.dayNum}일차</small>`:''}</button>`;
+    }).join('');
+    $$('.datenav-chip', nav).forEach(chip=>{
+      chip.addEventListener('click', ()=> jumpToCategory(chip.dataset.target));
+    });
+  }
+  function jumpToCategory(catId){
+    const el = document.getElementById('cat_'+catId);
+    if(!el) return;
+    el.scrollIntoView({ behavior:'smooth', block:'start' });
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  }
+  // 오늘(현지) 날짜에 해당하는 카테고리로 자동 이동. 없으면 오늘 이후 가장 가까운 일자로.
+  function jumpToToday(){
+    const tk = todayKey();
+    const cats = currentPerson().categories;
+    // 오늘 날짜 카드 우선, 없으면 오늘 이후 가장 이른 날짜
+    let target = cats.find(c=>dateSortKey(c.date)===tk);
+    if(!target){
+      const future = cats.filter(c=>dateSortKey(c.date)!==Infinity && dateSortKey(c.date)>tk)
+                         .sort((a,b)=>dateSortKey(a.date)-dateSortKey(b.date));
+      target = future[0];
+    }
+    if(target){
+      const el = document.getElementById('cat_'+target.id);
+      if(el){
+        el.scrollIntoView({ behavior:'auto', block:'start' });
+        el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+      }
+    }
+  }
+
+  /* ---------- 카테고리(일자) 렌더링 ---------- */
+  function renderCategories(){
+    const container = $('#categoriesContainer');
+    container.innerHTML = '';
+    const cats = sortedCategories();
+    if(cats.length===0){
+      container.innerHTML = '<div class="empty-msg">아직 일자가 없어요. 아래에서 새 일자를 추가해보세요 👇</div>';
+      return;
+    }
+    let dividerInserted = false;
+    cats.forEach(cat=>{
+      const past = isPastDate(cat.date);
+      if(past && !dividerInserted){
+        const div = document.createElement('div');
+        div.className = 'past-divider';
+        div.textContent = '⏳ 지난 일정 (눌러서 펼치기)';
+        container.appendChild(div);
+        dividerInserted = true;
+      }
+      // 지난 날짜는 기본으로 접어서 헤더만 보이게 함 (누르면 펼쳐짐)
+      container.appendChild(buildCategoryBlock(cat, past, past));
+    });
+  }
+
+  function buildCategoryBlock(cat, past, forceCollapsed){
+    const { total, done, pct } = catStats(cat);
+    const complete = total>0 && done===total;
+    // 지난 날짜는 기본으로 접힘. 단 사용자가 직접 펼쳐둔 경우(userExpanded)는 존중.
+    const collapsed = forceCollapsed ? !cat.userExpanded : !!cat.collapsed;
+    const collapsed_state = { value: collapsed }; // 헤더 토글이 참조할 현재 접힘 상태
+
+    const wrap = document.createElement('div');
+    wrap.className = 'category-group' + (past?' past':'') + (complete?' complete':'');
+    wrap.id = 'cat_'+cat.id;
+    wrap.innerHTML = `
+    ${complete ? '<div class="stamp">Complete!</div>' : ''}
+    <div class="category-header ${collapsed?'collapsed':''}">
+      <span class="cat-date">${escapeHtml(cat.date||'—')}${cat.dayNum?`<small>${cat.dayNum}일차</small>`:''}${outfitHtml(cat.date)}</span>
+      <div class="cat-main">
+        ${placeText(cat.date) ? `<div class="cat-place" data-act="toggleplace"><span>📍</span><span class="cp-text">${escapeHtml(placeText(cat.date))}</span><span class="cp-caret">▾</span></div>` : ''}
+        ${cat.title ? `<div class="cat-title">${escapeHtml(cat.title)}</div>` : ''}
+        <div class="cat-progress-line">
+          <div class="cat-mini-outer"><div class="cat-mini-inner" style="width:${pct}%"></div></div>
+          <span class="cat-count ${complete?'complete':''}">${done}/${total} · ${pct}%${complete?' ✓':''}</span>
+        </div>
+      </div>
+      <div class="cat-actions">
+        <button data-act="editcat" title="일자 수정">✏️</button>
+        <button class="del" data-act="delcat" title="일자 삭제">🗑️</button>
+      </div>
+      <span class="caret">▾</span>
+    </div>
+    <div class="category-body ${collapsed?'hidden':''}"></div>
+  `;
+
+    const body = $('.category-body', wrap);
+    if(cat.sections.length===0){
+      body.appendChild(Object.assign(document.createElement('div'),{className:'empty-msg',textContent:'섹션이 없어요'}));
+    }else{
+      cat.sections.forEach(sec=> body.appendChild(buildSectionBlock(cat, sec)));
+    }
+
+    // 섹션 추가 버튼
+    const addSecBtn = document.createElement('button');
+    addSecBtn.className = 'add-section-btn';
+    addSecBtn.textContent = '＋ 섹션 추가 (예: 오후, 이동 중)';
+    addSecBtn.addEventListener('click', ()=> addSection(cat));
+    body.appendChild(addSecBtn);
+
+    // 주요 방문지 탭 → 한 줄/전체 펼치기 (헤더 접기와 별개로 동작)
+    const placeEl = $('.cat-place', wrap);
+    if(placeEl){
+      placeEl.addEventListener('click', e=>{
+        e.stopPropagation();
+        placeEl.classList.toggle('expanded');
+      });
+    }
+
+    // 헤더 클릭 → 접기/펼치기 (현재 화면 상태 기준으로 토글, 지난 날짜 접힘도 반영)
+    $('.category-header', wrap).addEventListener('click', e=>{
+      if(e.target.closest('.cat-actions')) return;
+      if(e.target.closest('.cat-place')) return;
+      const nowCollapsed = !collapsed_state.value;
+      collapsed_state.value = nowCollapsed;
+      cat.collapsed = nowCollapsed;
+      cat.userExpanded = !nowCollapsed; // 지난 날짜라도 사용자가 펼치면 유지
+      saveState();
+      $('.category-header', wrap).classList.toggle('collapsed', nowCollapsed);
+      body.classList.toggle('hidden', nowCollapsed);
+    });
+    $('[data-act="editcat"]', wrap).addEventListener('click', ()=> editCategory(cat));
+    $('[data-act="delcat"]', wrap).addEventListener('click', ()=> deleteCategory(cat));
+
+    return wrap;
+  }
+
+  /* ---------- 섹션(아침/저녁 등) 렌더링 ---------- */
+  function buildSectionBlock(cat, sec){
+    const { total, done, pct } = secStats(sec);
+    const complete = total>0 && done===total;
+
+    const box = document.createElement('div');
+    box.className = 'section';
+    box.innerHTML = `
+    <div class="section-header">
+      <span class="sec-icon">${sec.icon||'📌'}</span>
+      <span>${escapeHtml(sec.title)}</span>
+      <span class="sec-count ${complete?'complete':''}">${done}/${total}${complete?' ✓':''}</span>
+      <span class="sec-actions">
+        <button data-act="editsec" title="섹션 수정">✏️</button>
+        <button class="del" data-act="delsec" title="섹션 삭제">🗑️</button>
+      </span>
+    </div>
+    <div class="section-body"></div>
+  `;
+    const sbody = $('.section-body', box);
+    if(sec.items.length===0){
+      sbody.appendChild(Object.assign(document.createElement('div'),{className:'empty-msg',textContent:'할 일이 없어요'}));
+    }else{
+      sec.items.forEach(item=> sbody.appendChild(buildItemRow(sec, item)));
+    }
+
+    // 항목 추가 입력 (이 섹션 기준)
+    const addRow = document.createElement('div');
+    addRow.className = 'add-item-row';
+    addRow.innerHTML = `<input type="text" placeholder="${escapeHtml(sec.title)}에 할 일 추가 후 Enter"><button type="button">추가</button>`;
+    const addInput = $('input', addRow);
+    const addBtn = $('button', addRow);
+    function addItem(){
+      const val = addInput.value.trim();
+      if(!val) return;
+      sec.items.push({ id:uid(), text:val, done:false });
+      saveState(); renderAll();
+      showToast('할 일이 추가되었어요 ✅');
+    }
+    addInput.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addItem(); }});
+    addBtn.addEventListener('click', addItem);
+    sbody.appendChild(addRow);
+
+    $('[data-act="editsec"]', box).addEventListener('click', ()=> editSection(cat, sec));
+    $('[data-act="delsec"]', box).addEventListener('click', ()=> deleteSection(cat, sec));
+
+    return box;
+  }
+
+  function buildItemRow(sec, item){
+    const row = document.createElement('div');
+    row.className = 'item-row' + (item.done?' done':'');
+    row.innerHTML = `
+    <div class="item-check ${item.done?'done':''}" data-act="toggle">${item.done?'✓':''}</div>
+    <span class="item-name" data-act="viewname">${escapeHtml(item.text)}</span>
+    <div class="row-actions">
+      <button data-act="edit" title="수정">✏️</button>
+      <button class="del" data-act="delete" title="삭제">🗑️</button>
+    </div>
+  `;
+    $('[data-act="toggle"]', row).addEventListener('click', ()=> toggleItem(item));
+    $('[data-act="edit"]', row).addEventListener('click', ()=> startEditItem(row, item));
+    $('[data-act="viewname"]', row).addEventListener('dblclick', ()=> startEditItem(row, item));
+    $('[data-act="delete"]', row).addEventListener('click', ()=> deleteItem(sec, item));
+    return row;
+  }
+
+  function toggleItem(item){
+    item.done = !item.done;
+    saveState(); renderAll();
+  }
+  function startEditItem(row, item){
+    const nameSpan = $('[data-act="viewname"]', row);
+    const input = document.createElement('input');
+    input.type='text'; input.className='item-name-input'; input.value=item.text;
+    nameSpan.replaceWith(input);
+    input.focus(); input.select();
+    function commit(save){
+      if(save){ const v=input.value.trim(); if(v) item.text=v; }
+      saveState(); renderAll();
+    }
+    input.addEventListener('keydown', e=>{
+      if(e.key==='Enter'){ e.preventDefault(); commit(true); }
+      else if(e.key==='Escape'){ e.preventDefault(); commit(false); }
+    });
+    input.addEventListener('blur', ()=> commit(true));
+  }
+  function deleteItem(sec, item){
+    if(!confirm('이 할 일을 삭제할까요?')) return;
+    sec.items = sec.items.filter(i=>i.id!==item.id);
+    saveState(); renderAll();
+  }
+
+  /* ---------- 섹션 추가/수정/삭제 ---------- */
+  function addSection(cat){
+    const title = prompt('섹션 이름 (예: 아침에 할 일, 오후, 이동 중)', '');
+    if(title===null) return;
+    const t = title.trim();
+    if(!t){ showToast('섹션 이름을 입력해주세요'); return; }
+    cat.sections.push({ id:uid(), icon:'📌', title:t, collapsed:false, items:[] });
+    saveState(); renderAll();
+    showToast('섹션이 추가되었어요 ✅');
+  }
+  function editSection(cat, sec){
+    const title = prompt('섹션 이름', sec.title);
+    if(title===null) return;
+    const icon = prompt('아이콘(이모지, 비워도 됨)', sec.icon||'');
+    if(icon===null) return;
+    sec.title = title.trim() || sec.title;
+    sec.icon = icon.trim();
+    saveState(); renderAll();
+    showToast('섹션이 수정되었어요 ✏️');
+  }
+  function deleteSection(cat, sec){
+    if(!confirm(`"${sec.title}" 섹션을 삭제할까요?\n안의 할 일도 함께 삭제됩니다.`)) return;
+    cat.sections = cat.sections.filter(s=>s.id!==sec.id);
+    saveState(); renderAll();
+    showToast('섹션이 삭제되었어요 🗑️');
+  }
+
+  /* ---------- 카테고리(일자) 수정/삭제 ---------- */
+  function editCategory(cat){
+    const date = prompt('날짜 (예: 8/6, 비워도 됨)', cat.date||'');
+    if(date===null) return;
+    const title = prompt('일자 설명 (비워두면 날짜만 표시)', cat.title||'');
+    if(title===null) return;
+    cat.date = date.trim();
+    cat.title = title.trim();
+    saveState(); renderAll();
+    showToast('일자가 수정되었어요 ✏️');
+  }
+  function deleteCategory(cat){
+    if(!confirm(`"${cat.date||cat.title}" 일자를 통째로 삭제할까요?\n안의 섹션·할 일도 함께 삭제됩니다.`)) return;
+    const p = currentPerson();
+    p.categories = p.categories.filter(c=>c.id!==cat.id);
+    saveState(); renderAll();
+    showToast('일자가 삭제되었어요 🗑️');
+  }
+
+  /* ---------- 새 일자(카테고리) 추가 ---------- */
+  $('#addCatForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    const date = $('#newCatDate').value.trim();
+    const title = $('#newCatTitle').value.trim();
+    if(!date && !title){ showToast('날짜 또는 설명을 입력해주세요'); return; }
+    // 기본으로 아침/저녁 섹션을 넣어 바로 나눠 쓸 수 있게 한다
+    currentPerson().categories.push({
+      id:uid(), date, dayNum:null, title, collapsed:false,
+      sections:[
+        { id:uid(), icon:'🌅', title:'아침에 할 일', collapsed:false, items:[] },
+        { id:uid(), icon:'🌙', title:'저녁 할 일', collapsed:false, items:[] },
+      ]
+    });
+    $('#newCatDate').value=''; $('#newCatTitle').value='';
+    saveState(); renderAll();
+    showToast('새 일자가 추가되었어요 ✅');
+  });
+
+  /* ---------- 통계 ---------- */
+  function renderStats(){
+    const p = currentPerson();
+    const { total, done, pct } = personStats();
+    const remain = total - done;
+    const catCount = p.categories.length;
+    $('#statsBar').innerHTML = `
+    <div class="stat"><b>${catCount}</b><span>일자</span></div>
+    <div class="stat"><b style="color:var(--success)">${done}</b><span>완료</span></div>
+    <div class="stat"><b style="color:var(--danger)">${remain}</b><span>남음</span></div>
+    <div class="stat"><b style="color:var(--sky-strong)">${pct}%</b><span>완료율</span></div>
+  `;
+  }
+
+  /* ---------- 마스터 렌더 ---------- */
+  function renderAll(){
+    renderPersonSelect();
+    $('#whoName').textContent = currentPerson().name;
+    if($('#letterName')) $('#letterName').textContent = currentPerson().name;
+    renderBanner();
+    renderDateNav();
+    renderCategories();
+    renderStats();
+  }
+
+  /* ---------- 상단 이동 버튼 ---------- */
+  window.addEventListener('scroll', ()=>{
+    $('#backTop').classList.toggle('show', window.scrollY>400);
+  });
+  $('#backTop').addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
+
+  /* ---------- 초기화 ---------- */
+  function boot(){
+    state = loadState();
+    if(!state){
+      const p = makeDefaultPerson('지유');
+      state = { darkMode:false, currentPersonId:p.id, people:{ [p.id]:p } };
+      saveState();
+    }
+    // 저장된 현재 사람이 없거나(삭제됨) 사람이 하나도 없으면 첫 번째 사람으로 복구
+    if(!state.people || Object.keys(state.people).length===0){
+      const p = makeDefaultPerson('지유');
+      state.people = { [p.id]:p };
+      state.currentPersonId = p.id;
+      saveState();
+    }else if(!state.people[state.currentPersonId]){
+      state.currentPersonId = Object.keys(state.people)[0];
+      saveState();
+    }
+    applyTheme();
+    renderAll();
+    // 첫날(7/28)이거나 여행 시작 전에는 편지부터 보이게 맨 위에서 시작,
+    // 7/29 이후(여행 중)에는 오늘 해당 날짜 카드로 자동 스크롤
+    const tk = todayKey();
+    const firstKey = (TRIP_DATES[0][0]*100 + TRIP_DATES[0][1]); // 728
+    if(tk <= firstKey){
+      window.scrollTo(0, 0);
+    }else{
+      setTimeout(jumpToToday, 300);
+    }
+    if(!storageAvailable){
+      setTimeout(()=> showToast('⚠️ 이 브라우저는 저장이 안돼요. 일반 브라우저로 열어주세요'), 500);
+    }
+  }
+  boot();
+</script>
+</body>
+</html>
