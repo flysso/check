@@ -106,6 +106,7 @@
       display:flex;align-items:center;gap:6px;transition:all .15s ease;
       box-shadow:var(--shadow-sm);white-space:nowrap;
     }
+    .topbar a.icon-btn{text-decoration:none;}
     .topbar .icon-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);border-color:var(--sky);}
     .topbar .icon-btn.danger:hover{border-color:var(--danger);color:var(--danger);}
     .person-select{
@@ -238,6 +239,12 @@
     .cat-place.expanded .cp-text{white-space:normal;overflow:visible;}
     .cat-place .cp-caret{flex:0 0 auto;transition:transform .2s ease;color:var(--text-faint);font-size:11px;margin-top:1px;}
     .cat-place.expanded .cp-caret{transform:rotate(180deg);}
+    .cat-weather{
+      font-size:12px;font-weight:800;color:var(--sky-strong);
+      display:inline-flex;align-items:center;gap:5px;margin-bottom:3px;
+      background:var(--sky-light);border-radius:8px;padding:2px 8px;
+    }
+    .cat-weather .cw-rain{color:var(--text-soft);font-weight:700;}
     .cat-title{font-size:15.5px;font-weight:800;line-height:1.35;}
     .cat-progress-line{display:flex;align-items:center;gap:8px;margin-top:7px;}
     .cat-mini-outer{flex:1 1 auto;background:var(--border);border-radius:20px;height:8px;overflow:hidden;max-width:220px;}
@@ -371,6 +378,7 @@
   <button class="icon-btn danger" id="resetBtn" title="이 사람의 모든 체크를 해제하고 기본 목록으로 되돌립니다">🔄 처음으로 돌리기</button>
   <button class="icon-btn danger" id="clearAllBtn" title="이 사람의 카테고리와 할 일을 모두 삭제합니다">🧹 모두 지우기</button>
   <button class="icon-btn" id="darkToggle">🌙</button>
+  <a class="icon-btn" href="https://flysso.github.io/check/Plan.html" target="_blank" rel="noopener" title="용돈 매니저 열기">💰</a>
 </div>
 
 <div class="wrap">
@@ -583,6 +591,84 @@
     return `<span class="cat-outfit">${mark}${escapeHtml(o.label)}</span>`;
   }
   function placeText(date){ return DATE_PLACE[dateKeyStr(date)] || ''; }
+
+  /* ---------- 날짜별 지역 & 날씨 예보 (Open-Meteo, API키 불필요) ---------- */
+  // 날짜별 도시: 8/1 오전까지 런던, 8/1 저녁부터(파리 입성) 파리 · 인천은 8/6
+  const CITY_COORD = {
+    london: { name:'런던',   lat:51.5074, lon:-0.1278, tz:'Europe/London' },
+    paris:  { name:'파리',   lat:48.8566, lon:2.3522,  tz:'Europe/Paris' },
+    incheon:{ name:'인천',   lat:37.4563, lon:126.7052,tz:'Asia/Seoul' },
+  };
+  const DATE_CITY = {
+    '7/28':'london','7/29':'london','7/30':'london','7/31':'london','8/1':'london',
+    '8/2':'paris','8/3':'paris','8/4':'paris','8/5':'paris','8/6':'incheon',
+  };
+  // ISO 날짜(YYYY-MM-DD) 만들기 — 여행 연도는 2026 고정
+  const TRIP_YEAR = 2026;
+  function isoDate(dateStr){
+    const m = String(dateStr||'').match(/(\d{1,2})\s*\/\s*(\d{1,2})/);
+    if(!m) return '';
+    return `${TRIP_YEAR}-${String(+m[1]).padStart(2,'0')}-${String(+m[2]).padStart(2,'0')}`;
+  }
+  // WMO 날씨코드 → 이모지 + 설명
+  function weatherIcon(code){
+    if(code===0) return {i:'☀️',t:'맑음'};
+    if(code<=2)  return {i:'🌤️',t:'대체로 맑음'};
+    if(code===3) return {i:'☁️',t:'흐림'};
+    if(code<=48) return {i:'🌫️',t:'안개'};
+    if(code<=57) return {i:'🌦️',t:'이슬비'};
+    if(code<=67) return {i:'🌧️',t:'비'};
+    if(code<=77) return {i:'🌨️',t:'눈'};
+    if(code<=82) return {i:'🌧️',t:'소나기'};
+    if(code<=86) return {i:'🌨️',t:'소낙눈'};
+    if(code<=99) return {i:'⛈️',t:'뇌우'};
+    return {i:'🌡️',t:''};
+  }
+  // 날씨 캐시: { 'london': {날짜: {tmax,tmin,code,rain}}, ... }
+  const weatherCache = {};
+  async function fetchWeatherFor(cityKey){
+    const c = CITY_COORD[cityKey];
+    if(!c || weatherCache[cityKey]) return;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}`
+      + `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max`
+      + `&timezone=${encodeURIComponent(c.tz)}&forecast_days=16`;
+    const res = await fetch(url, { cache:'no-store' });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    const d = data.daily;
+    const map = {};
+    (d.time||[]).forEach((day,i)=>{
+      map[day] = {
+        code: d.weathercode[i],
+        tmax: Math.round(d.temperature_2m_max[i]),
+        tmin: Math.round(d.temperature_2m_min[i]),
+        rain: d.precipitation_probability_max ? d.precipitation_probability_max[i] : null,
+      };
+    });
+    weatherCache[cityKey] = map;
+  }
+  // 모든 도시 예보를 한 번에 불러온 뒤 카드 갱신
+  async function loadAllWeather(){
+    const cities = [...new Set(Object.values(DATE_CITY))];
+    await Promise.all(cities.map(ck=> fetchWeatherFor(ck).catch(e=>console.warn('날씨 실패',ck,e))));
+    // 각 카드의 날씨 자리 갱신
+    $$('.cat-weather[data-date]').forEach(el=>{
+      const html = weatherHtml(el.dataset.date);
+      if(html) el.innerHTML = html; else el.remove();
+    });
+  }
+  // 특정 날짜의 날씨 HTML (캐시에 있으면 반환, 없으면 빈 문자열)
+  function weatherHtml(dateStr){
+    const cityKey = DATE_CITY[dateKeyStr(dateStr)];
+    const iso = isoDate(dateStr);
+    if(!cityKey || !iso) return '';
+    const w = weatherCache[cityKey] && weatherCache[cityKey][iso];
+    if(!w) return '';
+    const wi = weatherIcon(w.code);
+    const city = CITY_COORD[cityKey].name;
+    const rain = (w.rain!=null) ? ` <span class="cw-rain">💧${w.rain}%</span>` : '';
+    return `${wi.i} ${city} ${w.tmax}°/${w.tmin}° ${wi.t}${rain}`;
+  }
   // 특정 시간대의 (월, 일)을 구함 — 기기(폰) 시간대와 무관하게 현지 날짜를 계산
   function ymdInTZ(tz){
     try{
@@ -841,6 +927,7 @@
     <div class="category-header ${collapsed?'collapsed':''}">
       <span class="cat-date">${escapeHtml(cat.date||'—')}${cat.dayNum?`<small>${cat.dayNum}일차</small>`:''}${outfitHtml(cat.date)}</span>
       <div class="cat-main">
+        ${DATE_CITY[dateKeyStr(cat.date)] ? `<div class="cat-weather" data-date="${escapeHtml(cat.date)}">${weatherHtml(cat.date) || '⏳ 날씨 불러오는 중…'}</div>` : ''}
         ${placeText(cat.date) ? `<div class="cat-place" data-act="toggleplace"><span>📍</span><span class="cp-text">${escapeHtml(placeText(cat.date))}</span><span class="cp-caret">▾</span></div>` : ''}
         ${cat.title ? `<div class="cat-title">${escapeHtml(cat.title)}</div>` : ''}
         <div class="cat-progress-line">
@@ -1079,6 +1166,8 @@
     renderDateNav();
     renderCategories();
     renderStats();
+    // 날씨 예보 로드(캐시되면 즉시 반영). 인터넷 안되면 조용히 무시
+    loadAllWeather().catch(e=>console.warn('날씨 로드 실패:', e));
   }
 
   /* ---------- 상단 이동 버튼 ---------- */
