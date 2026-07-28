@@ -395,7 +395,7 @@
    카테고리(주제) → 섹션 → 할 일(items) 구조
    ===================================================================== */
 
-const STORAGE_KEY = 'waveLetterChecklistApp_v5';
+const STORAGE_KEY = 'waveLetterChecklistApp_v6';
 
 /* ---------- 기본 카테고리(주제) — 엄마 편지 기준 할 일 ---------- */
 function defaultCategories(){
@@ -437,6 +437,13 @@ function defaultCategories(){
         '파운드·유로 챙기기 (캐리어 지퍼덮개 부분)',
       ]},
     ]},
+    { icon:'💊', title:'영양제 챙겨먹기', sections:[
+      { icon:'💊', title:'영양제', items:[
+        '식사 후 비타민C 먹기',
+        '식사 후 효소 먹기',
+        '유산균 먹기',
+      ]},
+    ]},
     { icon:'📸', title:'관광', sections:[
       { icon:'👜', title:'소매치기 조심', items:[
         '핸드폰·카드·물병 늘 조심하기',
@@ -464,13 +471,6 @@ function defaultCategories(){
         '목베개 사용 (투명꼭지 막고 펌핑, 다 되면 작은 꼭지도 막기)',
         '물 자주 마시기',
         '눈 건조하면 인공눈물 넣기 (앞주머니)',
-      ]},
-    ]},
-    { icon:'💊', title:'영양제 챙겨먹기', sections:[
-      { icon:'💊', title:'영양제', items:[
-        '식사 후 비타민C 먹기',
-        '식사 후 효소 먹기',
-        '유산균 먹기',
       ]},
     ]},
   ];
