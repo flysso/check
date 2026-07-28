@@ -189,7 +189,7 @@
     /* ---------------- 카테고리(일자 카드) ---------------- */
     .category-group{
       background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-md);
-      margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow-sm);scroll-margin-top:80px;
+      margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow-sm);scroll-margin-top:72px;
       animation:fadeUp .3s ease both;
     }
     .category-group{position:relative;}
@@ -425,7 +425,7 @@
     '비닐, 소독제, 티슈 옆가방에 리필 (왼쪽칸)',
     '모자 챙기기 (오른쪽칸)',
     '선글라스 챙기기 (오른쪽칸)',
-    '텀블러 챙기기 (짐될 것 같으면 X)',    
+    '텀블러 챙기기 (짐될 것 같으면 X)',
     '무거운 건 캐리어에 빼고 가기',
   ];
   const EVENING = [
@@ -460,10 +460,10 @@
     '쓰고 난 일회용품은 버리기(챙기지 말 것)',
     '멀티어댑터 캐리어 넣기',
     '드라이기 캐리어 넣기',
-    '유로 꺼내서 지갑에 넣기(가운데 주머니)',       
+    '유로 꺼내서 지갑에 넣기(가운데 주머니)',
     '필터 샤워기 빼서 캐리어에 넣기',
     '호텔 샤워기 원래대로 해놓기',
-    '방 나가기 전에 물건 있는지 체크',    
+    '방 나가기 전에 물건 있는지 체크',
   ];
   const ARRIVE_PARIS = [
     '캐리어 자리 선정, 열기',
@@ -473,7 +473,7 @@
     '호텔 샤워기 뺀 건 세면대 잘 보이는 곳에 두기',
     '파란 고양이 파우치 침대 앞 잘 보이는 곳에 두기',
     '베개커버 씌우기',
-    '멀티어댑터 셋팅', 
+    '멀티어댑터 셋팅',
   ];
   const CHECKOUT_PARIS = [
     '쓰고 난 일회용품은 버리기(챙기지 말 것), 물 특히!)',
@@ -484,7 +484,7 @@
     '드라이기 캐리어 넣기',
     '보조배터리, 선풍기 다 보조가방에 챙기기',
     '캐리어 비닐커버 하기',
-    '방 나가기 전에 물건 있는지 체크',        
+    '방 나가기 전에 물건 있는지 체크',
   ];
 
   // 여행 기간(7/28~8/5)을 하루 1카테고리로. 하루 안에 섹션(아침/이벤트/저녁) 배치.
@@ -531,9 +531,25 @@
     if(!m) return Infinity;
     return parseInt(m[1],10)*100 + parseInt(m[2],10);
   }
+  // 특정 시간대의 (월, 일)을 구함 — 기기(폰) 시간대와 무관하게 현지 날짜를 계산
+  function ymdInTZ(tz){
+    try{
+      const parts = new Intl.DateTimeFormat('en-CA', { timeZone:tz, month:'2-digit', day:'2-digit' }).formatToParts(new Date());
+      const m = +parts.find(p=>p.type==='month').value;
+      const d = +parts.find(p=>p.type==='day').value;
+      return { m, d };
+    }catch(e){
+      const now = new Date();
+      return { m: now.getMonth()+1, d: now.getDate() };
+    }
+  }
+  // 여행 현지 날짜 기준 오늘 키(월*100+일).
+  // 8/1 전까지는 영국(런던), 그 뒤로는 프랑스(파리) 시간대로 계산.
   function todayKey(){
-    const d = new Date();
-    return (d.getMonth()+1)*100 + d.getDate();
+    const rough = ymdInTZ('Europe/Paris');
+    const tz = (rough.m*100 + rough.d) < 801 ? 'Europe/London' : 'Europe/Paris';
+    const { m, d } = ymdInTZ(tz);
+    return m*100 + d;
   }
   function isPastDate(date){
     const k = dateSortKey(date);
@@ -629,11 +645,10 @@
     const p = currentPerson();
     const ok = confirm(`⚠️ "${p.name}" 님의 목록을 기본 할 일로 되돌리고\n모든 체크를 해제합니다.\n계속할까요?`);
     if(!ok) return;
-    const fresh = makeDefaultPerson(p.name);
-    fresh.id = p.id;
-    state.people[p.id] = fresh;
-    saveState(); renderAll();
-    showToast('기본 목록으로 리셋되었어요 🔄');
+    // 저장된 캐시(localStorage)를 완전히 지우고 기본 상태로 되돌린 뒤 새로고침
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){ console.warn('캐시 삭제 실패:', e); }
+    memoryFallback = null;
+    location.reload();
   });
 
   /* ---------- 모든 항목 지우기: 카테고리·할 일 싹 삭제 ---------- */
@@ -715,6 +730,25 @@
     el.scrollIntoView({ behavior:'smooth', block:'start' });
     el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
   }
+  // 오늘(현지) 날짜에 해당하는 카테고리로 자동 이동. 없으면 오늘 이후 가장 가까운 일자로.
+  function jumpToToday(){
+    const tk = todayKey();
+    const cats = currentPerson().categories;
+    // 오늘 날짜 카드 우선, 없으면 오늘 이후 가장 이른 날짜
+    let target = cats.find(c=>dateSortKey(c.date)===tk);
+    if(!target){
+      const future = cats.filter(c=>dateSortKey(c.date)!==Infinity && dateSortKey(c.date)>tk)
+                         .sort((a,b)=>dateSortKey(a.date)-dateSortKey(b.date));
+      target = future[0];
+    }
+    if(target){
+      const el = document.getElementById('cat_'+target.id);
+      if(el){
+        el.scrollIntoView({ behavior:'auto', block:'start' });
+        el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+      }
+    }
+  }
 
   /* ---------- 카테고리(일자) 렌더링 ---------- */
   function renderCategories(){
@@ -731,24 +765,28 @@
       if(past && !dividerInserted){
         const div = document.createElement('div');
         div.className = 'past-divider';
-        div.textContent = '⏳ 지난 일정';
+        div.textContent = '⏳ 지난 일정 (눌러서 펼치기)';
         container.appendChild(div);
         dividerInserted = true;
       }
-      container.appendChild(buildCategoryBlock(cat, past));
+      // 지난 날짜는 기본으로 접어서 헤더만 보이게 함 (누르면 펼쳐짐)
+      container.appendChild(buildCategoryBlock(cat, past, past));
     });
   }
 
-  function buildCategoryBlock(cat, past){
+  function buildCategoryBlock(cat, past, forceCollapsed){
     const { total, done, pct } = catStats(cat);
     const complete = total>0 && done===total;
+    // 지난 날짜는 기본으로 접힘. 단 사용자가 직접 펼쳐둔 경우(userExpanded)는 존중.
+    const collapsed = forceCollapsed ? !cat.userExpanded : !!cat.collapsed;
+    const collapsed_state = { value: collapsed }; // 헤더 토글이 참조할 현재 접힘 상태
 
     const wrap = document.createElement('div');
     wrap.className = 'category-group' + (past?' past':'') + (complete?' complete':'');
     wrap.id = 'cat_'+cat.id;
     wrap.innerHTML = `
     ${complete ? '<div class="stamp">Complete!</div>' : ''}
-    <div class="category-header ${cat.collapsed?'collapsed':''}">
+    <div class="category-header ${collapsed?'collapsed':''}">
       <span class="cat-date">${escapeHtml(cat.date||'—')}${cat.dayNum?`<small>${cat.dayNum}일차</small>`:''}</span>
       <div class="cat-main">
         ${cat.title ? `<div class="cat-title">${escapeHtml(cat.title)}</div>` : ''}
@@ -763,7 +801,7 @@
       </div>
       <span class="caret">▾</span>
     </div>
-    <div class="category-body ${cat.collapsed?'hidden':''}"></div>
+    <div class="category-body ${collapsed?'hidden':''}"></div>
   `;
 
     const body = $('.category-body', wrap);
@@ -780,13 +818,16 @@
     addSecBtn.addEventListener('click', ()=> addSection(cat));
     body.appendChild(addSecBtn);
 
-    // 헤더 클릭 → 접기/펼치기
+    // 헤더 클릭 → 접기/펼치기 (현재 화면 상태 기준으로 토글, 지난 날짜 접힘도 반영)
     $('.category-header', wrap).addEventListener('click', e=>{
       if(e.target.closest('.cat-actions')) return;
-      cat.collapsed = !cat.collapsed;
+      const nowCollapsed = !collapsed_state.value;
+      collapsed_state.value = nowCollapsed;
+      cat.collapsed = nowCollapsed;
+      cat.userExpanded = !nowCollapsed; // 지난 날짜라도 사용자가 펼치면 유지
       saveState();
-      $('.category-header', wrap).classList.toggle('collapsed', cat.collapsed);
-      body.classList.toggle('hidden', cat.collapsed);
+      $('.category-header', wrap).classList.toggle('collapsed', nowCollapsed);
+      body.classList.toggle('hidden', nowCollapsed);
     });
     $('[data-act="editcat"]', wrap).addEventListener('click', ()=> editCategory(cat));
     $('[data-act="delcat"]', wrap).addEventListener('click', ()=> deleteCategory(cat));
@@ -1003,6 +1044,15 @@
     }
     applyTheme();
     renderAll();
+    // 첫날(7/28)이거나 여행 시작 전에는 편지부터 보이게 맨 위에서 시작,
+    // 7/29 이후(여행 중)에는 오늘 해당 날짜 카드로 자동 스크롤
+    const tk = todayKey();
+    const firstKey = (TRIP_DATES[0][0]*100 + TRIP_DATES[0][1]); // 728
+    if(tk <= firstKey){
+      window.scrollTo(0, 0);
+    }else{
+      setTimeout(jumpToToday, 300);
+    }
     if(!storageAvailable){
       setTimeout(()=> showToast('⚠️ 이 브라우저는 저장이 안돼요. 일반 브라우저로 열어주세요'), 500);
     }
