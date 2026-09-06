@@ -304,8 +304,8 @@
 
 <div class="wrap">
 
-<div class="card hero" id="hero">
-  <button class="hero-toggle" id="heroToggle" aria-expanded="true" aria-controls="heroBody">
+<div class="card hero collapsed" id="hero">
+  <button class="hero-toggle" id="heroToggle" aria-expanded="false" aria-controls="heroBody">
     <span class="ht-label when-open">여행 개요</span>
     <span class="ht-label when-closed">🗼 10.05(월) ~ 10.10(토) · 5박 6일 · 킨시초</span>
     <span class="caret" aria-hidden="true">▾</span>
@@ -985,19 +985,26 @@
   var btn  = document.getElementById('heroToggle');
   if (!hero || !btn) return;
 
-  function set(open){
+  var KEY = 'tokyoHeroV2';
+
+  function set(open, persist){
     hero.classList.toggle('collapsed', !open);
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    try { localStorage.setItem('tokyoHero', open ? 'open' : 'closed'); } catch (e) {}
+    if (persist) {
+      try { localStorage.setItem(KEY, open ? 'open' : 'closed'); } catch (e) {}
+    }
   }
 
   btn.addEventListener('click', function(){
-    set(hero.classList.contains('collapsed'));
+    set(hero.classList.contains('collapsed'), true);
   });
 
-  var saved = 'open';
-  try { saved = localStorage.getItem('tokyoHero') || 'open'; } catch (e) {}
-  set(saved !== 'closed');
+  var saved = null;
+  try {
+    saved = localStorage.getItem(KEY);
+    localStorage.removeItem('tokyoHero');
+  } catch (e) {}
+  set(saved === 'open', false);
 })();
 </script>
 
