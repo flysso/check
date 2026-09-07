@@ -210,6 +210,103 @@
   .tagx.hot{background:linear-gradient(100deg,var(--warning),var(--danger));color:#fff;}
   .tagx.mid{background:var(--sky-light);color:var(--sky-strong);border:1px solid var(--border-strong);}
 
+  /* ---- 구간별 노선 ---- */
+  .leg-day{
+    font-size:15px;margin:26px 0 10px;padding-left:12px;
+    border-left:5px solid var(--border-strong);
+  }
+  .leg-day:first-of-type{margin-top:6px;}
+  .legs{display:flex;flex-direction:column;gap:8px;}
+  .leg{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    background:var(--card-bg-soft);border:1px solid var(--border);border-radius:12px;padding:12px 15px;
+  }
+  .lg-main{flex:1 1 260px;min-width:0;}
+  .lg-st{font-size:15px;}
+  .lg-ar{color:var(--text-faint);margin:0 3px;}
+  .lg-line{display:block;font-size:12.5px;color:var(--text-soft);margin-top:3px;}
+  .lg-line b{color:var(--sky-strong);}
+  .lg-side{display:flex;align-items:center;gap:12px;flex:0 0 auto;margin-left:auto;}
+  .lg-t{font-size:12.5px;color:var(--text-faint);white-space:nowrap;}
+  .lg-go{
+    text-decoration:none;white-space:nowrap;font-size:13px;color:#fff;border-radius:20px;padding:7px 15px;
+    background:linear-gradient(100deg,var(--sky),var(--mint));box-shadow:0 2px 0 var(--mint-strong);
+  }
+  .lg-go:active{transform:translateY(1px);box-shadow:0 1px 0 var(--mint-strong);}
+
+  /* ---- 공유 시트 ---- */
+  .share{
+    background:linear-gradient(100deg,var(--sky),var(--mint));border:none;color:#fff;
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  }
+  .share .stxt{flex:1 1 240px;min-width:0;}
+  .share .stxt b{display:block;font-size:16.5px;margin-bottom:3px;}
+  .share .stxt span{font-size:13px;color:rgba(255,255,255,.9);}
+  .share a{
+    flex:0 0 auto;text-decoration:none;background:#fff;color:var(--sky-strong);
+    border-radius:12px;padding:11px 20px;font-size:14.5px;box-shadow:0 3px 0 rgba(0,0,0,.12);
+  }
+  .share a:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.12);}
+  .sheet-link{
+    display:inline-flex;align-items:center;gap:5px;margin-left:auto;white-space:nowrap;
+    font-size:12px;text-decoration:none;color:var(--sky-strong);
+    background:var(--card-bg-soft);border:1px solid var(--border-strong);border-radius:20px;padding:6px 12px;
+  }
+  .sheet-link:hover{border-color:var(--sky);background:var(--sky-light);}
+
+  /* ---- checklist toggle (db) ---- */
+  .b-row.has-chk{grid-template-columns:auto 1fr auto;}
+  .chk{
+    width:26px;height:26px;flex:none;align-self:center;cursor:pointer;font-family:inherit;
+    border-radius:8px;border:2px solid var(--border-strong);background:var(--card-bg);
+    color:#fff;font-size:14px;line-height:1;padding:0;
+  }
+  .chk:hover{border-color:var(--mint);}
+  .chk:focus-visible{outline:3px solid var(--sky);outline-offset:2px;}
+  .b-row.done .chk{background:var(--mint-strong);border-color:var(--mint-strong);}
+  .b-row.done .w{opacity:.5;}
+  .b-row.done .w > b:first-child,.b-row.done .w{text-decoration:line-through;}
+  .b-row.done .w em{text-decoration:none;}
+
+  /* ---- my items (db) ---- */
+  .card.mine{border:2px dashed var(--border-strong);background:var(--card-bg-soft);}
+  .mine h3{font-size:16.5px;margin:0 0 4px;display:flex;align-items:center;gap:7px;}
+  .mine .mdesc{font-size:12.5px;color:var(--text-soft);margin:0 0 14px;}
+  .mine-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+  .mine-item{
+    display:grid;grid-template-columns:56px 1fr auto;gap:10px;align-items:baseline;
+    background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:10px 13px;
+  }
+  .mine-item .mt{font-size:13px;color:var(--sky-strong);white-space:nowrap;}
+  .mine-item .mb{font-size:14.5px;min-width:0;}
+  .mine-item .mb small{display:block;font-size:12.5px;color:var(--text-soft);}
+  .mine-item .md{
+    font-size:11px;color:var(--mint-strong);background:var(--mint-light);
+    border-radius:20px;padding:2px 8px;margin-right:6px;white-space:nowrap;
+  }
+  .mine-del{
+    border:none;background:none;color:var(--text-faint);font-size:15px;cursor:pointer;
+    padding:2px 7px;border-radius:6px;font-family:inherit;
+  }
+  .mine-del:hover{background:var(--danger-light);color:var(--danger);}
+  .mine-empty{font-size:13px;color:var(--text-faint);padding:4px 2px 10px;}
+  .mine-form{display:flex;gap:8px;flex-wrap:wrap;}
+  .mine-form input{
+    font-family:inherit;font-size:14px;color:var(--text);background:var(--card-bg);
+    border:1px solid var(--border-strong);border-radius:10px;padding:9px 11px;min-width:0;
+  }
+  .mine-form input[name="time"]{width:112px;flex:0 0 auto;}
+  .mine-form input[name="title"]{flex:2 1 170px;}
+  .mine-form input[name="note"]{flex:1 1 140px;}
+  .mine-form input:focus{outline:none;border-color:var(--sky);box-shadow:0 0 0 3px var(--sky-light);}
+  .mine-form button{
+    font-family:inherit;font-size:14px;border:none;border-radius:10px;padding:9px 18px;
+    color:#fff;cursor:pointer;background:linear-gradient(100deg,var(--sky),var(--mint));
+    box-shadow:0 3px 0 var(--mint-strong);
+  }
+  .mine-form button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--mint-strong);}
+  .mine-msg{font-size:12.5px;color:var(--danger);margin-top:10px;}
+
   /* ---- day ---- */
   .day-hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
   .day-chip{
@@ -278,16 +375,16 @@
 
 </head>
 <body>
-</head>
-<body>
 <div class="topbar">
   <h1>🗼 하윤지유 in Tokyo</h1>
+  <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1VZavcThMko_EGbiK1qjH487h3KgtdSDc93P68GHumAQ/edit?gid=1920886231#gid=1920886231" target="_blank" rel="noopener">📋 공유 시트</a>
 </div>
 
 <nav class="nav" aria-label="메뉴">
   <div class="row mainrow" role="tablist" aria-label="주요 메뉴">
     <button class="mtab on" data-panel="schedule" role="tab" aria-selected="true">📋 일정</button>
-    <button class="mtab" data-panel="route" role="tab" aria-selected="false">🗺️ 동선</button>
+    <button class="mtab" data-panel="route" role="tab" aria-selected="false">🗺️ 지도</button>
+    <button class="mtab" data-panel="route2" role="tab" aria-selected="false">🚇 노선</button>
     <button class="mtab" data-panel="book" role="tab" aria-selected="false">✅ 예약</button>
     <button class="mtab" data-panel="tips" role="tab" aria-selected="false">💡 꿀팁</button>
   </div>
@@ -326,10 +423,10 @@
   <h2>🔀 어떤 안으로 볼까요</h2>
   <p class="sub">아래를 누르면 <b>화요일과 금요일</b>이 통째로 바뀝니다. 나머지 나흘은 두 안이 같습니다.</p>
   <div class="tabs" role="tablist">
-    <button class="tab on" data-plan="1" role="tab" aria-selected="true"><span class="tn">1안 · 물길 코스 🚢</span><span class="td">화 아사쿠사·배·오다이바 / 금 요코하마+시부야</span></button>
-    <button class="tab" data-plan="2" role="tab" aria-selected="false"><span class="tn">2안 · 쇼핑 코스 🛍️</span><span class="td">화 하라주쿠·시부야 / 금 요코하마만</span></button>
+    <button class="tab on" data-plan="1" role="tab" aria-selected="true"><span class="tn">1안 · 물길 코스 🚢</span><span class="td">월 해리포터 / 화 아사쿠사·배·오다이바 / 금 +시부야</span></button>
+    <button class="tab" data-plan="2" role="tab" aria-selected="false"><span class="tn">2안 · 순서 바꿈 🔁</span><span class="td">월 하라주쿠·시부야 / 화 해리포터 (여유) / 금 요코하마만</span></button>
   </div>
-  <p class="tabnote"><b>시부야는 두 안 모두 한 번씩 들어갑니다</b> — 1안은 금요일 요코하마 귀로에, 2안은 화요일에 여유 있게. 대신 <b>2안은 아사쿠사와 오다이바를 통째로 포기</b>합니다. 아사쿠사는 킨시초에서 12분이라 아무 날 저녁에나 따로 다녀올 수 있어요.</p>
+  <p class="tabnote"><b>2안은 월·화를 맞바꾼 안입니다.</b> 해리포터를 온전한 하루로 옮겨 치이카와파크·가샤폰이 쫓기지 않고, 도착일 오후는 다케시타도리(11시 오픈)에 딱 맞습니다. 대신 <b>2안은 아사쿠사와 오다이바를 포기</b>합니다. 10/5에도 늦은 편(15:30·15:55·16:10)이 있어 도착일에 탈 수는 있지만, 그러면 미라이칸이 통째로 날아가고 오다이바를 30분만 보게 됩니다 — 제대로 볼 거면 오전부터 시작하는 화요일이어야 합니다. 시부야는 두 안 모두 한 번씩 들어갑니다.</p>
 </div>
 
 <div class="daypanel" data-day="all">
@@ -337,9 +434,10 @@
   <h2>📅 한눈에</h2>
   <p class="sub">하루에 큰 것 하나씩. 아이 체력에 따라 <b>선택</b> 항목부터 덜어내면 됩니다.</p>
   <div class="glance">
-    <div class="g-row" style="border-left-color:var(--d1)"><div class="g-d">10/5 월</div><div class="g-m">🪄 해리포터 스튜디오 → 치이카와파크 → 가샤폰 백화점<span class="g-w">짐을 공항에서 부치니 도착 즉시 직행</span></div></div>
+    <div class="g-row v1" style="border-left-color:var(--d1)"><div class="g-d">10/5 월</div><div class="g-m">🪄 해리포터 → 치이카와파크<span class="opt-tag">선택</span> → 가샤폰 백화점<span class="g-w">도착 즉시 직행 — 치이카와를 넣으면 저녁이 빠듯</span></div></div>
+    <div class="g-row v2" hidden style="border-left-color:var(--d1)"><div class="g-d">10/5 월</div><div class="g-m">🛍️ 하라주쿠 → 시부야 → 저녁에 팀랩<span class="g-w">다케시타도리가 11시 오픈이라 오후 시작이 자연스러움</span></div></div>
     <div class="g-row v1" style="border-left-color:var(--d2)"><div class="g-d">10/6 화</div><div class="g-m">🚢 아사쿠사 → 수상버스 → 오다이바 → 팀랩<span class="g-w">배로 이어지는 하루. 디즈니 전 회복일</span></div></div>
-    <div class="g-row v2" hidden style="border-left-color:var(--d2)"><div class="g-d">10/6 화</div><div class="g-m">🛍️ 하라주쿠 → 시부야 → 저녁에 팀랩<span class="g-w">가챠·캐릭터 굿즈 중심. 야마노테 한 줄로 이어짐</span></div></div>
+    <div class="g-row v2" hidden style="border-left-color:var(--d2)"><div class="g-d">10/6 화</div><div class="g-m">🪄 해리포터 (오전 입장) → 치이카와파크<span class="opt-tag">선택</span> → 가샤폰<span class="g-w">온전한 하루라 저녁까지 여유</span></div></div>
     <div class="g-row" style="border-left-color:var(--d3)"><div class="g-d">10/7 수</div><div class="g-m">🏰 도쿄 디즈니씨 종일<span class="g-w">체력이 가장 좋은 날에 배치</span></div></div>
     <div class="g-row" style="border-left-color:var(--d4)"><div class="g-d">10/8 목</div><div class="g-m">🏛️ 국립박물관 역사체험 13~16시 → 우에노 쇼핑<span class="opt-tag">선택</span> → 스카이트리<span class="opt-tag">선택</span><span class="g-w">평일이라 투어 시간에 제약 없음</span></div></div>
     <div class="g-row v1" style="border-left-color:var(--d5)"><div class="g-d">10/9 금</div><div class="g-m">🍜 요코하마 → 🎮 시부야 (닌텐도 도쿄)<span class="g-w">셋 다 직통. 하루 종일 환승 0회</span></div></div>
@@ -352,9 +450,13 @@
 
 <div class="daypanel" data-day="1" hidden>
 <div class="card" id="d1">
-  <div class="day-hd"><span class="day-chip" style="background:var(--d1)">D1 · 10/5 월</span><h2>🪄 해리포터 스튜디오 투어</h2></div>
-  <p class="sub">짐을 공항에서 부치기 때문에 성립하는 날입니다. 캐리어를 들고 있었다면 불가능했습니다.</p>
-  <div class="plan">
+  <div class="day-hd"><span class="day-chip" style="background:var(--d1)">D1 · 10/5 월</span>
+    <h2 class="v1">🪄 해리포터 스튜디오 투어</h2>
+    <h2 class="v2" hidden>🛍️ 하라주쿠 → 시부야 → 팀랩</h2>
+  </div>
+  <p class="sub v1">짐을 공항에서 부치기 때문에 성립하는 날입니다. 다만 <b>13시 입장 → 16시 종료 → 치이카와파크</b>로 이어지는 저녁이 빠듯합니다.</p>
+  <p class="sub v2" hidden>도착일 오후에 딱 맞는 코스입니다. 다케시타도리 상점이 <b>11시에 열기 때문에</b> 오후 시작이 오히려 자연스럽고, 앉을 데가 많은 쇼핑 코스라 비행 직후에도 버팁니다.</p>
+  <div class="plan v1">
     <div class="t">09:50</div>
     <div class="e"><h4>하네다 착륙</h4><p>입국 심사와 수하물까지 보통 40~60분. 11시 전에 나오면 정상입니다.</p></div>
 
@@ -377,10 +479,11 @@
     <div class="e"><h4>도시마엔 → 이케부쿠로</h4><p class="mv">세이부이케부쿠로선 약 12분</p></div>
 
     <div class="t">16:40</div>
-    <div class="e"><h4>치이카와 파크 <span class="opt-tag">사전 예매</span></h4><p class="mv">선샤인시티 <b>애넥스 B1/1F</b> · 10:00~19:00 · <b>마지막 입장 17:40</b></p>
+    <div class="e"><h4>치이카와 파크 <span class="opt-tag">선택</span> <span class="opt-tag">사전 예매</span></h4><p class="mv">선샤인시티 <b>애넥스 B1/1F</b> · 10:00~19:00 · <b>마지막 입장 17:40</b></p>
       <p>체험형 전시와 파크 한정 굿즈 숍으로 이뤄져 있습니다.</p>
       <span class="tip warn">🚪 <b>지상에서 직접 못 들어갑니다.</b> 니토리 이케부쿠로 선샤인60도리점 옆 <b>선샤인시티 지하 통로 입구</b>로 내려가 애넥스 B1으로 가세요. 헤매기 쉬운 구조라 미리 지도에 저장해 두시길.</span>
-      <span class="tip">💳 <b>현금을 안 받습니다.</b> 카드·IC카드·간편결제만 됩니다. 입장 시각도 지정제라 예약한 시간을 넘기면 못 들어갑니다.</span></div>
+      <span class="tip">💳 <b>현금을 안 받습니다.</b> 카드·IC카드·간편결제만 됩니다. 입장 시각도 지정제라 예약한 시간을 넘기면 못 들어갑니다.</span>
+      <span class="tip warn">🤔 <b>이걸 빼면 오늘 저녁의 시간 압박이 통째로 사라집니다.</b> 스튜디오에서 늦게 나와도 되고, 가샤폰 백화점을 20시까지 느긋하게 볼 수 있습니다. 아이가 치이카와를 특별히 좋아하는 게 아니면 뺄 만합니다.</span></div>
 
     <div class="t">18:05</div>
     <div class="e"><h4>가샤폰 백화점 이케부쿠로 총본점</h4><p class="mv">선샤인시티 알파 3층 · 약 20:00까지</p>
@@ -393,6 +496,50 @@
     <div class="t">20:40</div>
     <div class="e"><h4>킨시초 복귀 · 체크인</h4><p class="mv">약 30분</p><p>짐은 18시경 이미 프런트에 도착해 있습니다. 씻고 바로 취침 — 모레가 디즈니씨입니다.</p></div>
   </div>
+
+  <div class="plan v2" hidden>
+    <div class="t">09:50</div>
+    <div class="e"><h4>하네다 착륙</h4><p>입국 심사와 수하물까지 보통 40~60분. 11시 전에 나오면 정상입니다.</p></div>
+
+    <div class="t">11:00</div>
+    <div class="e"><h4>제3터미널역 2층 · 짐 발송</h4><p><b>KEIKYU TIC 카운터 안쪽 특설 카운터</b>에서 접수합니다. 접수 09:00~15:00, 당일 18시경 호텔 도착. 게이큐 승차권을 보여주면 할인됩니다.</p>
+      <span class="tip">송장에 <b>예약자 이름 한 명으로 통일</b>해서 적으세요. <b>세면도구·잠옷·팀랩용 갈아입을 옷</b>은 기내 가방에 남겨두셔야 합니다.</span></div>
+
+    <div class="t">11:25</div>
+    <div class="e"><h4>하네다 → 하라주쿠</h4><p class="mv">게이큐선 시나가와 환승 → JR 야마노테선 · 약 45분</p></div>
+
+    <div class="t">12:10</div>
+    <div class="e"><h4>하라주쿠 점심</h4><p>기내식 이후 처음 먹는 끼니입니다. 다케시타도리 안은 서서 먹는 간식 위주라, 앉아서 먹으려면 오모테산도 쪽으로 한 블록 나오세요.</p></div>
+
+    <div class="t">13:10</div>
+    <div class="e"><h4>다케시타도리</h4><p>하라주쿠역 건너편 350m 골목. 10대 패션, 크레페, 캐릭터 잡화가 빽빽합니다. <b>오후엔 이미 전 매장이 열려 있어</b> 도착일 코스로 딱 맞습니다.</p>
+      <span class="tip">👛 좁고 사람이 많습니다. <b>아이 손 놓치기 쉬운 구간</b>이라 들어가기 전에 만날 장소를 정해두세요.</span></div>
+
+    <div class="t">14:00</div>
+    <div class="e"><h4>C-pla · 캐릭터 / 스티커 쇼핑</h4><p>가챠(캡슐토이) 전문점. 다케시타도리 일대에 캐릭터 굿즈·스티커·프리쿠라 가게가 몰려 있어 한 번에 돕니다.</p>
+      <span class="tip">🪙 <b>100엔 동전을 미리 준비하세요.</b> 현장 환전기 앞에 줄이 깁니다.</span></div>
+
+    <div class="t">14:40</div>
+    <div class="e"><h4>하라주쿠 → 시부야</h4><p class="mv">야마노테 1정거장 3분 · 또는 캣스트리트 도보 20분</p></div>
+
+    <div class="t">15:00</div>
+    <div class="e"><h4>시부야 대형 가챠샵 · 스크램블 교차로</h4><p>센터가이 일대에 가챠 전문점이 모여 있습니다. 스크램블 교차로는 사진 찍고 15분이면 끝나니 가볍게.</p></div>
+
+    <div class="t">16:00</div>
+    <div class="e"><h4>시부야 파르코 6층</h4><p><b>닌텐도 도쿄</b> · <b>포켓몬 센터 시부야</b> · 캡콤 스토어 · 점프숍이 한 층에. 2안에서는 금요일에 시부야를 안 가니 <b>여기가 유일한 기회</b>입니다.</p>
+      <span class="tip">🎟️ 혼잡할 때 정리권을 운영하는 경우가 있습니다. 도착하면 6층부터 올라가세요. 영업 11:00~21:00. 시간이 남으면 도보 3분 거리 <b>시부야 로프트</b>까지.</span></div>
+
+    <div class="t">17:00</div>
+    <div class="e"><h4>시부야 → 신토요스</h4><p class="mv">지하철 약 40분(환승 2회) · 택시 약 25분</p>
+      <span class="tip">🚕 짐 없이 움직이지만 이 구간이 오늘 유일하게 깁니다. <b>지치면 택시</b>로.</span></div>
+
+    <div class="t">17:45</div>
+    <div class="e"><h4>팀랩 플래닛 TOKYO</h4><p>관람 60~90분. 끝나고 바로 호텔로 가니 젖은 채로 다른 일정을 소화할 필요가 없습니다.</p>
+      <span class="tip">👕 <b>복장이 전부입니다.</b> 맨발로 무릎까지 물에 들어갑니다. 걷어올려지는 반바지·치마로 입히고, <b>갈아입을 옷과 수건</b>을 챙기세요.</span></div>
+
+    <div class="t">19:15</div>
+    <div class="e"><h4>킨시초 복귀 · 체크인 · 저녁</h4><p class="mv">약 30분 · 택시면 15분</p><p>짐은 18시경 이미 프런트에 도착해 있습니다.</p></div>
+  </div>
 </div>
 
 <!-- DAY 2 -->
@@ -402,10 +549,10 @@
 <div class="card" id="d2">
   <div class="day-hd"><span class="day-chip" style="background:var(--d2)">D2 · 10/6 화</span>
     <h2 class="v1">🚢 아사쿠사 → 배 → 오다이바 → 팀랩</h2>
-    <h2 class="v2" hidden>🛍️ 하라주쿠 → 시부야 → 팀랩</h2>
+    <h2 class="v2" hidden>🪄 해리포터 · 치이카와파크 · 가샤폰</h2>
   </div>
   <p class="sub v1">스미다강을 따라 내려가며 하루가 이어집니다. 어제의 피로를 배 위에서 푸는 날. <b>1안 기준</b>입니다.</p>
-  <p class="sub v2" hidden>가챠·캐릭터 굿즈 중심의 하루. 하라주쿠 → 시부야가 야마노테 <b>한 정거장</b>이라 이동이 거의 없습니다. <b>2안 기준</b>이고, 이 날 시부야를 보기 때문에 금요일은 요코하마만 갑니다.</p>
+  <p class="sub v2" hidden>해리포터를 <b>온전한 하루</b>로 옮긴 날입니다. 오전에 입장하니 치이카와파크도 가샤폰도 쫓기지 않습니다 — 1안에서 저녁이 빠듯했던 문제가 여기서 풀립니다.</p>
   <div class="plan v1">
     <div class="t">08:30</div>
     <div class="e"><h4>호텔 조식</h4></div>
@@ -413,20 +560,22 @@
     <div class="t">09:15</div>
     <div class="e"><h4>센소지 · 나카미세</h4><p class="mv">킨시초 → 아사쿠사 12분</p><p>오전이 훨씬 한산합니다. 나카미세 군것질(닌교야키, 멘치카츠)로 시작하세요.</p></div>
 
-    <div class="t">11:15</div>
-    <div class="e"><h4>아사쿠사에서 이른 점심</h4><p>배 시간에 맞춰야 하니 여유 있게 먼저 먹습니다. 텐동이나 규카츠.</p></div>
+    <div class="t">11:30</div>
+    <div class="e"><h4>아사쿠사에서 이른 점심</h4><p>13:10 배를 타야 하니 먼저 먹습니다. 텐동이나 규카츠.</p>
+      <span class="tip">⛴️ <b>12:50까지 아사쿠사 선착장</b>(아즈마바시 옆)으로. 승선은 출항 10분 전부터입니다.</span></div>
 
-    <div class="t">12:30</div>
-    <div class="e"><h4>수상버스로 오다이바 <span class="opt-tag">선택</span></h4><p class="mv">아사쿠사 → 오다이바 해변공원 · 50~60분 · 어른 2,000엔 / 어린이 1,000엔</p>
-      <p>마쓰모토 레이지가 디자인한 우주선 같은 배(히미코·호타루나)입니다. 스미다강 다리 열두 개를 지나 도쿄만으로 나가는 동안 아이는 창밖만 봅니다.</p>
-      <span class="tip warn">⚠️ <b>출발 시각이 이 날의 기준점입니다.</b> 하루 2편뿐이라 배 시간이 정해지면 아사쿠사 일정을 거기 맞춰야 합니다. 운항이 재개되지 않았다면 긴자선 신바시 → 유리카모메로 35분입니다.</span></div>
-
-    <div class="t">13:40</div>
-    <div class="e"><h4>오다이바 해변 · 레인보우브리지 <span class="opt-tag">선택</span></h4><p>배에서 내리면 바로 해변공원입니다. 바다와 다리를 배경으로 사진 찍고 잠깐 걷습니다.</p></div>
+    <div class="t">13:10</div>
+    <div class="e"><h4>수상버스 <b>호타루나</b>로 오다이바 <span class="opt-tag">선택</span></h4><p class="mv">아사쿠사 → 오다이바 해변공원 · 약 60분 · 어른 2,000엔 / 어린이 1,000엔</p>
+      <p>마쓰모토 레이지가 디자인한 우주선 같은 배입니다. 스미다강 다리 열두 개를 지나 도쿄만으로 나가는 동안 아이는 창밖만 봅니다.</p>
+      <span class="tip">🛥️ <b>13:10은 호타루나 편입니다.</b> 옥상 전망 데크가 있는 배라 날씨만 좋으면 그 위가 오늘의 명당입니다. <b>히미코는 이번 여행 기간에 운항하지 않습니다</b>(예약 화면에 취소선).</span>
+      <span class="tip">🕐 <b>10/6 아사쿠사 출항</b> — 11:00 에메랄다스 · <b>13:10 호타루나</b> · 14:10 에메랄다스 · 15:30 호타루나 · 15:55 · 16:10 에메랄다스. 11:00 편을 타면 센소지가 90분으로 줄고, 14:10 이후 편이면 미라이칸이 빠듯해집니다.</span></div>
 
     <div class="t">14:20</div>
+    <div class="e"><h4>오다이바 해변 · 레인보우브리지 <span class="opt-tag">선택</span></h4><p>배에서 내리면 바로 해변공원입니다. 바다와 다리를 배경으로 사진 찍고 잠깐 걷습니다.</p></div>
+
+    <div class="t">15:00</div>
     <div class="e"><h4>일본과학미래관 (미라이칸) <span class="opt-tag">선택</span></h4><p class="mv">유리카모메 도쿄국제크루즈터미널역 · 약 10분</p><p>거대한 지구 디스플레이 '지오코스모스', 로봇과 우주 전시. 오다이바를 간다면 초5가 가장 오래 붙어 있을 곳입니다.</p>
-      <span class="tip">🕔 <b>마지막 입장 16:30, 폐관 17:00</b>입니다. 오늘 오다이바에서는 여기 하나만 보면 되니 <b>두 시간을 통째로</b> 쓰세요. 서두를 이유가 없습니다.</span></div>
+      <span class="tip">🕔 <b>마지막 입장 16:30, 폐관 17:00</b>입니다. 13:10 배를 타면 90분이 남습니다 — 오다이바에서 볼 건 여기 하나뿐이니 그 시간을 다 쓰세요. 11:00 배를 타면 두 시간 반이 됩니다.</span></div>
 
     <div class="t">16:45</div>
     <div class="e"><h4>오다이바 → 신토요스</h4><p class="mv">유리카모메 · 약 15분</p></div>
@@ -441,47 +590,36 @@
   </div>
 
   <div class="plan v2" hidden>
-    <div class="t">09:00</div>
-    <div class="e"><h4>호텔 조식</h4></div>
+    <div class="t">08:30</div>
+    <div class="e"><h4>호텔 조식</h4><p>어제 도착일이 가벼웠으니 오늘은 제대로 먹고 출발합니다.</p></div>
 
-    <div class="t">09:50</div>
-    <div class="e"><h4>킨시초 → 하라주쿠</h4><p class="mv">한조몬선 시부야 직통 25분 → 야마노테 1정거장 · 약 35분</p></div>
+    <div class="t">09:15</div>
+    <div class="e"><h4>킨시초 → 도시마엔</h4><p class="mv">JR 소부선 아키하바라 → 야마노테 이케부쿠로 → 세이부이케부쿠로선 · 약 55분</p>
+      <span class="tip">🚃 러시아워 끝자락이라 야마노테선이 아직 붐빕니다. 아이들 손 꼭 잡으시고요.</span></div>
 
     <div class="t">10:30</div>
-    <div class="e"><h4>메이지신궁 숲길 <span class="opt-tag">선택</span></h4><p>하라주쿠역 바로 앞입니다. 거대한 나무 도리이와 자갈길 숲이 도심 한복판에 있어서 대비가 큽니다. 본전까지 왕복 40분.</p>
-      <span class="tip">⏰ <b>다케시타도리 상점 상당수가 11시에 엽니다.</b> 그 시간을 여기서 메우는 셈이라 일부러 앞에 넣었습니다. 관심 없으면 출발을 한 시간 늦추세요.</span></div>
+    <div class="e"><h4>워너브러더스 스튜디오 투어 도쿄 <span class="opt-tag">3시간</span></h4><p>대연회장 → 금지된 숲 → 다이애건 앨리 → 호그와트 모형. <b>오전 슬롯이라 시간에 쫓기지 않습니다</b> — 버터비어도 빗자루 체험도 여유 있게.</p>
+      <span class="tip">🎟️ 1안과 달리 <b>오전 10:00~10:30 슬롯</b>으로 예약하세요. 이게 2안의 핵심입니다.</span></div>
 
-    <div class="t">11:20</div>
-    <div class="e"><h4>다케시타도리</h4><p>하라주쿠역 건너편 350m 골목. 10대 패션, 크레페, 솜사탕, 캐릭터 잡화가 빽빽합니다. 이 여행에서 가장 <b>'지금 일본'</b>다운 골목이라 초5가 좋아합니다.</p>
-      <span class="tip">👛 좁고 사람이 많습니다. <b>아이 손 놓치기 쉬운 구간</b>이라 들어가기 전에 만날 장소를 정해두세요.</span></div>
+    <div class="t">13:40</div>
+    <div class="e"><h4>도시마엔 → 이케부쿠로 · 점심</h4><p class="mv">세이부이케부쿠로선 약 12분</p><p>스튜디오 안 카페는 줄이 기니 나와서 이케부쿠로에서 제대로 먹습니다.</p></div>
 
-    <div class="t">12:20</div>
-    <div class="e"><h4>C-pla · 캐릭터 / 스티커 쇼핑</h4><p>가챠(캡슐토이) 전문점입니다. 다케시타도리 일대에 캐릭터 굿즈·스티커·프리쿠라 가게가 몰려 있어 한 번에 돕니다.</p>
-      <span class="tip">🪙 <b>100엔 동전을 미리 바꿔두세요.</b> 가챠는 대부분 동전만 받고, 현장 환전기 앞에 줄이 깁니다. 오늘 예산을 아이별로 정해두면 실랑이가 줄어듭니다.</span></div>
+    <div class="t">15:00</div>
+    <div class="e"><h4>치이카와 파크 <span class="opt-tag">선택</span> <span class="opt-tag">사전 예매</span></h4><p class="mv">선샤인시티 <b>애넥스 B1/1F</b> · 10:00~19:00 · 마지막 입장 17:40</p>
+      <p>체험형 전시와 파크 한정 굿즈 숍. <b>15시 입장이면 마지막 입장 시각을 신경 쓸 필요가 없습니다.</b></p>
+      <span class="tip warn">🚪 <b>지상에서 직접 못 들어갑니다.</b> 니토리 이케부쿠로 선샤인60도리점 옆 <b>지하 통로 입구</b>로 내려가 애넥스 B1으로. 미리 지도에 저장해 두세요.</span>
+      <span class="tip">💳 <b>현금을 안 받습니다.</b> 카드·IC카드·간편결제만. 입장 시각 지정제라 예약 시간을 넘기면 못 들어갑니다.</span></div>
 
-    <div class="t">13:10</div>
-    <div class="e"><h4>하라주쿠 점심</h4><p>다케시타도리 안은 서서 먹는 간식 위주라 앉아서 먹으려면 오모테산도 쪽으로 한 블록 나오는 게 낫습니다.</p></div>
+    <div class="t">16:40</div>
+    <div class="e"><h4>가샤폰 백화점 이케부쿠로 총본점</h4><p class="mv">선샤인시티 알파 3층 · 약 20:00까지</p>
+      <p>가챠 기계가 수천 대. <b>세 시간 넘게 남아 있으니</b> 포켓몬센터 메가도쿄와 점프숍까지 같은 건물에서 다 돕니다.</p>
+      <span class="tip">🪙 <b>100엔 동전을 미리 준비하세요.</b> 아이별 예산을 정해두면 실랑이가 줄어듭니다.</span></div>
 
-    <div class="t">14:20</div>
-    <div class="e"><h4>하라주쿠 → 시부야</h4><p class="mv">야마노테 1정거장 3분 · 또는 캣스트리트 도보 20분</p><p>날씨가 좋으면 <b>캣스트리트</b>로 걸어가세요. 하라주쿠와 시부야를 잇는 골목이라 그 자체가 코스가 됩니다.</p></div>
+    <div class="t">18:30</div>
+    <div class="e"><h4>이케부쿠로에서 야키니쿠</h4><p>동쪽 출구 일대에 야키니쿠집이 몰려 있습니다. 오늘 하루의 마무리.</p></div>
 
-    <div class="t">14:45</div>
-    <div class="e"><h4>시부야 대형 가챠샵</h4><p>센터가이 일대에 가챠 전문점이 모여 있습니다. 하라주쿠보다 기계 수가 훨씬 많아서, 여기가 오늘의 본무대입니다.</p></div>
-
-    <div class="t">15:40</div>
-    <div class="e"><h4>시부야 파르코 6층</h4><p><b>닌텐도 도쿄</b> · <b>포켓몬 센터 시부야</b> · 캡콤 스토어 · 점프숍이 한 층에 모여 있습니다. 2안에서는 금요일에 시부야를 안 가니 <b>여기가 유일한 기회</b>입니다.</p>
-      <span class="tip">🎟️ 혼잡할 때 정리권을 운영하는 경우가 있습니다. 도착하면 6층부터 올라가 상황을 확인하세요. 영업 11:00~21:00. 시간이 남으면 도보 3분 거리 <b>시부야 로프트</b>까지.</span></div>
-
-    <div class="t">16:30</div>
-    <div class="e"><h4>시부야 → 신토요스</h4><p class="mv">지하철 약 40분(환승 2회) · 택시 약 25분</p>
-      <span class="tip">🚕 오늘 유일하게 긴 이동입니다. 팀랩 예약 시간이 걸려 있으니 <b>지치면 택시</b>로. 4인이면 시간값이 아깝지 않습니다.</span></div>
-
-    <div class="t">17:15</div>
-    <div class="e"><h4>팀랩 플래닛 TOKYO</h4><p>관람 60~90분. 끝나고 바로 호텔로 가니 젖은 채로 다른 일정을 소화할 필요가 없습니다.</p>
-      <span class="tip">👕 <b>복장이 전부입니다.</b> 맨발로 무릎까지 물에 들어가는 작품이 있습니다. 걷어올려지는 반바지·치마로 입히고, <b>갈아입을 옷과 수건</b>을 챙기세요. 대여 반바지도 있습니다.</span></div>
-
-    <div class="t">19:00</div>
-    <div class="e"><h4>킨시초 복귀 · 저녁</h4><p class="mv">약 30분 · 택시면 15분</p>
+    <div class="t">20:00</div>
+    <div class="e"><h4>킨시초 복귀</h4><p class="mv">약 30분</p>
       <span class="tip">🛏️ 내일이 디즈니씨입니다. <b>9시 취침.</b></span></div>
   </div>
 </div>
@@ -795,7 +933,7 @@
 
   <text class="sm" x="158" y="42"  text-anchor="middle">공항에서 70분</text>
   <text class="sm" x="600" y="194" text-anchor="start">3분</text>
-  <text class="sm" x="438" y="350" text-anchor="end">배 55분</text>
+  <text class="sm" x="438" y="350" text-anchor="end">배 60분</text>
   <text class="sm" x="676" y="312" text-anchor="start">30분</text>
   <text class="sm" x="152" y="442" text-anchor="middle">요코하마 → 시부야 35분</text>
   <text class="sm" x="486" y="539" text-anchor="start">킨시초에서 50분</text>
@@ -842,23 +980,210 @@
 
 </section>
 
+<section class="panel" data-panel="route2" hidden>
+<div class="card">
+  <h2>🚇 구간별 노선</h2>
+  <p class="sub">위 <b>일차 탭</b>으로 그날 구간만 볼 수 있고, <b>1안/2안</b>에 따라 월·화·금 구간이 바뀝니다. 각 구간의 <b>길찾기</b>를 누르면 구글맵 대중교통 안내가 열립니다. 지연·플랫폼·막차는 앱이 정확하니 <b>움직이기 직전에</b> 한 번 눌러보세요.</p>
+  <div class="leg-group v1" data-legday="1">
+  <h3 class="leg-day" style="border-left-color:var(--d1)">10/5 월 · 1안 (해리포터·이케부쿠로)</h3>
+  <div class="legs">
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">하네다 공항 제3터미널</span> <span class="lg-ar">→</span> <span class="lg-st">도시마엔</span>
+        <span class="lg-line">게이큐선 → 도영 아사쿠사선 직통 → <b>다이몬</b> 환승 → 도영 오에도선</span></div>
+      <div class="lg-side"><span class="lg-t">약 70분 · 환승 1</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF%E7%AC%AC3%E3%82%BF%E3%83%BC%E3%83%9F%E3%83%8A%E3%83%AB&destination=%E8%B1%8A%E5%B3%B6%E5%9C%92%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">도시마엔</span> <span class="lg-ar">→</span> <span class="lg-st">이케부쿠로</span>
+        <span class="lg-line">세이부이케부쿠로선</span></div>
+      <div class="lg-side"><span class="lg-t">약 12분 · 환승 0</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E8%B1%8A%E5%B3%B6%E5%9C%92%E9%A7%85&destination=%E6%B1%A0%E8%A2%8B%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">이케부쿠로</span> <span class="lg-ar">→</span> <span class="lg-st">킨시초</span>
+        <span class="lg-line">JR 야마노테선 → <b>아키하바라</b> 환승 → JR 소부선</span></div>
+      <div class="lg-side"><span class="lg-t">약 30분 · 환승 1</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E6%B1%A0%E8%A2%8B%E9%A7%85&destination=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+  </div>
+  </div>
+  <div class="leg-group v2" data-legday="1" hidden>
+  <h3 class="leg-day" style="border-left-color:var(--d1)">10/5 월 · 2안 (하라주쿠·시부야)</h3>
+  <div class="legs">
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">하네다 공항 제3터미널</span> <span class="lg-ar">→</span> <span class="lg-st">하라주쿠</span>
+        <span class="lg-line">게이큐선 → <b>시나가와</b> 환승 → JR 야마노테선</span></div>
+      <div class="lg-side"><span class="lg-t">약 45분 · 환승 1</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF%E7%AC%AC3%E3%82%BF%E3%83%BC%E3%83%9F%E3%83%8A%E3%83%AB&destination=%E5%8E%9F%E5%AE%BF%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">하라주쿠</span> <span class="lg-ar">→</span> <span class="lg-st">시부야</span>
+        <span class="lg-line">JR 야마노테선 1정거장 (또는 캣스트리트 도보 20분)</span></div>
+      <div class="lg-side"><span class="lg-t">약 3분 · 환승 0</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E5%8E%9F%E5%AE%BF%E9%A7%85&destination=%E6%B8%8B%E8%B0%B7%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">시부야</span> <span class="lg-ar">→</span> <span class="lg-st">신토요스</span>
+        <span class="lg-line">환승 2회 — <b>지치면 택시</b></span></div>
+      <div class="lg-side"><span class="lg-t">약 40분 / 택시 25분</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E6%B8%8B%E8%B0%B7%E9%A7%85&destination=%E6%96%B0%E8%B1%8A%E6%B4%B2%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">신토요스</span> <span class="lg-ar">→</span> <span class="lg-st">킨시초</span>
+        <span class="lg-line">환승 2회 · <b>4인이면 택시가 낫습니다</b></span></div>
+      <div class="lg-side"><span class="lg-t">약 30~40분 / 택시 15분</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E6%96%B0%E8%B1%8A%E6%B4%B2%E9%A7%85&destination=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+  </div>
+  </div>
+  <div class="leg-group v1" data-legday="2">
+  <h3 class="leg-day" style="border-left-color:var(--d2)">10/6 화 · 1안 (아사쿠사·오다이바)</h3>
+  <div class="legs">
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">킨시초</span> <span class="lg-ar">→</span> <span class="lg-st">아사쿠사</span>
+        <span class="lg-line">한조몬선 → <b>오시아게</b> 환승 → 도영 아사쿠사선</span></div>
+      <div class="lg-side"><span class="lg-t">약 12분 · 환승 1</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&destination=%E6%B5%85%E8%8D%89%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">아사쿠사 선착장</span> <span class="lg-ar">→</span> <span class="lg-st">오다이바 해변공원</span>
+        <span class="lg-line">도쿄크루즈 수상버스 — <b>13:10 호타루나</b> 권장</span></div>
+      <div class="lg-side"><span class="lg-t">약 60분 · 10/6 6편</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E6%B5%85%E8%8D%89%E9%A7%85&destination=%E3%81%8A%E5%8F%B0%E5%A0%B4%E6%B5%B7%E6%B5%9C%E5%85%AC%E5%9C%92&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">오다이바카이힌코엔</span> <span class="lg-ar">→</span> <span class="lg-st">도쿄국제크루즈터미널</span>
+        <span class="lg-line">유리카모메</span></div>
+      <div class="lg-side"><span class="lg-t">약 6분 · 환승 0</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E3%81%8A%E5%8F%B0%E5%A0%B4%E6%B5%B7%E6%B5%9C%E5%85%AC%E5%9C%92&destination=%E6%9D%B1%E4%BA%AC%E5%9B%BD%E9%9A%9B%E3%82%AF%E3%83%AB%E3%83%BC%E3%82%BA%E3%82%BF%E3%83%BC%E3%83%9F%E3%83%8A%E3%83%AB&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">도쿄국제크루즈터미널</span> <span class="lg-ar">→</span> <span class="lg-st">신토요스</span>
+        <span class="lg-line">유리카모메</span></div>
+      <div class="lg-side"><span class="lg-t">약 15분 · 환승 0</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E6%9D%B1%E4%BA%AC%E5%9B%BD%E9%9A%9B%E3%82%AF%E3%83%AB%E3%83%BC%E3%82%BA%E3%82%BF%E3%83%BC%E3%83%9F%E3%83%8A%E3%83%AB&destination=%E6%96%B0%E8%B1%8A%E6%B4%B2%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">신토요스</span> <span class="lg-ar">→</span> <span class="lg-st">킨시초</span>
+        <span class="lg-line">환승 2회 · 경로가 여러 갈래 — <b>4인이면 택시가 낫습니다</b></span></div>
+      <div class="lg-side"><span class="lg-t">약 30~40분 / 택시 15분</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E6%96%B0%E8%B1%8A%E6%B4%B2%E9%A7%85&destination=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+  </div>
+  </div>
+  <div class="leg-group v2" data-legday="2" hidden>
+  <h3 class="leg-day" style="border-left-color:var(--d2)">10/6 화 · 2안 (해리포터·이케부쿠로)</h3>
+  <div class="legs">
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">킨시초</span> <span class="lg-ar">→</span> <span class="lg-st">도시마엔</span>
+        <span class="lg-line">JR 소부선 → <b>아키하바라</b> → 야마노테선 → <b>이케부쿠로</b> → 세이부이케부쿠로선</span></div>
+      <div class="lg-side"><span class="lg-t">약 55분 · 환승 2</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&destination=%E8%B1%8A%E5%B3%B6%E5%9C%92%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">도시마엔</span> <span class="lg-ar">→</span> <span class="lg-st">이케부쿠로</span>
+        <span class="lg-line">세이부이케부쿠로선</span></div>
+      <div class="lg-side"><span class="lg-t">약 12분 · 환승 0</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E8%B1%8A%E5%B3%B6%E5%9C%92%E9%A7%85&destination=%E6%B1%A0%E8%A2%8B%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">이케부쿠로</span> <span class="lg-ar">→</span> <span class="lg-st">킨시초</span>
+        <span class="lg-line">JR 야마노테선 → <b>아키하바라</b> 환승 → JR 소부선</span></div>
+      <div class="lg-side"><span class="lg-t">약 30분 · 환승 1</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E6%B1%A0%E8%A2%8B%E9%A7%85&destination=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+  </div>
+  </div>
+  <div class="leg-group" data-legday="3">
+  <h3 class="leg-day" style="border-left-color:var(--d3)">10/7 수 · 디즈니씨</h3>
+  <div class="legs">
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">킨시초</span> <span class="lg-ar">→</span> <span class="lg-st">마이하마</span>
+        <span class="lg-line"><b>호텔 셔틀 이용</b>. 전철이면 JR 소부쾌속 → 도쿄역 환승 → JR 게이요선</span></div>
+      <div class="lg-side"><span class="lg-t">셔틀 35분 / 전철 30분</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&destination=%E8%88%9E%E6%B5%9C%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+  </div>
+  </div>
+  <div class="leg-group" data-legday="4">
+  <h3 class="leg-day" style="border-left-color:var(--d4)">10/8 목 · 우에노·스카이트리</h3>
+  <div class="legs">
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">킨시초</span> <span class="lg-ar">→</span> <span class="lg-st">우에노</span>
+        <span class="lg-line">JR 소부선 → <b>아키하바라</b> 환승 → JR 야마노테선 1정거장</span></div>
+      <div class="lg-side"><span class="lg-t">약 15분 · 환승 1</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&destination=%E4%B8%8A%E9%87%8E%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">우에노</span> <span class="lg-ar">→</span> <span class="lg-st">오시아게 (스카이트리)</span>
+        <span class="lg-line">긴자선 → <b>아사쿠사</b> 환승 → 도영 아사쿠사선 1정거장</span></div>
+      <div class="lg-side"><span class="lg-t">약 15분 · 환승 1</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E4%B8%8A%E9%87%8E%E9%A7%85&destination=%E6%8A%BC%E4%B8%8A%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">오시아게</span> <span class="lg-ar">→</span> <span class="lg-st">킨시초</span>
+        <span class="lg-line">한조몬선 1정거장</span></div>
+      <div class="lg-side"><span class="lg-t">3분 · 환승 0</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E6%8A%BC%E4%B8%8A%E9%A7%85&destination=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+  </div>
+  </div>
+  <div class="leg-group" data-legday="5">
+  <h3 class="leg-day" style="border-left-color:var(--d5)">10/9 금 · 요코하마 <span style="font-weight:400;font-size:12.5px;color:var(--text-faint)">(1안은 시부야까지)</span></h3>
+  <div class="legs">
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">킨시초</span> <span class="lg-ar">→</span> <span class="lg-st">요코하마</span>
+        <span class="lg-line">JR 소부쾌속·요코스카선 <b>직통</b></span></div>
+      <div class="lg-side"><span class="lg-t">약 45분 · 환승 0</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&destination=%E6%A8%AA%E6%B5%9C%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg v1">
+      <div class="lg-main"><span class="lg-st">미나토미라이</span> <span class="lg-ar">→</span> <span class="lg-st">시부야</span>
+        <span class="lg-line">미나토미라이선·도큐 도요코선 <b>직통 특급</b></span></div>
+      <div class="lg-side"><span class="lg-t">약 35분 · 환승 0</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E3%81%BF%E3%81%AA%E3%81%A8%E3%81%BF%E3%82%89%E3%81%84%E9%A7%85&destination=%E6%B8%8B%E8%B0%B7%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+      <div class="leg v2" hidden>
+      <div class="lg-main"><span class="lg-st">요코하마</span> <span class="lg-ar">→</span> <span class="lg-st">킨시초</span>
+        <span class="lg-line">JR 요코스카선·소부쾌속 <b>직통</b> — 2안은 시부야를 안 거치고 바로 복귀</span></div>
+      <div class="lg-side"><span class="lg-t">약 45분 · 환승 0</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E6%A8%AA%E6%B5%9C%E9%A7%85&destination=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+  </div>
+    <div class="leg v1">
+      <div class="lg-main"><span class="lg-st">시부야</span> <span class="lg-ar">→</span> <span class="lg-st">킨시초</span>
+        <span class="lg-line">도쿄메트로 한조몬선 <b>직통</b></span></div>
+      <div class="lg-side"><span class="lg-t">약 25분 · 환승 0</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E6%B8%8B%E8%B0%B7%E9%A7%85&destination=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+  </div>
+  </div>
+  <div class="leg-group" data-legday="6">
+  <h3 class="leg-day" style="border-left-color:var(--d6)">10/10 토 · 긴자·하네다</h3>
+  <div class="legs">
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">킨시초</span> <span class="lg-ar">→</span> <span class="lg-st">노기자카 (국립신미술관)</span>
+        <span class="lg-line">한조몬선 → <b>오테마치</b> 환승 → 치요다선 · 6번 출구 직결</span></div>
+      <div class="lg-side"><span class="lg-t">약 30분 · 환승 1</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&destination=%E4%B9%83%E6%9C%A8%E5%9D%82%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">롯폰기</span> <span class="lg-ar">→</span> <span class="lg-st">긴자</span>
+        <span class="lg-line">도쿄메트로 히비야선 <b>직통</b></span></div>
+      <div class="lg-side"><span class="lg-t">약 12분 · 환승 0</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E5%85%AD%E6%9C%AC%E6%9C%A8%E9%A7%85&destination=%E9%8A%80%E5%BA%A7%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">도쿄역</span> <span class="lg-ar">→</span> <span class="lg-st">킨시초</span>
+        <span class="lg-line">JR 소부선 쾌속 <b>직통</b></span></div>
+      <div class="lg-side"><span class="lg-t">8분 · 환승 0</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E6%9D%B1%E4%BA%AC%E9%A7%85&destination=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+    <div class="leg">
+      <div class="lg-main"><span class="lg-st">킨시초</span> <span class="lg-ar">→</span> <span class="lg-st">하네다 공항 제3터미널</span>
+        <span class="lg-line">한조몬선 → <b>오시아게</b> 환승 → 도영 아사쿠사선·게이큐 직통</span></div>
+      <div class="lg-side"><span class="lg-t">약 50분 · 환승 1</span><a class="lg-go" href="https://www.google.com/maps/dir/?api=1&origin=%E9%8C%A6%E7%B3%B8%E7%94%BA%E9%A7%85&destination=%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF%E7%AC%AC3%E3%82%BF%E3%83%BC%E3%83%9F%E3%83%8A%E3%83%AB&travelmode=transit" target="_blank" rel="noopener">길찾기 ↗</a></div>
+    </div>
+  </div>
+  </div>
+  <p class="sub" style="margin:20px 0 0;">📱 <b>앱 추천</b> — 구글맵이면 충분하지만, 일본에서는 <b>Yahoo!乗換案内</b>가 지연·혼잡·환승 출구까지 더 정확합니다. 둘 다 깔아두면 좋습니다. 그리고 4인 가족이라 <b>도요스·시부야 구간은 택시가 시간값을 합니다</b> — 3,000엔 안쪽입니다.</p>
+</div>
+</section>
+
 <section class="panel" data-panel="book" hidden>
+<div class="card share">
+  <div class="stxt"><b>📋 같이 편집하는 공유 시트</b><span>「하윤지유 in 도쿄」 시트에 <b>일정</b>(1안·2안·예약까지 102줄) · <b>정산</b> · <b>장소</b>(가고 싶은 곳 취합) 탭이 들어 있습니다. 어느 칸이든 고치고, 행을 지우고, 새 줄을 추가하면 실시간으로 같이 보입니다.</span></div>
+  <a href="https://docs.google.com/spreadsheets/d/1VZavcThMko_EGbiK1qjH487h3KgtdSDc93P68GHumAQ/edit?gid=1920886231#gid=1920886231" target="_blank" rel="noopener">시트 열기 →</a>
+</div>
 <div class="card" id="book">
   <h2>✅ 지금 예약할 것</h2>
   <p class="sub">한 달 남았습니다. 위 네 개는 날짜나 시각이 밀리면 일정 자체가 흔들립니다.</p>
   <div class="book">
-    <div class="b-row"><div class="w">🪄 해리포터 스튜디오 투어 — <b>13:00 이후 슬롯</b><em>D1. 입국 60분 + 공항→도시마엔 70분이라 12:30 도착입니다. 12시 슬롯은 버퍼가 0이니 반드시 13시 이후로. 관람은 3시간 기준 — 16시에 나와야 치이카와파크에 댑니다. 어른 6,300~7,300엔 / 4~11세 3,800~4,400엔</em></div><span class="tagx hot">지금</span></div>
-    <div class="b-row"><div class="w">🐭 치이카와 파크 (이케부쿠로)<em>D1 오후. <b>asoview!에서 사전 예매 필수</b>, 시간 지정·선착순입니다. <b>16:30~17:00 입장</b>으로 잡으세요(마지막 입장 17:40). 캐시리스 전용</em></div><span class="tagx hot">지금</span></div>
-    <div class="b-row"><div class="w">🏰 도쿄 디즈니씨 1데이 패스포트 (10/7 수)<em>날짜 지정 변동가격제. 공식 앱 미리 설치하고 4인 계정 연결까지 끝내두기</em></div><span class="tagx hot">지금</span></div>
-    <div class="b-row"><div class="w">🚌 디즈니 직행 셔틀버스 — <b>왕복 예약 완료</b> ✅<em>갈 때 호텔 07:00 출발. 올 때는 <b>21:15</b>을 권합니다 — 19:10은 하버쇼와 불꽃놀이를 둘 다 놓칩니다</em></div><span class="tagx mid">완료</span></div>
-    <div class="b-row"><div class="w">🚢 아사쿠사 → 오다이바 수상버스<em>선박 정비로 중단됐다가 <b>2026년 여름 재개 예정</b>. 운항 여부와 하루 2편뿐인 출발 시각을 먼저 확인하고 화요일 오전을 거기 맞추세요. 어른 2,000엔 / 어린이 1,000엔</em></div><span class="tagx hot">운항 확인</span></div>
-    <div class="b-row"><div class="w">🏛️ 도쿄국립박물관 역사 체험 (13:00~16:00)<em>D4 목요일. 평일이라 시각 제약이 없습니다</em></div><span class="tagx mid">2주 전</span></div>
-    <div class="b-row"><div class="w">✨ 팀랩 플래닛 도요스 — 화요일 17:00 전후<em>현장 판매 없음, 사전 구매만. 10월 6일이 휴관일이 아닌지 캘린더에서 확인하세요</em></div><span class="tagx mid">2주 전</span></div>
-    <div class="b-row"><div class="w">🍜 컵누들 박물관 · 마이 컵누들 팩토리<em>D5 요코하마를 택한 경우. 만들기 체험은 인원 제한이 있어 온라인 예약이 안전합니다</em></div><span class="tagx mid">2주 전</span></div>
-    <div class="b-row"><div class="w">🗼 도쿄 스카이트리 텐보 데크 <span class="opt-tag">선택</span><em>목요일 야경. 호텔에서 3분이라 <b>당일에 정해도 되는 유일한 항목</b>입니다 — 미리 사려면 웹 시간 지정권으로</em></div><span class="tagx mid">당일도 가능</span></div>
-    <div class="b-row"><div class="w">🎮 시부야 파르코 6층 — 닌텐도 도쿄<em>1안이면 금요일, 2안이면 화요일. 예약은 없지만 혼잡 시 정리권을 운영하는 경우가 있으니 방문 전 파르코 공식 안내를 한 번 보고 가세요</em></div><span class="tagx mid">당일 확인</span></div>
-    <div class="b-row"><div class="w">🧳 하네다 → 레반트 짐 당일 배송<em>예약 불필요, 현장 접수(09:00~15:00). 제3터미널<b>역</b> 2층 KEIKYU TIC 안쪽 카운터 · 1개 2,000엔, 게이큐 승차권 제시 시 1,500엔 · 당일 18시경 도착</em></div><span class="tagx mid">현장</span></div>
-    <div class="b-row"><div class="w">💳 모바일 스이카 / 파스모<em>출국 전에 4명분 각각 등록·충전. 아이 것도 미리 만들어두면 개찰구에서 안 밀립니다</em></div><span class="tagx mid">출국 전</span></div>
+    <div class="b-row" data-id="hp"><div class="w">🪄 해리포터 스튜디오 투어 — <b>13:00 이후 슬롯</b><em><b>1안이면 10/5(월) 13:00 이후</b> — 입국 60분 + 이동 70분이라 12:30 도착이라 12시 슬롯은 버퍼가 0입니다. <b>2안이면 10/6(화) 10:00~10:30</b>. 관람은 3시간 기준. 어른 6,300~7,300엔 / 4~11세 3,800~4,400엔</em></div><span class="tagx hot">지금</span></div>
+    <div class="b-row" data-id="chiikawa"><div class="w">🐭 치이카와 파크 (이케부쿠로) <span class="opt-tag">선택</span><em><b>asoview!에서 사전 예매 필수</b>, 시간 지정·선착순입니다. <b>1안이면 10/5 16:30~17:00</b>(마지막 입장 17:40이라 빠듯), <b>2안이면 10/6 15:00</b>으로 잡으세요. 캐시리스 전용</em></div><span class="tagx hot">지금</span></div>
+    <div class="b-row" data-id="tds"><div class="w">🏰 도쿄 디즈니씨 1데이 패스포트 (10/7 수)<em>날짜 지정 변동가격제. 공식 앱 미리 설치하고 4인 계정 연결까지 끝내두기</em></div><span class="tagx hot">지금</span></div>
+    <div class="b-row" data-id="shuttle"><div class="w">🚌 디즈니 직행 셔틀버스 — <b>왕복 예약 완료</b> ✅<em>갈 때 호텔 07:00 출발. 올 때는 <b>21:15</b>을 권합니다 — 19:10은 하버쇼와 불꽃놀이를 둘 다 놓칩니다</em></div><span class="tagx mid">완료</span></div>
+    <div class="b-row" data-id="boat"><div class="w">🚢 아사쿠사 → 오다이바 수상버스<em>1안 화요일. <b>10/6 아사쿠사 출항</b> 11:00 / 13:10 / 14:10 / 15:30 / 15:55 / 16:10 — <b>13:10 호타루나</b>(옥상 데크)로 예매하세요. 예약 시 배를 <b>지정</b>해야 호타루나를 탑니다("지정 없음"으로 두면 배가 바뀔 수 있음). 어른 2,000엔 / 어린이 1,000엔</em></div><span class="tagx hot">13:10 예매</span></div>
+    <div class="b-row" data-id="museum"><div class="w">🏛️ 도쿄국립박물관 역사 체험 (13:00~16:00)<em>D4 목요일. 평일이라 시각 제약이 없습니다</em></div><span class="tagx mid">2주 전</span></div>
+    <div class="b-row" data-id="teamlab"><div class="w">✨ 팀랩 플래닛 도요스 — 화요일 17:00 전후<em>현장 판매 없음, 사전 구매만. 10월 6일이 휴관일이 아닌지 캘린더에서 확인하세요</em></div><span class="tagx mid">2주 전</span></div>
+    <div class="b-row" data-id="cupnoodle"><div class="w">🍜 컵누들 박물관 · 마이 컵누들 팩토리<em>D5 요코하마를 택한 경우. 만들기 체험은 인원 제한이 있어 온라인 예약이 안전합니다</em></div><span class="tagx mid">2주 전</span></div>
+    <div class="b-row" data-id="skytree"><div class="w">🗼 도쿄 스카이트리 텐보 데크 <span class="opt-tag">선택</span><em>목요일 야경. 호텔에서 3분이라 <b>당일에 정해도 되는 유일한 항목</b>입니다 — 미리 사려면 웹 시간 지정권으로</em></div><span class="tagx mid">당일도 가능</span></div>
+    <div class="b-row" data-id="parco"><div class="w">🎮 시부야 파르코 6층 — 닌텐도 도쿄<em>1안이면 금요일, 2안이면 화요일. 예약은 없지만 혼잡 시 정리권을 운영하는 경우가 있으니 방문 전 파르코 공식 안내를 한 번 보고 가세요</em></div><span class="tagx mid">당일 확인</span></div>
+    <div class="b-row" data-id="baggage"><div class="w">🧳 하네다 → 레반트 짐 당일 배송<em>예약 불필요, 현장 접수(09:00~15:00). 제3터미널<b>역</b> 2층 KEIKYU TIC 안쪽 카운터 · 1개 2,000엔, 게이큐 승차권 제시 시 1,500엔 · 당일 18시경 도착</em></div><span class="tagx mid">현장</span></div>
+    <div class="b-row" data-id="suica"><div class="w">💳 모바일 스이카 / 파스모<em>출국 전에 4명분 각각 등록·충전. 아이 것도 미리 만들어두면 개찰구에서 안 밀립니다</em></div><span class="tagx mid">출국 전</span></div>
   </div>
 </div>
 
@@ -870,15 +1195,15 @@
   <h2>⚠️ 놓치면 아픈 것들</h2>
   <div class="notes">
     <div class="note"><div class="nt">🎌 3연휴</div><div class="nb">10월 12일(월)이 <b>스포츠의 날</b>입니다. 10/10~12가 일본 국내 3연휴라 마지막 날인 <b>10일 토요일</b>부터 롯폰기·긴자·도쿄역이 붐빕니다. 그래서 신미술관과 이토야를 개관·개점 시각에 맞춰 넣었습니다.</div></div>
-    <div class="note"><div class="nt">🚢 수상버스</div><div class="nb">아사쿠사~오다이바 직행편은 선박 정비로 중단됐다가 <b>2026년 여름 재개 예정</b>입니다. 10월이면 재개됐을 가능성이 높지만 확정은 아니고, 재개돼도 <b>하루 2편</b>뿐입니다.</div></div>
+    <div class="note"><div class="nt">🚢 수상버스</div><div class="nb"><b>운항 확인 완료.</b> 배는 <b>호타루나</b>(약 60분, 옥상 전망 데크)와 <b>에메랄다스</b>(약 55분) 두 종류 — <b>히미코는 이 기간 운항하지 않습니다.</b><br><br><b>아사쿠사 → 오다이바</b><br>· 10/5(월) 11:00 · 13:10 · 15:30 · 15:55 · 16:10 <span style="color:var(--text-faint)">(5편)</span><br>· 10/6(화) 11:00 · 13:10 · 14:10 · 15:30 · 15:55 · 16:10 <span style="color:var(--text-faint)">(6편)</span><br><br><b>오다이바 → 아사쿠사</b> <span style="color:var(--text-faint)">(역방향)</span><br>· 10/5(월) 13:10 · 14:20 · 15:10 <span style="color:var(--text-faint)">(3편, 오후 일찍 끊김)</span><br><br>역방향은 마지막 편이 15시대라 <b>오다이바를 오후에 보고 배로 돌아오는 코스는 성립하지 않습니다.</b> 지금처럼 아사쿠사 → 오다이바 편도로 타는 게 맞습니다. 강풍이나 높은 파도면 결항하니 그날 아침에 한 번 확인하세요.</div></div>
     <div class="note"><div class="nt">🧳 첫날</div><div class="nb">짐을 공항에서 부치는 것이 <b>전제</b>입니다. 캐리어를 들고 가면 도시마엔 코인락커에 대형 4개가 들어간다는 보장이 없고, 호텔을 먼저 찍으면 왕복 110분이라 13시 입장을 못 맞춥니다.</div></div>
     <div class="note"><div class="nt">🧺 세탁</div><div class="nb">레반트는 주방·세탁기가 있는 아파트형이 아닙니다. 5박에 아이 둘이면 빨래가 쌓이니 <b>호텔 코인 런드리 유무</b>를 예약 전에 확인하고, 없으면 킨시초역 주변 코인 세탁소를 미리 저장해 두세요.</div></div>
     <div class="note"><div class="nt">🛏️ 객실</div><div class="nb">트윈 2인실 두 개면 일반 트윈(28.5㎡)으로 잡으면 됩니다 — 합쳐 57㎡라 4베드룸보다 오히려 넉넉합니다. <b>같은 층 인접 객실</b>을 요청해 두시고, 스카이트리 뷰는 아이들 방 하나만 잡아도 충분합니다.</div></div>
     <div class="note"><div class="nt">🌤️ 날씨</div><div class="nb">10월 초 도쿄는 대체로 최고 23~25℃, 최저 17~19℃. 낮엔 반팔, 아침저녁은 얇은 겉옷 하나. <b>화요일 수상버스 갑판과 디즈니씨 야간</b>은 바닷바람이 있어 한 겹 더 필요합니다.</div></div>
     <div class="note"><div class="nt">📏 신장 제한</div><div class="nb">디즈니씨 — 레이징 스피릿 <b>117cm</b>, 타워 오브 테러 · 센터 오브 디 어스 <b>102cm</b>. 초5는 통과하지만 둘째 아이 키는 미리 확인해 두세요.</div></div>
     <div class="note"><div class="nt">💳 이동권</div><div class="nb">4인 모두 모바일 스이카/파스모. JR패스는 이 일정에서 본전이 안 나옵니다 — 수도권 안에서만 움직이니 충전식이 훨씬 쌉니다.</div></div>
-    <div class="note"><div class="nt">🫧 여백</div><div class="nb">빼도 되는 순서는 <b>① D4 스카이트리 → ② D4 우에노 쇼핑 → ③ D4 오전 국립과학박물관 → ④ D2 오다이바(1안) 또는 메이지신궁(2안)</b>입니다. <b>목요일은 투어(13~16시) 말고는 전부 선택</b>이라, 디즈니 다음날 아이 상태를 보고 당일에 정하면 됩니다.</div></div>
-    <div class="note"><div class="nt">⛩️ 아사쿠사</div><div class="nb"><b>2안을 고르면 아사쿠사가 일정에서 통째로 빠집니다.</b> 센소지를 꼭 보고 싶으면 킨시초에서 12분이니 <b>목요일 저녁이나 첫날 밤</b>에 따로 다녀오세요. 밤에 조명이 들어온 본당이 낮보다 낫습니다.</div></div>
+    <div class="note"><div class="nt">🫧 여백</div><div class="nb">빼도 되는 순서는 <b>① 치이카와파크(1안이면 특히) → ② D4 스카이트리 → ③ D4 우에노 쇼핑 → ④ D4 오전 국립과학박물관 → ⑤ D2 오다이바</b>입니다. <b>목요일은 투어(13~16시) 말고는 전부 선택</b>이라, 디즈니 다음날 아이 상태를 보고 당일에 정하면 됩니다.</div></div>
+    <div class="note"><div class="nt">⛩️ 아사쿠사</div><div class="nb"><b>2안을 고르면 아사쿠사와 오다이바가 빠집니다.</b> 아사쿠사는 회수하기 쉬워요 — <b>목요일 우에노 투어가 16시에 끝나면 긴자선으로 5분</b>입니다. 센소지 보고 오시아게(1정거장)로 넘어가 스카이트리 야경까지 이어집니다. 밤에 조명 들어온 본당이 낮보다 낫고요. 오다이바는 이번엔 포기하는 게 맞습니다.</div></div>
   </div>
 </div>
 
@@ -891,7 +1216,9 @@
 <script>
 (function(){
   var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab[data-plan]'));
-  var blocks = Array.prototype.slice.call(document.querySelectorAll('.v1, .v2'));
+  var blocks = Array.prototype.slice.call(
+    document.querySelectorAll('.v1:not(.leg-group):not(.leg), .v2:not(.leg-group):not(.leg)')
+  );
 
   function apply(v){
     blocks.forEach(function(el){
@@ -903,6 +1230,8 @@
       b.setAttribute('aria-selected', on ? 'true' : 'false');
     });
     try { localStorage.setItem('tokyoPlanTab', v); } catch (e) {}
+    document.documentElement.setAttribute('data-plan', v);
+    document.dispatchEvent(new CustomEvent('planchange', { detail: v }));
   }
 
   tabs.forEach(function(b){
@@ -944,15 +1273,35 @@
       t.classList.toggle('on', on);
       t.setAttribute('aria-selected', on ? 'true' : 'false');
     });
-    subrow.hidden = (name !== 'schedule');
+    subrow.hidden = !(name === 'schedule' || name === 'route2');
     if (scroll) {
       bringIntoView(name === 'schedule' ? visible(days) : visible(panels));
     }
     try { localStorage.setItem('tokyoPanel', name); } catch (e) {}
   }
 
+  var legGroups = Array.prototype.slice.call(document.querySelectorAll('.leg-group'));
+  var legItems  = Array.prototype.slice.call(document.querySelectorAll('.leg.v1, .leg.v2'));
+  var curDay = 'all';
+
+  function plan(){
+    return document.documentElement.getAttribute('data-plan') || '1';
+  }
+  function syncLegs(){
+    var v = 'v' + plan();
+    legGroups.forEach(function(g){
+      var dayOk  = (curDay === 'all' || g.getAttribute('data-legday') === curDay);
+      var planOk = !(g.classList.contains('v1') || g.classList.contains('v2')) || g.classList.contains(v);
+      g.hidden = !(dayOk && planOk);
+    });
+    legItems.forEach(function(el){ el.hidden = !el.classList.contains(v); });
+  }
+  document.addEventListener('planchange', syncLegs);
+
   function showDay(d, scroll){
+    curDay = d;
     days.forEach(function(p){ p.hidden = p.getAttribute('data-day') !== d; });
+    syncLegs();
     stabs.forEach(function(t){
       var on = t.getAttribute('data-day') === d;
       t.classList.toggle('on', on);
@@ -1005,6 +1354,162 @@
     localStorage.removeItem('tokyoHero');
   } catch (e) {}
   set(saved === 'open', false);
+})();
+
+/* ---------- 저장소 (이 기기) ---------- */
+(function(){
+  var CK = 'hyjyCheck', MK = 'hyjyCustom';
+
+  var DAYS = {
+    '1': { label: '1일차 · 10/5 월', color: 'var(--d1)' },
+    '2': { label: '2일차 · 10/6 화', color: 'var(--d2)' },
+    '3': { label: '3일차 · 10/7 수', color: 'var(--d3)' },
+    '4': { label: '4일차 · 10/8 목', color: 'var(--d4)' },
+    '5': { label: '5일차 · 10/9 금', color: 'var(--d5)' },
+    '6': { label: '6일차 · 10/10 토', color: 'var(--d6)' }
+  };
+
+  function load(key, fallback){
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      var v = JSON.parse(raw);
+      return (v && typeof v === 'object') ? v : fallback;
+    } catch (e) { return fallback; }
+  }
+  function save(key, value){
+    try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+    catch (e) { return false; }
+  }
+  function esc(t){
+    return String(t).replace(/[&<>"]/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c];
+    });
+  }
+
+  initChecklist();
+  initMine();
+
+  /* --- 예약 체크 --- */
+  function initChecklist(){
+    var rows = Array.prototype.slice.call(document.querySelectorAll('.b-row[data-id]'));
+    if (!rows.length) return;
+    var done = load(CK, {});
+
+    rows.forEach(function(row){
+      row.classList.add('has-chk');
+      var box = document.createElement('button');
+      box.type = 'button';
+      box.className = 'chk';
+      box.setAttribute('aria-pressed', 'false');
+      box.setAttribute('aria-label', '예약 완료 표시');
+      row.insertBefore(box, row.firstChild);
+      box.addEventListener('click', function(){
+        var id = row.getAttribute('data-id');
+        done[id] = !done[id];
+        save(CK, done);
+        paint();
+      });
+    });
+
+    function paint(){
+      rows.forEach(function(row){
+        var on = !!done[row.getAttribute('data-id')];
+        row.classList.toggle('done', on);
+        var b = row.querySelector('.chk');
+        if (b) { b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.textContent = on ? '✓' : ''; }
+      });
+    }
+    paint();
+  }
+
+  /* --- 직접 등록한 일정 --- */
+  function initMine(){
+    var store = load(MK, { items: [] });
+    if (!Array.isArray(store.items)) store.items = [];
+    var hosts = {};
+
+    Object.keys(DAYS).concat(['all']).forEach(function(d){
+      var panel = document.querySelector('.daypanel[data-day="' + d + '"]');
+      if (!panel) return;
+      var isAll = (d === 'all');
+      var card = document.createElement('div');
+      card.className = 'card mine';
+      card.innerHTML =
+        '<h3>✏️ 직접 등록한 일정</h3>' +
+        '<p class="mdesc">' + (isAll
+          ? '일차 탭에서 등록한 것이 여기 모입니다. <b>이 기기에만 저장</b>됩니다 — 같이 볼 건 위쪽 <b>공유 시트</b>에 적어주세요.'
+          : DAYS[d].label + '에 넣을 일정을 등록하세요. <b>이 기기에만 저장</b>되는 개인 메모입니다.') +
+        '</p>' +
+        '<div class="mine-list"></div>' +
+        (isAll ? '' :
+          '<form class="mine-form">' +
+          '<input type="time" name="time" required aria-label="시각">' +
+          '<input type="text" name="title" placeholder="무엇을 할까요?" maxlength="60" required aria-label="내용">' +
+          '<input type="text" name="note" placeholder="메모 (선택)" maxlength="140" aria-label="메모">' +
+          '<button type="submit">＋ 등록</button>' +
+          '</form>' +
+          '<p class="mine-msg" hidden></p>');
+      panel.appendChild(card);
+      hosts[d] = card;
+
+      var form = card.querySelector('.mine-form');
+      if (!form) return;
+      form.addEventListener('submit', function(ev){
+        ev.preventDefault();
+        var msg = card.querySelector('.mine-msg');
+        var time = form.time.value.trim();
+        var title = form.title.value.trim();
+        if (!time || !title) return;
+        store.items.push({
+          id: String(Date.now()) + Math.random().toString(36).slice(2, 7),
+          day: d, time: time, title: title, note: form.note.value.trim()
+        });
+        if (save(MK, store)) { form.reset(); msg.hidden = true; }
+        else { msg.hidden = false; msg.textContent = '저장하지 못했습니다. 브라우저의 저장 공간이 막혀 있을 수 있습니다.'; }
+        render();
+      });
+    });
+
+    document.addEventListener('click', function(ev){
+      var btn = ev.target.closest ? ev.target.closest('.mine-del') : null;
+      if (!btn) return;
+      var id = btn.getAttribute('data-del');
+      store.items = store.items.filter(function(i){ return i.id !== id; });
+      save(MK, store);
+      render();
+    });
+
+    render();
+
+    function render(){
+      var items = store.items.slice().sort(function(a, b){
+        if (a.day !== b.day) return a.day < b.day ? -1 : 1;
+        return a.time < b.time ? -1 : (a.time > b.time ? 1 : 0);
+      });
+      Object.keys(hosts).forEach(function(d){
+        var list = hosts[d].querySelector('.mine-list');
+        var mine = (d === 'all') ? items : items.filter(function(i){ return i.day === d; });
+        if (!mine.length) {
+          list.innerHTML = '<p class="mine-empty">' +
+            (d === 'all' ? '아직 등록한 일정이 없습니다.' : '아직 없습니다. 아래에서 등록해 보세요.') +
+            '</p>';
+          return;
+        }
+        list.innerHTML = mine.map(function(i){
+          var badge = (d === 'all' && DAYS[i.day])
+            ? '<span class="md" style="color:' + DAYS[i.day].color + '">' + esc(DAYS[i.day].label.split(' · ')[0]) + '</span>'
+            : '';
+          return '<div class="mine-item">' +
+            '<span class="mt">' + esc(i.time) + '</span>' +
+            '<span class="mb">' + badge + esc(i.title) +
+              (i.note ? '<small>' + esc(i.note) + '</small>' : '') + '</span>' +
+            '<button type="button" class="mine-del" data-del="' + esc(i.id) + '" aria-label="삭제">✕</button>' +
+            '</div>';
+        }).join('');
+      });
+    }
+  }
 })();
 </script>
 
