@@ -461,6 +461,7 @@ function pickItem(kind,n){
 }
 var SAMPLE_V=2,SAMPLE_R=[['연산 수력충전',20,[1,2,3,4,5],'math'],['교과 6-2 개념',20,[1,2,3,4,5],'math'],['교과 6-2 유형',20,[1,2,3,4,5],'math'],['심화 5-2 최상위',20,[1,2,3,4,5],'math'],['심화 5-2 점프왕',20,[1,2,3,4,5],'math'],['요약독해',20,[1,2,3,4,5],'kor'],['추론독해',20,[1,2,3,4,5],'kor'],['리딩',20,[1,2,3,4,5],'eng'],['리스닝',20,[1,2,3,4,5],'eng'],['문법',20,[1,2,3,4,5],'eng'],['롸이팅',20,[1,2,3,4,5],'eng'],['옥수수',20,[1,2,3,4,5],'hw'],['클카',20,[1,2,3,4,5],'hw']];
 function sampleList(){return SAMPLE_R.map(function(x){return {id:uid(),name:x[0],min:x[1],cat:x[3],days:x[2].slice(),sample:true};});}
+function fbArr(v){if(Array.isArray(v))return v.filter(function(x){return x!==null&&x!==undefined;});if(v&&typeof v==='object')return Object.keys(v).map(function(k){return v[k];});return [];}
 function normalize(db){
   if(!Array.isArray(db.cats)||!db.cats.length)db.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));
   db.cats=db.cats.filter(function(c){return c&&typeof c.id==='string'&&typeof c.name==='string';}).map(function(c){var dc=DEFAULT_CATS.filter(function(d){return d.id===c.id;})[0];return {id:c.id,name:c.name,icon:ICONS[c.icon]?c.icon:'star',color:LC.indexOf(c.color)>-1?c.color:(dc?dc.color:'gray')};});
@@ -470,6 +471,12 @@ function normalize(db){
   db.profiles.forEach(function(p){
     db.routines[p.id]=db.routines[p.id]||[];db.logs[p.id]=db.logs[p.id]||{};
     db.rewards[p.id]=db.rewards[p.id]||[];db.redeemed[p.id]=db.redeemed[p.id]||[];
+    /* Firebase는 빈 배열/객체를 지우고 배열을 객체로 바꾸기도 해서 다시 모양을 맞춘다 */
+    db.routines[p.id]=fbArr(db.routines[p.id]).filter(function(r){return r&&typeof r==='object';});
+    db.routines[p.id].forEach(function(r){r.days=fbArr(r.days);});
+    db.rewards[p.id]=fbArr(db.rewards[p.id]);db.redeemed[p.id]=fbArr(db.redeemed[p.id]);
+    var LG=db.logs[p.id];
+    Object.keys(LG).forEach(function(k){var l=LG[k];if(!l||typeof l!=='object'){LG[k]={t:{},x:[]};return;}l.t=(l.t&&typeof l.t==='object')?l.t:{};l.x=fbArr(l.x).filter(function(x){return x&&typeof x==='object';});});
   });
   if((+db.sampleV||1)<SAMPLE_V){
     db.profiles.forEach(function(p){
@@ -522,7 +529,7 @@ function syPull(force){
     if(force||ru>lu){
       if(syBusyUi()&&!force){return;}
       DB=normalize(r);try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}
-      ui.timerKey=null;render();syStat('연동 중 · 받아옴 '+syTime());
+      ui.timerKey=null;try{render();}catch(e2){syStat('받아온 기록을 화면에 그리지 못했어요',true);return;}syStat('연동 중 · 받아옴 '+syTime());
     }else if(ru<lu){syPush();}
     else syStat('연동 중 · 최신 상태 '+syTime());
   }).catch(function(e){syBusy=false;syStat(syErr(e,'연결하지 '),true);});
