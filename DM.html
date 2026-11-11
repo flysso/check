@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>소수 곱셈 놀이터</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme:light dark;
+    --bg:#eef8fb; --bg-grad:linear-gradient(160deg,#eaf7fb 0%,#e7fbf5 100%);
+    --card-bg:#ffffff; --card-bg-soft:#f4fbfd;
+    --sky:#3fb6e0; --sky-strong:#2a9fcb; --sky-light:#dbf2fb;
+    --mint:#3fd6bf; --mint-strong:#22b39d; --mint-light:#dcf9f2;
+    --text:#1f2d3a; --text-soft:#6b7f8c; --text-faint:#9db0bb;
+    --border:#e1eef2; --border-strong:#c9dfe6;
+    --shadow-sm:0 2px 8px rgba(31,64,80,.06); --shadow-md:0 8px 24px rgba(31,64,80,.10);
+    --radius-lg:22px;
+    --danger:#f0645f; --danger-light:#fde6e5; --warning:#f5a623; --warning-light:#fff3dc; --warning-text:#a8660a;
+    --violet:#6b7fd7; --violet-strong:#5667c2;
+    --font-main:'Jua',-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0e1620; --bg-grad:linear-gradient(160deg,#0d1620 0%,#0d1c1c 100%);
+      --card-bg:#161f2a; --card-bg-soft:#131b25;
+      --sky:#4fc3ec; --sky-strong:#6fd0f0; --sky-light:#16303a;
+      --mint:#3fe0c6; --mint-strong:#4fe8d0; --mint-light:#123028;
+      --text:#e8f1f5; --text-soft:#9fb3bf; --text-faint:#6d8390;
+      --border:#233240; --border-strong:#2e4250;
+      --shadow-sm:0 2px 8px rgba(0,0,0,.25); --shadow-md:0 8px 24px rgba(0,0,0,.35);
+      --danger:#ff6b66; --danger-light:#3a1f20; --warning:#ffb84d; --warning-light:#3a2c14; --warning-text:#ffb84d;
+      --violet:#96a6ee; --violet-strong:#7f90e0;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;padding:0 0 60px;font-family:var(--font-main);
+    background:var(--bg);background-image:var(--bg-grad);color:var(--text);
+    font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{margin:0;font-family:var(--font-main);font-weight:400;}
+  .wrap{max-width:820px;margin:0 auto;padding:18px 16px 40px;}
+
+  .topbar{
+    background:var(--card-bg);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);
+    padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  }
+  .topbar h1{
+    font-size:20px;display:flex;align-items:center;gap:8px;
+    background:linear-gradient(100deg,var(--sky-strong),var(--mint-strong));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .topbar .sub{font-size:12px;color:var(--text-faint);}
+
+  .card{
+    background:var(--card-bg);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);
+    padding:20px;margin-bottom:18px;border:1px solid var(--border);
+  }
+  .card h2{font-size:17px;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .card .sub{font-size:13.5px;color:var(--text-soft);margin:0 0 14px;}
+  .card .sub b{color:var(--sky-strong);font-weight:400;}
+  .card.mine{border:2px dashed var(--border-strong);background:var(--card-bg-soft);box-shadow:none;}
+  .mine h3{font-size:16.5px;margin:0 0 4px;display:flex;align-items:center;gap:7px;}
+  .mine .mdesc{font-size:12.5px;color:var(--text-soft);margin:0 0 12px;}
+
+  .form{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .form .x{font-size:22px;color:var(--text-soft);}
+  input{
+    font-family:inherit;font-size:20px;color:var(--text);background:var(--card-bg);text-align:center;
+    border:1px solid var(--border-strong);border-radius:10px;padding:9px 11px;min-width:0;width:112px;
+  }
+  input::placeholder{color:var(--text-faint);}
+  input:focus{outline:none;border-color:var(--sky);box-shadow:0 0 0 3px var(--sky-light);}
+  .err{font-size:12.5px;color:var(--danger);}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    font-family:inherit;cursor:pointer;white-space:nowrap;font-size:13.5px;color:var(--text-soft);
+    background:var(--card-bg);border:1px solid var(--border-strong);border-radius:20px;padding:6px 14px;transition:all .15s;
+  }
+  .chip:hover{border-color:var(--sky);color:var(--text);}
+  .chip:focus-visible,.btn:focus-visible{outline:3px solid var(--sky);outline-offset:2px;}
+
+  .divider{border:none;border-top:2px dashed var(--border-strong);margin:6px 0 18px;}
+
+  .ctrls{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px;}
+  .btn{
+    font-family:inherit;font-size:14.5px;cursor:pointer;border:none;border-radius:20px;padding:9px 20px;color:#fff;
+    transition:transform .08s,box-shadow .08s;
+  }
+  .btn:active{transform:translateY(2px);}
+  #play{background:linear-gradient(100deg,var(--sky),var(--mint));box-shadow:0 3px 0 var(--mint-strong);}
+  #play:active{box-shadow:0 1px 0 var(--mint-strong);}
+  #next{background:var(--violet);box-shadow:0 3px 0 var(--violet-strong);}
+  #next:active{box-shadow:0 1px 0 var(--violet-strong);}
+  #reset{background:var(--warning-light);color:var(--warning-text);border:1.5px solid var(--warning);box-shadow:0 3px 0 var(--warning);}
+  #reset:active{box-shadow:0 1px 0 var(--warning);}
+
+  .src{
+    display:inline-block;font-size:12px;color:#fff;border-radius:20px;padding:3px 12px;white-space:nowrap;
+    background:linear-gradient(100deg,var(--sky),var(--mint));
+  }
+  .src.sample{background:var(--mint-light);color:var(--mint-strong);border:1px solid var(--mint);}
+  .stage-top{text-align:center;margin:0 0 10px;}
+  .bar{display:flex;gap:6px;justify-content:center;margin:0 0 14px;}
+  .pip{width:9px;height:9px;border-radius:50%;background:var(--border-strong);transition:background .3s;}
+  .pip.on{background:linear-gradient(100deg,var(--sky),var(--mint));}
+
+  .line{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;justify-content:center;margin:0 0 14px;}
+  .numgrp{display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .dg{display:flex;align-items:flex-end;gap:3px;}
+  .c{
+    width:38px;height:46px;display:flex;align-items:center;justify-content:center;font-size:24px;
+    border-radius:10px;border:1px solid var(--border-strong);background:var(--card-bg-soft);color:var(--text);
+    transition:background .4s,color .4s,border-color .4s;
+  }
+  .c.f{background:var(--sky-light);border-color:var(--sky);color:var(--sky-strong);}
+  .c.z{border-style:dashed;color:var(--text-faint);}
+  .xd{
+    width:12px;height:46px;display:flex;align-items:flex-end;justify-content:center;font-size:32px;line-height:1;
+    color:var(--danger);transition:opacity .5s,width .5s,transform .5s;overflow:hidden;
+  }
+  .xd.gone{opacity:0;width:0;transform:translateY(-30px);}
+  .op{font-size:26px;color:var(--text-soft);height:46px;display:flex;align-items:center;padding:0 8px;}
+  .badge{font-size:12px;color:var(--sky-strong);background:var(--sky-light);border-radius:20px;padding:2px 10px;opacity:0;transition:opacity .4s;}
+  .badge.on{opacity:1;}
+  .prow{opacity:0;transition:opacity .5s;display:flex;align-items:flex-end;justify-content:center;}
+  .prow.on{opacity:1;}
+  .sl{width:16px;height:46px;display:flex;align-items:flex-end;justify-content:center;font-size:36px;line-height:1;color:var(--danger);}
+  .sl.hop{animation:hop .55s ease-out;}
+  @keyframes hop{0%{transform:translateY(0)}40%{transform:translateY(-26px)}100%{transform:translateY(0)}}
+  @media (prefers-reduced-motion:reduce){.sl.hop{animation:none;}}
+  .msg{font-size:16px;text-align:center;min-height:56px;margin:8px 0 0;}
+  .ans{font-size:24px;text-align:center;opacity:0;transition:opacity .5s;margin:6px 0 0;color:var(--mint-strong);}
+  .ans.on{opacity:1;}
+  .hl{color:var(--sky-strong);font-weight:400;}
+
+  .tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+  .tl li{
+    display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:baseline;
+    background:var(--card-bg-soft);border-radius:12px;padding:10px 14px;border-left:5px solid var(--sky);font-size:14.5px;
+  }
+  .tl li.w{border-left-color:var(--warning);}
+  .tg{font-size:12.5px;color:var(--sky-strong);white-space:nowrap;}
+  .tl li.w .tg{color:var(--warning-text);}
+  @media (max-width:620px){ .tl li{grid-template-columns:1fr;gap:2px;} }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>🔢 소수 곱셈 놀이터 <span class="sub">소수점이 움직이는 걸 직접 봐요</span></h1>
+</div>
+
+<div class="wrap">
+
+<div class="card">
+  <h2>✏️ 직접 입력하기</h2>
+  <p class="sub">곱해지는 수와 곱하는 수를 넣어 보세요. <b>입력하면 바로</b> 아래 애니메이션과 팁이 바뀌어요. (소수 셋째 자리까지)</p>
+  <div class="form">
+    <input id="a" value="" placeholder="1.2" inputmode="decimal" aria-label="곱해지는 수">
+    <span class="x">×</span>
+    <input id="b" value="" placeholder="0.3" inputmode="decimal" aria-label="곱하는 수">
+    <span class="err" id="err"></span>
+  </div>
+</div>
+
+<div class="card mine">
+  <h3>🎯 샘플 예시</h3>
+  <p class="mdesc">누르면 위 입력칸에 샘플이 들어가요. 흐린 글씨가 샘플 숫자예요.</p>
+  <div class="chips" id="pre"></div>
+</div>
+
+<hr class="divider">
+
+<div class="ctrls">
+  <button class="btn" id="play">▶ 자동 재생</button>
+  <button class="btn" id="next">다음 단계</button>
+  <button class="btn" id="reset">처음으로</button>
+</div>
+
+<div class="card">
+  <div class="stage-top"><span class="src" id="src"></span></div>
+  <div class="bar" id="bar"></div>
+  <div class="line" id="expr"></div>
+  <div class="line" style="margin-bottom:4px"><div class="prow" id="prow"></div></div>
+  <p class="ans" id="ans"></p>
+  <p class="msg" id="msg"></p>
+</div>
+
+<div class="card">
+  <h2 id="tiptitle">💡 맞춤 팁</h2>
+  <ul class="tl" id="tips"></ul>
+</div>
+
+<footer style="text-align:center;font-size:12.5px;color:var(--text-faint);">소수점은 칸 수만큼만 움직여요</footer>
+</div>
+
+<script>
+var presets=[["1.2","0.3"],["0.3","0.4"],["2.5","1.4"],["0.06","0.5"],["3.2","0.05"]];
+var pre=document.getElementById('pre');
+presets.forEach(function(p){var b=document.createElement('button');b.className='chip';b.textContent=p[0]+' × '+p[1];b.onclick=function(){stop();sample=p;var ia=document.getElementById('a'),ib=document.getElementById('b');ia.value='';ib.value='';ia.placeholder=p[0];ib.placeholder=p[1];build();};pre.appendChild(b);});
+var S={},step=0,timer=null,sample=["1.2","0.3"];
+function parse(s){s=s.trim();if(!/^\d{1,4}(\.\d{1,3})?$/.test(s))return null;var q=s.split('.');var f=q[1]||'';return {s:s,v:parseFloat(s),n:parseInt(q[0]+f,10),d:f.length,i:q[0],f:f};}
+function tips(){
+ var A=S.A,B=S.B,td=S.td,L=[];
+ function t(tag,txt,w){L.push('<li'+(w?' class="w"':'')+'><span class="tg">'+tag+'</span><span>'+txt+'</span></li>');}
+ if(td===0){t('안내','두 수 모두 자연수예요. 소수점 아래 칸이 0칸이라 그냥 곱하면 돼요. 소수가 들어간 수를 넣어 보세요.');}
+ else{
+  t('핵심','소수점 아래 칸을 세면 '+A.d+'칸 + '+B.d+'칸 = <b class="hl">'+td+'칸</b>이에요. '+A.n+' × '+B.n+' = '+S.p+'의 오른쪽 끝에서 '+td+'칸 왼쪽에 소수점을 찍어요.');
+  if(A.d!==B.d)t('주의','소수 자리 수가 달라도('+A.d+'칸, '+B.d+'칸) 맞출 필요 없어요. 곱셈은 칸 수를 그냥 더해요. 소수점을 세로로 맞추는 건 덧셈·뺄셈이에요.',1);
+  else t('주의','곱셈은 소수점을 세로로 맞추지 않아요. 맞추는 건 덧셈·뺄셈이에요. 곱셈은 칸 수만 더해요.',1);
+  if(S.added)t('0 채우기',A.n+' × '+B.n+' = '+S.p+'은 '+String(S.p).length+'자리인데 소수점 아래가 '+td+'칸 필요해서, 앞에 0을 '+S.added+'개 채워요. 소수점 바로 앞에도 0을 꼭 써요. → '+S.raw);
+  if(S.tr!==S.raw)t('끝자리 0',S.raw+'처럼 소수점 아래 끝에 0이 오면 지워도 같은 수예요. → '+S.tr);
+ }
+ var r=A.v*B.v;
+ if(A.v===0||B.v===0)t('검산','0을 곱하면 답은 항상 0이에요.');
+ else if(A.v<1&&B.v<1)t('검산','두 수 모두 1보다 작아서 답은 '+A.s+'보다도, '+B.s+'보다도 작아야 해요. → '+S.tr+(r<A.v&&r<B.v?' ✓':' ✗'));
+ else if(B.v<1)t('검산',B.s+'는 1보다 작으니까 답은 '+A.s+'보다 작아져야 해요. → '+S.tr+(r<A.v?' ✓':' ✗'));
+ else if(B.v>1)t('검산',B.s+'는 1보다 크니까 답은 '+A.s+'보다 커져야 해요. → '+S.tr+(r>A.v?' ✓':' ✗'));
+ else t('검산','1을 곱하면 그대로예요. → '+S.tr);
+ var ra=Math.round(A.v),rb=Math.round(B.v);
+ if(td>0&&ra>0&&rb>0)t('어림',A.s+'은 약 '+ra+', '+B.s+'는 약 '+rb+'이니까 '+ra+' × '+rb+' = '+(ra*rb)+' 근처가 나와야 해요. 답 '+S.tr+'과(와) 비교해 보세요.');
+ else if(td>0&&A.v!==0&&B.v!==0&&A.v<1&&B.v<1)t('어림','소수점 아래 첫 숫자만 보면 '+A.s+'는 약 '+(Math.round(A.v*10)/10)+', '+B.s+'는 약 '+(Math.round(B.v*10)/10)+'예요. 답이 이 둘의 곱과 비슷한 크기인지 봐요.');
+ document.getElementById('tiptitle').textContent='💡 '+A.s+' × '+B.s+'에 맞춘 팁';
+ document.getElementById('tips').innerHTML=L.join('');
+}
+function numHtml(P,id){var h='<div class="numgrp"><div class="dg">';for(var k=0;k<P.i.length;k++)h+='<div class="c">'+P.i[k]+'</div>';if(P.d){h+='<div class="xd" id="xd'+id+'">.</div>';for(var j=0;j<P.f.length;j++)h+='<div class="c fr'+id+'">'+P.f[j]+'</div>';}h+='</div><div class="badge" id="bd'+id+'">소수 '+P.d+'칸</div></div>';return h;}
+function build(){
+ stop();
+ var va=document.getElementById('a').value.trim(),vb=document.getElementById('b').value.trim(),err=document.getElementById('err'),isSample=!va&&!vb;
+ if(isSample){va=sample[0];vb=sample[1];}
+ else if(!va||!vb){err.textContent='두 수를 모두 입력해 주세요';return;}
+ var A=parse(va),B=parse(vb);
+ if(!A||!B){err.textContent='소수 셋째 자리까지의 수만 넣어 주세요';return;}
+ err.textContent='';
+ var src=document.getElementById('src');
+ src.textContent=isSample?'샘플 값으로 보는 중':'내가 입력한 값으로 보는 중';
+ src.className='src'+(isSample?' sample':'');
+ var p=A.n*B.n,ps=String(p),td=A.d+B.d,pad=ps.padStart(td+1,'0'),added=pad.length-ps.length,L=pad.length;
+ var ip=pad.slice(0,L-td),fp=pad.slice(L-td),raw=td?ip+'.'+fp:ip;
+ var fpt=fp.replace(/0+$/,''),tr=td?(ip+(fpt?'.'+fpt:'')):ip;
+ S={A:A,B:B,td:td,L:L,added:added,raw:raw,tr:tr,p:p,N:5+td};
+ document.getElementById('expr').innerHTML=numHtml(A,'A')+'<div class="op">×</div>'+numHtml(B,'B');
+ var h='';for(var i=0;i<=L;i++){h+='<div class="sl" id="sl'+i+'"></div>';if(i<L)h+='<div class="c'+(i>=L-td?' f':'')+(i<added?' z':'')+'">'+pad[i]+'</div>';}
+ document.getElementById('prow').innerHTML=h;
+ var bar='';for(var k=0;k<S.N;k++)bar+='<div class="pip" id="pip'+k+'"></div>';
+ document.getElementById('bar').innerHTML=bar;
+ step=0;apply(0);tips();
+}
+function msgFor(i){
+ var A=S.A,B=S.B,td=S.td;
+ if(i===0)return A.s+' × '+B.s+'<br>빨간 점이 소수점이에요. 먼저 소수점 아래 숫자(파란 칸)를 볼게요.';
+ if(i===1)return '소수점 아래 칸을 세요. '+A.d+'칸 + '+B.d+'칸 = <b class="hl">'+td+'칸</b>. 이 숫자를 기억해 두세요!';
+ if(i===2)return '소수점을 잠깐 지워요.<br>'+A.n+' × '+B.n+'으로 바뀌었어요.';
+ if(i===3)return '자연수처럼 곱하면 '+S.p+'이에요.'+(S.added?'<br>자리가 모자라서 앞에 0을 채웠어요 (점선 칸).':'')+'<br>소수점은 오른쪽 끝에서 출발해요.';
+ if(i<4+td)return '소수점을 왼쪽으로 <b class="hl">'+(i-3)+'칸</b> 옮겨요. ('+(i-3)+' / '+td+')';
+ return td+'칸 옮기기 끝!'+(S.tr!==S.raw?'<br>끝자리 0은 지울 수 있어요.':'');
+}
+function apply(i){
+ var td=S.td,L=S.L;
+ for(var k=0;k<S.N;k++)document.getElementById('pip'+k).classList.toggle('on',k<=i);
+ document.querySelectorAll('.frA,.frB').forEach(function(e){e.classList.toggle('f',i>=1);});
+ ['A','B'].forEach(function(id){var b=document.getElementById('bd'+id),x=document.getElementById('xd'+id);b.classList.toggle('on',i>=1&&i<2);if(x)x.classList.toggle('gone',i>=2);});
+ document.getElementById('prow').classList.toggle('on',i>=3);
+ for(var s=0;s<=L;s++){var e=document.getElementById('sl'+s);e.textContent='';e.classList.remove('hop');}
+ if(i>=3){var kk=Math.min(i-3,td),sl=document.getElementById('sl'+(L-kk));sl.textContent='.';if(i>3&&i<=3+td){void sl.offsetWidth;sl.classList.add('hop');}}
+ var ans=document.getElementById('ans');
+ ans.classList.toggle('on',i===S.N-1);
+ ans.textContent=S.A.s+' × '+S.B.s+' = '+S.raw+(S.tr!==S.raw?' = '+S.tr:'');
+ document.getElementById('msg').innerHTML=msgFor(i);
+}
+function stop(){if(timer){clearInterval(timer);timer=null;}var p=document.getElementById('play');if(p)p.textContent='▶ 자동 재생';}
+function go(){if(step<S.N-1){step++;apply(step);}else stop();}
+document.getElementById('next').onclick=function(){stop();if(step>=S.N-1){step=0;apply(0);}else go();};
+document.getElementById('reset').onclick=function(){stop();step=0;apply(0);};
+document.getElementById('play').onclick=function(){if(timer){stop();return;}if(step>=S.N-1){step=0;apply(0);}document.getElementById('play').textContent='❚❚ 멈추기';timer=setInterval(function(){go();},1700);};
+document.getElementById('a').addEventListener('input',build);
+document.getElementById('b').addEventListener('input',build);
+build();
+</script>
+</body>
+</html>
