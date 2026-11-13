@@ -77,6 +77,17 @@
   .hl{color:var(--sky-strong);}
   .muted{color:var(--text-soft);font-size:13px;}
   .err{font-size:12.5px;color:var(--danger);min-height:18px;margin:6px 0 0;}
+  .card.notecard{padding:0;overflow:hidden;}
+  .notehd{width:100%;display:flex;align-items:center;gap:8px;background:none;border:none;font-family:inherit;font-size:18px;color:var(--text);padding:14px 18px;cursor:pointer;text-align:left;}
+  .notehd .nb{background:var(--sky-light);color:var(--sky-strong);font-size:12.5px;border-radius:999px;padding:1px 9px;}
+  .notehd .ar{margin-left:auto;color:var(--text-soft);font-size:14px;}
+  .notebody{padding:0 18px 16px;}
+  .notebody textarea{width:100%;min-height:84px;resize:vertical;font-family:inherit;font-size:15px;line-height:1.6;color:var(--text);background:var(--card-bg-soft);border:1.5px solid var(--border);border-radius:14px;padding:10px 12px;}
+  .notebody textarea:focus{outline:none;border-color:var(--sky);}
+  .noteadd{display:flex;justify-content:flex-end;margin:8px 0 4px;}
+  .noteitem{display:flex;gap:8px;align-items:flex-start;background:var(--card-bg-soft);border:1px solid var(--border);border-radius:12px;padding:8px 10px;margin-top:8px;}
+  .noteitem .nt{flex:1;white-space:pre-wrap;word-break:break-word;font-size:15px;line-height:1.6;}
+  .noteitem .nd{font-size:11.5px;color:var(--text-faint);}
   .empty{text-align:center;color:var(--text-soft);padding:18px 8px;font-size:14px;}
 
   .btn{font-family:inherit;font-size:14.5px;cursor:pointer;border:none;border-radius:20px;padding:9px 20px;color:#fff;white-space:nowrap;background:linear-gradient(100deg,var(--sky),var(--mint));box-shadow:0 3px 0 var(--mint-strong);transition:transform .08s,box-shadow .08s;}
@@ -468,7 +479,10 @@ function normalize(db){
   if(!db.cats.some(function(c){return c.id==='etc';}))db.cats.push({id:'etc',name:'기타',icon:'star',color:'gray'});
   db.settings=db.settings||{};if(db.settings.sound===undefined)db.settings.sound=true;if(db.settings.notify===undefined)db.settings.notify=false;
   ['routines','logs','rewards','redeemed','treasure'].forEach(function(k){db[k]=db[k]||{};});
+  db.notes=(db.notes&&typeof db.notes==='object')?db.notes:{};
   db.profiles.forEach(function(p){
+    var NP=db.notes[p.id];NP=(NP&&typeof NP==='object')?NP:{};db.notes[p.id]=NP;
+    Object.keys(NP).forEach(function(dk){var arr=fbArr(NP[dk]).filter(function(n){return n&&typeof n==='object'&&typeof n.text==='string';});if(arr.length)NP[dk]=arr;else delete NP[dk];});
     db.routines[p.id]=db.routines[p.id]||[];db.logs[p.id]=db.logs[p.id]||{};
     db.rewards[p.id]=db.rewards[p.id]||[];db.redeemed[p.id]=db.redeemed[p.id]||[];
     /* Firebase는 빈 배열/객체를 지우고 배열을 객체로 바꾸기도 해서 다시 모양을 맞춘다 */
@@ -498,9 +512,9 @@ var SKEY='skyRoutine.sync';
 var SY=(function(){try{var o=JSON.parse(localStorage.getItem(SKEY));return o&&typeof o==='object'?o:{};}catch(e){return {};}})();
 var syT=null,syBusy=false;
 function sySave(){try{localStorage.setItem(SKEY,JSON.stringify(SY));}catch(e){}}
-var FB_RE=/^https:\/\/[a-z0-9-]+(\.[a-z0-9-]+)*\.(firebaseio\.com|firebasedatabase\.app)\/?$/;
-function syOk(){return SY.on&&FB_RE.test(SY.url||'')&&/^[A-Za-z0-9]{12,48}$/.test(SY.code||'');}
-function syUrl(){return SY.url.replace(/\/+$/,'')+'/sync/'+SY.code+'.json';}
+var FB_DEFAULT='https://flysso-default-rtdb.asia-southeast1.firebasedatabase.app';
+function syOk(){return SY.on&&/^[A-Za-z0-9]{12,48}$/.test(SY.code||'');}
+function syUrl(){return FB_DEFAULT+'/sync/'+SY.code+'.json';}
 function syStat(t,bad){SY.msg=t;SY.bad=!!bad;sySave();var e=document.getElementById('syStat');if(e){e.textContent=t;e.className='sysmsg'+(bad?' bad':'');}}
 function syTime(){var d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());}
 function syQueue(){if(!syOk())return;clearTimeout(syT);syT=setTimeout(syPush,1500);}
@@ -536,7 +550,7 @@ function syPull(force){
 }
 function syRandCode(){var a=new Uint8Array(20),s='',C='abcdefghijkmnpqrstuvwxyz23456789',i;try{crypto.getRandomValues(a);}catch(e){for(i=0;i<20;i++)a[i]=Math.floor(Math.random()*256);}for(i=0;i<20;i++)s+=C[a[i]%C.length];return s;}
 var DB=load();
-var ui={tab:'today',modal:null,timerKey:null,menuKey:null,formCat:'subj',xCat:'subj',newIcon:'pencil',newColor:'sky',colorEdit:null,date:todayKey(),rwDay:new Date().getDay(),editId:null,formDays:[new Date().getDay()],statWeek:0,confirmReset:false,doneOpen:false,doneSort:'wd',delKey:null,confirmClear:false,rwEmoji:'🎁',pEmo:null,pEmoEdit:null,sort:'def',sortDir:1,confirmDel:null,pendingImport:null};
+var ui={tab:'today',noteOpen:false,noteDraft:'',modal:null,timerKey:null,menuKey:null,formCat:'subj',xCat:'subj',newIcon:'pencil',newColor:'sky',colorEdit:null,date:todayKey(),rwDay:new Date().getDay(),editId:null,formDays:[new Date().getDay()],statWeek:0,confirmReset:false,doneOpen:false,doneSort:'wd',delKey:null,confirmClear:false,rwEmoji:'🎁',pEmo:null,pEmoEdit:null,sort:'def',sortDir:1,confirmDel:null,pendingImport:null};
 
 /* ---------- toast / sound ---------- */
 var toastT=null;
@@ -643,9 +657,22 @@ function sortBar(n){
      ui.confirmClear?'<span class="muted">할 일 '+n+'개를 삭제해요. 요일 루틴은 다른 요일에서도 사라져요.</span> <button class="btn sm danger" data-act="cleargo">모두 삭제</button> <button class="btn sm ghost" data-act="resetx">취소</button>':
      '<button class="btn sm ghost" data-act="resetask">↺ '+(ui.date===todayKey()?'오늘':'이날')+' 초기화</button> <button class="btn sm ghost" data-act="clearask">🗑 모두 삭제</button>')+'</span></div>';
 }
+function notesOf(pid,key){DB.notes=DB.notes||{};DB.notes[pid]=DB.notes[pid]||{};var a=DB.notes[pid][key];return Array.isArray(a)?a:[];}
+function noteHtml(){
+  var pid=DB.cur,key=ui.date,L=notesOf(pid,key),open=ui.noteOpen;
+  var h='<div class="card notecard"><button type="button" class="notehd" data-act="notetoggle" aria-expanded="'+open+'" aria-controls="noteBody">📒 알림장'+(L.length?'<span class="nb">'+L.length+'</span>':'')+'<span class="ar">'+(open?'접기 ▲':'펼치기 ▼')+'</span></button>';
+  if(open){
+    h+='<div class="notebody" id="noteBody"><textarea id="noteTxt" placeholder="학교 알림장 내용을 적어 주세요" aria-label="알림장 내용">'+esc(ui.noteDraft||'')+'</textarea><div class="noteadd"><button type="button" class="btn sm" data-act="noteadd">입력</button></div>';
+    if(L.length){h+=L.map(function(n){var tm=new Date(n.at||0);return '<div class="noteitem"><div class="nt">'+esc(n.text)+(n.at?'<div class="nd">'+(tm.getMonth()+1)+'/'+tm.getDate()+' '+('0'+tm.getHours()).slice(-2)+':'+('0'+tm.getMinutes()).slice(-2)+' 입력</div>':'')+'</div><button type="button" class="ic del" data-act="notedel" data-id="'+n.id+'" aria-label="알림장 삭제">🗑</button></div>';}).join('');}
+    else h+='<div class="muted" style="font-size:13px;text-align:center;margin-top:6px">아직 입력한 알림장이 없어요.</div>';
+    h+='</div>';
+  }
+  return h+'</div>';
+}
 function renderToday(){
   var pid=DB.cur,key=ui.date,isToday=key===todayKey(),tasks=tasksFor(pid,key),st=dayStats(pid,key),pct=st.total?Math.round(st.done/st.total*100):0,d=parseKey(key);
   var h='';
+  h+=noteHtml();
   h+='<div class="card"><h2>✅ 할 일</h2>';
   if(isToday&&tasks.length)h+=bannerHtml()+cheerHtml();
   if(!tasks.length){
@@ -867,9 +894,8 @@ function renderSettings(){
   h+='<div class="card"><h2>🏷️ 라벨</h2><p class="sub">할 일에 붙이는 라벨을 늘리거나 지울 수 있어요. 라벨을 지우면 그 라벨을 쓰던 할 일은 「기타」로 보여요.</p><div class="chips">'+DB.cats.map(function(c){return '<span class="chip lbl cc lc-'+lcOf(c)+(ui.colorEdit===c.id?' on':'')+'"><button class="lbn" data-act="coledit" data-id="'+c.id+'" aria-label="'+esc(c.name)+' 색 바꾸기" aria-pressed="'+(ui.colorEdit===c.id)+'">'+iconSvg(c.icon,16)+' '+esc(c.name)+'</button>'+(c.id==='etc'?'':'<button class="lbl-x" data-act="lbldel" data-id="'+c.id+'" aria-label="'+esc(c.name)+' 라벨 삭제">✕</button>')+'</span>';}).join('')+'</div>'+(ui.colorEdit&&catOf(ui.colorEdit).id===ui.colorEdit?'<div class="cwrow"><span class="muted">'+esc(catOf(ui.colorEdit).name)+' 색</span>'+colorChips(lcOf(catOf(ui.colorEdit)),'colset',ui.colorEdit)+'</div>':'<p class="muted" style="margin:-4px 0 12px">라벨을 누르면 색을 바꿀 수 있어요.</p>')+lblForm('s')+'</div>';
   h+='<div class="card"><h2>🔔 알림</h2><p class="sub">타이머가 예상 시간을 넘으면 알려줘요. 화면이 꺼져 있거나 다른 앱을 쓰는 중엔 소리가 안 날 수 있어요.</p><div class="addrow"><button class="chip'+(DB.settings.sound?' on':'')+'" data-act="sound">'+sndIcon(DB.settings.sound)+' 소리 '+(DB.settings.sound?'켜짐':'꺼짐')+'</button><button class="chip'+(DB.settings.notify?' on':'')+'" data-act="notiperm">🔔 브라우저 알림 '+(DB.settings.notify?'켜짐':'꺼짐')+'</button></div></div>';
   var syc=SY.code||'';
-  h+='<div class="card"><h2>🔄 기기 연동</h2><p class="sub">태블릿과 폰이 같은 기록을 보게 해요. 두 기기에 <b>같은 주소와 코드</b>를 넣으면 돼요. 코드를 아는 사람은 기록을 볼 수 있으니 다른 사람에게 알려 주지 마세요.</p>'+
-    '<label class="mlbl" for="syUrlI">Firebase 데이터베이스 주소</label><input id="syUrlI" class="txt" maxlength="200" placeholder="https://○○○-default-rtdb.firebaseio.com" value="'+esc(SY.url||'')+'" inputmode="url" autocomplete="off">'+
-    '<label class="mlbl" for="syCodeI" style="margin-top:10px">동기화 코드</label><div class="addrow"><input id="syCodeI" class="txt" maxlength="48" placeholder="코드를 붙여 넣거나 새로 만들기" value="'+esc(syc)+'" autocomplete="off"><button class="btn ghost sm" data-act="sygen">새 코드 만들기</button></div>'+
+  h+='<div class="card"><h2>🔄 기기 연동</h2><p class="sub">태블릿과 폰이 같은 기록을 보게 해요. 두 기기에 <b>같은 코드</b>를 넣으면 돼요. 코드를 아는 사람은 기록을 볼 수 있으니 다른 사람에게 알려 주지 마세요.</p>'+
+    '<label class="mlbl" for="syCodeI">동기화 코드</label><div class="addrow"><input id="syCodeI" class="txt" maxlength="48" placeholder="코드를 붙여 넣거나 새로 만들기" value="'+esc(syc)+'" autocomplete="off"><button class="btn ghost sm" data-act="sygen">새 코드 만들기</button></div>'+
     '<div class="addrow" style="margin-top:12px">'+(SY.on?'<button class="btn warn sm" data-act="syoff">연동 끄기</button>':'<button class="btn" data-act="syon">연동 켜기</button>')+'<button class="btn ghost sm" data-act="sycopy">연동 정보 복사</button>'+(SY.on?'<button class="btn ghost sm" data-act="sysync">지금 맞추기</button>':'')+'</div>'+
     '<p class="sysmsg'+(SY.bad?' bad':'')+'" id="syStat">'+esc(SY.on?(SY.msg||'연동 중'):'연동이 꺼져 있어요')+'</p>'+
     '<p class="muted">이미 코드가 있는 서버에 처음 연결하면, 이 기기의 기록이 서버 기록으로 바뀌어요.</p></div>';
@@ -1080,6 +1106,9 @@ document.addEventListener('click',function(e){
   var a=el.dataset.act,d=el.dataset.d,id=el.dataset.id,k=el.dataset.k;
   if(a==='prof'){DB.cur=id;ui.editId=null;ui.timerKey=null;save();render();}
   else if(a==='dnav'){ui.confirmReset=false;ui.confirmClear=false;ui.delKey=null;ui.date=d==='0'?todayKey():addDays(ui.date,+d);render();}
+  else if(a==='notetoggle'){var nt0=document.getElementById('noteTxt');if(nt0)ui.noteDraft=nt0.value;ui.noteOpen=!ui.noteOpen;render();}
+  else if(a==='noteadd'){var nt=document.getElementById('noteTxt'),tv=nt?nt.value.trim():'';if(!tv){toast('알림장 내용을 먼저 적어 주세요');if(nt)nt.focus();}else{var NL=notesOf(DB.cur,ui.date);NL.push({id:uid(),text:tv,at:Date.now()});DB.notes[DB.cur][ui.date]=NL;ui.noteDraft='';save();render();toast('알림장을 입력했어요');}}
+  else if(a==='notedel'){var ND=notesOf(DB.cur,ui.date).filter(function(n){return n.id!==id;});DB.notes[DB.cur][ui.date]=ND;save();render();}
   else if(a==='done'){var t=findTask(k);if(t)toggleDone(t);}
   else if(a==='open'){var t2=findTask(k);if(t2)openTimer(t2);}
   else if(a==='edit'){var te=findTask(k);if(te){ui.menuKey=null;openModal(te);}}
@@ -1234,22 +1263,21 @@ document.addEventListener('click',function(e){
   else if(a==='importcancel'){ui.pendingImport=null;render();}
   else if(a==='sygen'){document.getElementById('syCodeI').value=syRandCode();}
   else if(a==='sycopy'){
-    var cu=document.getElementById('syUrlI').value.trim(),cc=document.getElementById('syCodeI').value.trim();
-    if(!cu||!cc){syStat('주소와 코드를 먼저 넣어 주세요',true);return;}
-    var txt=cu+'|'+cc;
-    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast('연동 정보를 복사했어요');},function(){toast('복사하지 못했어요. 직접 적어 주세요');});}
+    var cc=document.getElementById('syCodeI').value.trim();
+    if(!cc){syStat('코드를 먼저 넣어 주세요',true);return;}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(cc).then(function(){toast('코드를 복사했어요');},function(){toast('복사하지 못했어요. 직접 적어 주세요');});}
     else toast('이 브라우저에서는 복사할 수 없어요');
   }
   else if(a==='syon'){
-    var uu=document.getElementById('syUrlI').value.trim(),co=document.getElementById('syCodeI').value.trim();
-    if(uu.indexOf('|')>-1){var pp=uu.split('|');uu=pp[0].trim();co=(pp[1]||co).trim();}
-    if(!FB_RE.test(uu)){syStat('주소는 https://…firebaseio.com 또는 …firebasedatabase.app 모양이어야 해요',true);return;}
-    if(!/^[A-Za-z0-9]{12,48}$/.test(co)){syStat('코드는 영문·숫자 12~48자로 넣어 주세요 (새 코드 만들기를 눌러도 돼요)',true);return;}
-    SY={url:uu.replace(/\/+$/,''),code:co,on:true};sySave();render();syStat('연결하는 중…');syPull(true);
+    var co=document.getElementById('syCodeI').value.trim();
+    if(co.indexOf('|')>-1)co=co.split('|').pop().trim();
+    if(!/^[A-Za-z0-9]{12,48}$/.test(co)){syStat('코드는 영문과 숫자 12~48자로 넣어 주세요 (새 코드 만들기를 눌러도 돼요)',true);return;}
+    SY={code:co,on:true};sySave();render();syStat('연결하는 중…');syPull(true);
   }
   else if(a==='syoff'){SY.on=false;sySave();clearTimeout(syT);render();}
   else if(a==='sysync'){syPull(false);syPush();}
 });
+document.addEventListener('input',function(e){if(e.target&&e.target.id==='noteTxt')ui.noteDraft=e.target.value;});
 document.addEventListener('change',function(e){
   var t=e.target;
   if(t.dataset&&t.dataset.chg==='pname'){var p=DB.profiles.filter(function(x){return x.id===t.dataset.id;})[0],v=t.value.trim();if(p&&v){p.name=v;save();renderProfiles();}else if(p){t.value=p.name;}}
