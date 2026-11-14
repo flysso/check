@@ -342,6 +342,9 @@
   .titem.new{animation:tpop .5s;}
   @keyframes tpop{0%{transform:scale(.8)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
   @media (max-width:620px){.tgrid{grid-template-columns:repeat(3,1fr);}}
+  .list.dnd .task:not(.done):not(.skipped){cursor:grab;}
+  .task.rdrag{opacity:.88;cursor:grabbing!important;box-shadow:0 8px 22px rgba(0,0,0,.2);position:relative;z-index:5;}
+  body.rdragging{user-select:none;-webkit-user-select:none;}
   .praise{position:fixed;left:50%;top:42%;transform:translate(-50%,-46%) scale(.92);z-index:120;display:flex;flex-direction:column;align-items:center;gap:18px;pointer-events:none;opacity:0;transition:opacity .35s,transform .35s;}
   .praise.on{opacity:.88;transform:translate(-50%,-50%) scale(1);}
   @keyframes stampin{0%{transform:scale(1.9) rotate(-14deg);opacity:0}55%{transform:scale(.94) rotate(-6deg);opacity:1}75%{transform:scale(1.04) rotate(-8deg)}100%{transform:scale(1) rotate(-8deg)}}
@@ -507,7 +510,7 @@ function normalize(db){
     db.routines[p.id].forEach(function(r){r.days=fbArr(r.days);});
     db.rewards[p.id]=fbArr(db.rewards[p.id]);db.redeemed[p.id]=fbArr(db.redeemed[p.id]);
     var LG=db.logs[p.id];
-    Object.keys(LG).forEach(function(k){var l=LG[k];if(!l||typeof l!=='object'){LG[k]={t:{},x:[],h:{}};return;}l.t=(l.t&&typeof l.t==='object')?l.t:{};l.h=(l.h&&typeof l.h==='object'&&!Array.isArray(l.h))?l.h:{};l.x=fbArr(l.x).filter(function(x){return x&&typeof x==='object';});});
+    Object.keys(LG).forEach(function(k){var l=LG[k];if(!l||typeof l!=='object'){LG[k]={t:{},x:[],h:{}};return;}l.t=(l.t&&typeof l.t==='object')?l.t:{};l.h=(l.h&&typeof l.h==='object'&&!Array.isArray(l.h))?l.h:{};l.o=fbArr(l.o).filter(function(k){return typeof k==='string';});l.x=fbArr(l.x).filter(function(x){return x&&typeof x==='object';});});
   });
   if((+db.sampleV||1)<SAMPLE_V){
     db.profiles.forEach(function(p){
@@ -654,6 +657,7 @@ function stepper(id,val){return '<div class="stepper"><button class="btn ghost s
 
 function sortTasks(arr){
   var ci={};DB.cats.forEach(function(c,i){ci[c.id]=i;});
+  var OI=null,lgo=peekLog(DB.cur,ui.date);if(lgo&&Array.isArray(lgo.o)&&lgo.o.length){OI={};lgo.o.forEach(function(k,i){OI[k]=i;});}
   var rows=arr.map(function(t,i){return {t:t,i:i};});
   function grp(t){var r=t.rec;return r&&r.skip?2:(r&&r.done?1:0);}
   rows.sort(function(a,b){
@@ -661,6 +665,7 @@ function sortTasks(arr){
     var d=0;
     if(ui.sort==='cat'){var x=ci[catOf(a.t.cat).id],y=ci[catOf(b.t.cat).id];d=(x-y)*ui.sortDir;}
     else if(ui.sort==='min')d=(a.t.min-b.t.min)*ui.sortDir;
+    else if(ui.sort==='def'&&OI){var ia=OI[a.t.kind+':'+a.t.id],ib=OI[b.t.kind+':'+b.t.id];d=(ia===undefined?1e6+a.i:ia)-(ib===undefined?1e6+b.i:ib);}
     return d||(a.i-b.i);
   });
   return rows.map(function(r){return r.t;});
@@ -670,9 +675,9 @@ function sortBar(n){
   return '<div class="sortbar"><span class="muted">정렬</span>'+o.map(function(x){
     var on=ui.sort===x[0],ar=on&&x[0]!=='def'?(x[0]==='min'?(ui.sortDir>0?' ↑':' ↓'):(ui.sortDir>0?' ↓':' ↑')):'';
     return '<button class="chip'+(on?' on':'')+'" data-act="sort" data-id="'+x[0]+'" aria-pressed="'+on+'">'+x[1]+ar+'</button>';
-  }).join('')+'<span class="muted" style="font-size:12.5px">끝낸 일은 맨 아래로 가요</span><span class="rsbox">'+
+  }).join('')+'<span class="muted" style="font-size:12.5px">끝낸 일은 맨 아래로 가요'+(ui.sort==='def'?', 끌어서 순서를 바꿔요':'')+'</span><span class="rsbox">'+
     (ui.confirmReset?'<span class="muted">기록을 모두 지울까요?</span> <button class="btn sm danger" data-act="resetgo">지우기</button> <button class="btn sm ghost" data-act="resetx">취소</button>':
-     ui.confirmClear?'<span class="muted">할 일 '+n+'개를 삭제해요. 요일 루틴은 다른 요일에서도 사라져요.</span> <button class="btn sm danger" data-act="cleargo">모두 삭제</button> <button class="btn sm ghost" data-act="resetx">취소</button>':
+     ui.confirmClear?'<span class="muted">할 일 '+n+'개를 '+(ui.date===todayKey()?'오늘':'이날')+'만 삭제해요. 다른 요일 루틴은 그대로예요.</span> <button class="btn sm danger" data-act="cleargo">모두 삭제</button> <button class="btn sm ghost" data-act="resetx">취소</button>':
      '<button class="btn sm ghost" data-act="resetask">↺ '+(ui.date===todayKey()?'오늘':'이날')+' 초기화</button> <button class="btn sm ghost" data-act="clearask">🗑 모두 삭제</button>')+'</span></div>';
 }
 function notesOf(pid,key){DB.notes=DB.notes||{};DB.notes[pid]=DB.notes[pid]||{};var a=DB.notes[pid][key];return Array.isArray(a)?a:[];}
@@ -727,7 +732,7 @@ function renderToday(){
     if(!any)h+='<div style="text-align:center"><button class="btn warn" data-act="sampleR">샘플 루틴 넣어보기</button></div>';
   }else{
     h+=sortBar(tasks.length);
-    h+='<div class="list">'+sortTasks(tasks).map(function(t){
+    h+='<div class="list'+(ui.sort==='def'?' dnd':'')+'">'+sortTasks(tasks).map(function(t){
       var r=t.rec,skip=!!(r&&r.skip),done=!!(r&&r.done),run=!!(r&&r.start),started=!!(r&&(r.acc>0||r.start)),el=elapsed(r),over=!!r&&!skip&&(done?r.over:el>t.min*60),k=t.kind+':'+t.id;
       var btn=skip?'<button class="btn sm ghost" data-act="mrestore" data-k="'+k+'">↩ 복구</button>':(isToday&&!done?'<button class="btn sm'+(run?' pause':'')+'" data-act="open" data-k="'+k+'">'+(run?'⏱<span class="bt"> 진행 중</span>':(started?'▶<span class="bt"> 계속</span>':'▶<span class="bt"> 시작</span>'))+'</button>':(done?'<button class="btn sm ghost" data-act="mactual" data-k="'+k+'">✏️ <span class="bt">실제 </span>'+Math.round(el/60)+'분</button>':''));
       var menu=ui.menuKey===k?'<div class="tmenu" role="menu"><button role="menuitem" data-act="edit" data-k="'+k+'">✏️ 수정</button>'+(skip?'':'<button role="menuitem" data-act="skipk" data-k="'+k+'">⏭ '+(isToday?'오늘은':'이날은')+' 건너뛰기</button>')+(skip?'':'<button role="menuitem" data-act="mactual" data-k="'+k+'">⏱ 실제 시간 입력</button>')+'<button role="menuitem" data-act="mreset" data-k="'+k+'">⟲ 시간 초기화</button></div>':'';
@@ -1379,6 +1384,52 @@ document.addEventListener('pointermove',function(e){
   setActualMin(rdrag.t,elMin);updateTimerView();
 });
 function endDrag(){if(!rdrag)return;var rg=document.getElementById('tmRing');if(rg)rg.classList.remove('dragging');var mv=rdrag.moved;rdrag=null;if(mv){save();window.__ringDragged=true;setTimeout(function(){window.__ringDragged=false;},350);}}
+var rowDrag=null;
+function rdRows(list,except){return [].slice.call(list.children).filter(function(c){return c!==except&&c.classList.contains('task')&&!c.classList.contains('done')&&!c.classList.contains('skipped');});}
+function rdStart(){
+  if(!rowDrag||rowDrag.on)return;rowDrag.on=true;clearTimeout(rowDrag.timer);
+  rowDrag.row.classList.add('rdrag');document.body.classList.add('rdragging');
+  try{rowDrag.row.setPointerCapture(rowDrag.pid);}catch(x){}
+}
+function rdEnd(save_){
+  if(!rowDrag)return;var d=rowDrag;rowDrag=null;clearTimeout(d.timer);
+  d.row.classList.remove('rdrag');document.body.classList.remove('rdragging');
+  if(!d.on)return;
+  window.__rowDragged=true;setTimeout(function(){window.__rowDragged=false;},350);
+  if(save_){
+    var keys=[].slice.call(d.list.children).filter(function(c){return c.classList.contains('task')&&c.dataset.k;}).map(function(c){return c.dataset.k;});
+    var lg=ensureLog(DB.cur,ui.date);lg.o=keys;save();
+  }
+  render();
+}
+document.addEventListener('pointerdown',function(e){
+  if(ui.sort!=='def'||ui.timerKey||ui.tab!=='today'||ui.delKey||ui.menuKey||e.button>0)return;
+  var row=e.target.closest&&e.target.closest('.task');
+  if(!row||!row.dataset.k||row.classList.contains('done')||row.classList.contains('skipped'))return;
+  if(e.target.closest('button,input,textarea,a,select,.tmenu'))return;
+  var list=row.parentNode;if(!list||!list.classList.contains('dnd'))return;
+  rowDrag={row:row,list:list,x:e.clientX,y:e.clientY,pid:e.pointerId,type:e.pointerType,on:false,timer:null};
+  if(e.pointerType!=='mouse'){rowDrag.timer=setTimeout(rdStart,380);}
+});
+document.addEventListener('pointermove',function(e){
+  if(!rowDrag||e.pointerId!==rowDrag.pid)return;
+  if(!rowDrag.on){
+    var dist=Math.abs(e.clientX-rowDrag.x)+Math.abs(e.clientY-rowDrag.y);
+    if(rowDrag.type==='mouse'){if(dist>6)rdStart();}
+    else if(dist>10){clearTimeout(rowDrag.timer);rowDrag=null;}
+    if(!rowDrag||!rowDrag.on)return;
+  }
+  e.preventDefault();
+  var row=rowDrag.row,rows=rdRows(rowDrag.list,row),y=e.clientY,placed=false;
+  for(var i=0;i<rows.length;i++){var b=rows[i].getBoundingClientRect();if(y<b.top+b.height/2){if(row.nextSibling!==rows[i])rowDrag.list.insertBefore(row,rows[i]);placed=true;break;}}
+  if(!placed&&rows.length){var last=rows[rows.length-1];if(last.nextSibling!==row)rowDrag.list.insertBefore(row,last.nextSibling);}
+  if(y<70)window.scrollBy(0,-14);else if(y>window.innerHeight-70)window.scrollBy(0,14);
+});
+document.addEventListener('pointerup',function(){rdEnd(true);});
+document.addEventListener('pointercancel',function(){rdEnd(false);});
+document.addEventListener('touchmove',function(e){if(rowDrag&&rowDrag.on&&e.cancelable)e.preventDefault();},{passive:false});
+document.addEventListener('click',function(e){if(window.__rowDragged){e.stopPropagation();e.preventDefault();}},true);
+document.addEventListener('contextmenu',function(e){if(rowDrag&&rowDrag.on)e.preventDefault();});
 document.addEventListener('pointerup',endDrag);
 document.addEventListener('pointercancel',endDrag);
 document.addEventListener('keydown',function(e){
