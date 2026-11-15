@@ -53,6 +53,9 @@
   .htxt{flex:1;min-width:160px;}
   .htxt h2{font-size:21px;margin:0 0 2px;display:block;}
   .htxt .hs{font-size:13.5px;color:var(--text-soft);line-height:1.5;}
+  .hstamp{flex:0 0 auto;width:80px;height:80px;margin:-12px -2px;transform:rotate(-10deg);object-fit:contain;pointer-events:none;}
+  .hstamp.pop{animation:stampin .5s ease-out both;}
+  @media (max-width:620px){.hstamp{width:66px;height:66px;margin:-8px -2px;}}
   .hring{flex:0 0 auto;position:relative;width:58px;height:58px;}
   .hring svg{width:100%;height:100%;transform:rotate(-90deg);}
   .hring span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;}
@@ -159,7 +162,8 @@
   .fact .val{font-size:20px;}
   .fact .val small{font-size:12px;color:var(--text-faint);}
   .bars{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;}
-  .bcol{text-align:center;}
+  .bcol{text-align:center;position:relative;}
+  .bstamp{position:absolute;left:50%;top:22px;width:min(118%,62px);max-height:68px;object-fit:contain;transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.18));}
   .btrack{height:120px;border-radius:10px;background:var(--sky-light);display:flex;align-items:flex-end;overflow:hidden;}
   .btrack i{display:block;width:100%;background:var(--sky);border-radius:10px 10px 0 0;transition:height .4s;}
   .btrack i.full{background:linear-gradient(0deg,var(--mint),var(--sky));}
@@ -327,6 +331,8 @@
   .tdots i{width:10px;height:10px;border-radius:50%;background:var(--border-strong);display:block;}
   .tdots i.f{background:var(--mint);}
   .tdots i.sp{background:transparent;border:2.5px solid var(--warning,#d9a521);width:11px;height:11px;box-sizing:border-box;}
+  .tcols[hidden]{display:none;}
+  .dexhd{padding:10px 4px;border-top:1px solid var(--border);margin-top:4px;}
   .tgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
   .titem{background:var(--card-bg-soft);border-radius:14px;padding:10px 4px 12px;text-align:center;font-size:13px;color:var(--text-soft);display:flex;flex-direction:column;align-items:center;gap:6px;}
   .titem .tm{font-size:12px;color:var(--text-soft);}
@@ -462,26 +468,35 @@ function daysText(days){
 
 function defaultDB(){return {v:1,profiles:[{id:'p1',name:'아이 1',emoji:EMOJI[0]}],cur:'p1',routines:{p1:[]},logs:{p1:{}},rewards:{p1:[]},redeemed:{p1:[]},settings:{sound:true,notify:false},cats:JSON.parse(JSON.stringify(DEFAULT_CATS))};}
 var TREASURE={
- gem:{name:'탄생석 모으기',noun:'탄생석',ico:'💎',items:[['가넷','🔴'],['자수정','🟣'],['아쿠아마린','🔵'],['다이아몬드','💎'],['에메랄드','🟢'],['진주','🤍'],['루비','❤️'],['페리도트','🍏'],['사파이어','🔷'],['오팔','🌈'],['토파즈','🟠'],['터키석','🩵']],month:true},
- snack:{name:'간식 모으기',noun:'간식',ico:'🍪',items:[['쿠키','🍪'],['초콜릿','🍫'],['사탕','🍬'],['도넛','🍩'],['컵케이크','🧁'],['푸딩','🍮'],['아이스크림','🍦'],['케이크','🍰'],['마카롱','🧇'],['팝콘','🍿'],['젤리','🍭'],['빵','🥐']]},
- plant:{name:'식물 키우기',noun:'식물',ico:'🌱',items:[['새싹','🌱'],['풀잎','🌿'],['클로버','🍀'],['벚꽃','🌸'],['해바라기','🌻'],['튤립','🌷'],['선인장','🌵'],['화분','🪴'],['나무','🌳'],['버섯','🍄'],['데이지','🌼'],['장미','🌹']]}
+ plant:{name:'식물 키우기',noun:'식물',ico:'🌱',items:[['새싹','🌱'],['풀잎','🌿'],['클로버','🍀'],['벚꽃','🌸'],['해바라기','🌻'],['튤립','🌷'],['선인장','🌵'],['화분','🪴'],['나무','🌳'],['버섯','🍄'],['데이지','🌼'],['장미','🌹'],['히비스커스','🌺'],['꽃다발','💐'],['토끼풀','☘️'],['전나무','🌲'],['야자수','🌴'],['대나무','🎋'],['단풍나무','🍁'],['벼','🌾'],['잎사귀','🍃'],['크리스마스트리','🎄'],['딸기','🍓'],['토마토','🍅'],['당근','🥕'],['옥수수','🌽'],['브로콜리','🥦'],['사과','🍎'],['청사과','🍏'],['귤','🍊'],['레몬','🍋'],['포도','🍇'],['복숭아','🍑'],['체리','🍒'],['키위','🥝'],['수박','🍉'],['멜론','🍈'],['파인애플','🍍'],['바나나','🍌'],['배','🍐'],['코코넛','🥥'],['밤','🌰'],['감자','🥔'],['고구마','🍠'],['호박','🎃'],['가지','🍆'],['고추','🌶️'],['아보카도','🥑'],['팬지','🌸',['#8e5bd0','#ffd54a',5,'r']],['코스모스','🌸',['#f26ea0','#ffd54a',8,'p']],['국화','🌸',['#ffc83d','#b8741a',14,'p']],['백합','🌸',['#ffffff','#f0a030',6,'p']],['수선화','🌸',['#ffe14d','#ff9f1c',6,'r']],['동백','🌸',['#e63950','#ffd54a',5,'r']],['모란','🌸',['#ff7fb0','#ffd54a',8,'r']],['작약','🌸',['#ffa6c8','#ffe08a',10,'r']],['프리지아','🌸',['#ffd23f','#fff3b0',6,'p']],['채송화','🌸',['#ff5d8f','#ffd54a',5,'r']],['봉선화','🌸',['#ff8fb1','#ffe28a',5,'r']],['제비꽃','🌸',['#7b6fd6','#ffe66d',5,'r']],['철쭉','🌸',['#ff6fa5','#ffd54a',5,'r']],['진달래','🌸',['#f58fd1','#ffd54a',5,'r']],['개나리','🌸',['#ffe030','#e8a700',4,'p']],['목련','🌸',['#fff1f6','#f4b7cf',6,'p']],['무궁화','🌸',['#ff8ad8','#c2185b',5,'r']],['나팔꽃','🌸',['#5b8def','#ffffff',5,'r']],['수국','🌸',['#7fb2f0','#c9e0ff',8,'r']],['카네이션','🌸',['#ff4f6d','#ffd0d8',12,'r']],['달리아','🌸',['#ff7a45','#ffd54a',12,'p']],['아네모네','🌸',['#d1478f','#2b1b3a',6,'r']],['해당화','🌸',['#ff4d7d','#ffd54a',5,'r']],['능소화','🌸',['#ff9a3c','#ffd54a',5,'r']],['라일락','🌸',['#b79cf0','#e5d8ff',4,'r']],['안개꽃','🌸',['#ffffff','#ffe28a',5,'r']],['물망초','🌸',['#6ec6ff','#ffe66d',5,'r']],['금잔화','🌸',['#ffa51f','#8a5200',12,'p']],['백일홍','🌸',['#ff5f7e','#ffd54a',14,'p']],['도라지','🌸',['#7a64e6','#ffffff',5,'p']],['복수초','🌸',['#ffd400','#ffa000',10,'p']],['매발톱','🌸',['#9a7bd6','#ffffff',5,'p']],['접시꽃','🌸',['#ff7aa8','#ffe28a',5,'r']],['금낭화','🌸',['#ff6f9c','#ffffff',4,'r']],['양귀비','🌸',['#ff3b30','#2b1b1b',5,'r']],['거베라','🌸',['#ff5252','#5d4037',14,'p']],['리시안셔스','🌸',['#c792ea','#ffffff',6,'r']],['라넌큘러스','🌸',['#ff9aa2','#ffe3b3',10,'r']],['스위트피','🌸',['#f78fb3','#ffffff',5,'r']],['페튜니아','🌸',['#d946ef','#fff6a0',5,'r']],['베고니아','🌸',['#ff6b6b','#ffd54a',4,'r']],['제라늄','🌸',['#ff4d4d','#ffd54a',5,'r']],['앵초','🌸',['#f06292','#fff59d',5,'r']],['꽃창포','🌸',['#6a5acd','#ffd54a',6,'p']],['붓꽃','🌸',['#4b61d1','#ffd54a',6,'p']],['글라디올러스','🌸',['#ff6e40','#ffe0b2',6,'p']],['히아신스','🌸',['#7e57c2','#ffffff',6,'p']],['크로커스','🌸',['#b388ff','#ffb300',6,'p']],['은방울꽃','🌸',['#ffffff','#e8f5e9',6,'r']],['메리골드','🌸',['#ff9800','#bf360c',16,'p']],['카모마일','🌸',['#ffffff','#ffd54a',12,'p']],['클레마티스','🌸',['#9575cd','#ffffff',6,'p']]]}
 };
-var T_ORDER=['gem','snack','plant'];
+var T_ORDER=['plant'];
+var PLANT_N=TREASURE.plant.items.length;
+function bloomSvg(sp,cx,cy,r){
+  var col=sp[0],cen=sp[1],n=sp[2],sh=sp[3],o='<g stroke="rgba(0,0,0,.2)" stroke-width="'+(r*0.05).toFixed(2)+'">',k,a,x,y;
+  for(k=0;k<n;k++){
+    a=k*360/n;
+    if(sh==='p'){o+='<ellipse cx="'+cx+'" cy="'+(cy-r*0.52).toFixed(2)+'" rx="'+(r*Math.min(.3,3.4/n)).toFixed(2)+'" ry="'+(r*0.5).toFixed(2)+'" fill="'+col+'" transform="rotate('+a.toFixed(1)+' '+cx+' '+cy+')"/>';}
+    else{o+='<circle cx="'+cx+'" cy="'+(cy-r*0.58).toFixed(2)+'" r="'+(r*Math.min(.42,2.6/n)).toFixed(2)+'" fill="'+col+'" transform="rotate('+a.toFixed(1)+' '+cx+' '+cy+')"/>';}
+  }
+  return o+'<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*0.26).toFixed(2)+'" fill="'+cen+'"/></g>';
+}
 var GEMC=['#b03a48','#9b6bd1','#7fd0e0','#dbe9f7','#3f9d6a','pearl','#d8344d','#9ccc3c','#3556b5','opal','#f0b340','#4fc1c8'];
 function itemVis(k,i,sz){
-  if(k!=='gem')return TREASURE[k].items[i][1];
+  var itm=TREASURE[k].items[i];if(itm[2])return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 40 40" aria-hidden="true">'+bloomSvg(itm[2],20,20,16)+'</svg>';
+  if(k!=='gem')return itm[1];
   var c=GEMC[i],v='<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 40 40" aria-hidden="true">';
   if(c==='pearl')return v+'<circle cx="20" cy="20" r="12" fill="#f4eef2" stroke="#d9cfd6" stroke-width="1.5"/><ellipse cx="16" cy="15" rx="4" ry="3" fill="#fff" opacity=".9"/></svg>';
   if(c==='opal')return v+'<ellipse cx="20" cy="20" rx="14" ry="11" fill="#e6def2" stroke="#c9bddb" stroke-width="1.5"/><circle cx="14" cy="18" r="3" fill="#9fd6e8"/><circle cx="24" cy="22" r="3.2" fill="#f3a9bd"/><circle cx="19" cy="15" r="2" fill="#bfe7c8"/></svg>';
   return v+'<polygon points="10,7 30,7 37,16 20,36 3,16" fill="'+c+'"/><polygon points="10,7 30,7 27,16 13,16" fill="#fff" opacity=".35"/><polygon points="3,16 13,16 20,36" fill="#000" opacity=".12"/><polygon points="37,16 27,16 20,36" fill="#000" opacity=".2"/><polyline points="3,16 37,16" stroke="#fff" stroke-opacity=".5" fill="none"/><polygon points="10,7 30,7 37,16 20,36 3,16" fill="none" stroke="#000" stroke-opacity=".18"/></svg>';
 }
-function rarOf(i){return i===3?'spec':(i===4||i===6||i===8)?'rare':'norm';}
+function rarOf(i){return 'norm';}
 function tOf(pid){
   DB.treasure=DB.treasure||{};var t=DB.treasure[pid];
-  if(!t)t=DB.treasure[pid]={sel:'gem',got:{},claims:{},days:{}};
+  if(!t)t=DB.treasure[pid]={sel:'plant',got:{},claims:{},days:{}};
   t.got=t.got||{};t.claims=t.claims||{};t.days=t.days||{};
   T_ORDER.forEach(function(k){t.got[k]=t.got[k]||{};t.claims[k]=t.claims[k]||0;});
-  if(!TREASURE[t.sel])t.sel='gem';
+  t.sel='plant';
   return t;
 }
 function pickItem(kind,n){
@@ -648,7 +663,8 @@ function renderTabs(){
   var nav=ui.tab==='today';
   var h='<div class="hrow">'+(nav?'<button class="hnav" data-act="dnav" data-d="-1" aria-label="이전 날">◀</button>':'')+cal+(nav?'<button class="hnav" data-act="dnav" data-d="1" aria-label="다음 날">▶</button>':'')+
     '<div class="htxt"><h2>'+title+'</h2><div class="hs">'+sub1+(sub2?'<br>'+sub2:'')+(!isT&&nav?' · <button class="btn sm" data-act="dnav" data-d="0">오늘로</button>':'')+'</div></div>'+
-    '<div class="hring" role="img" aria-label="'+st.done+'/'+st.total+' 완료"><svg viewBox="0 0 58 58"><circle cx="29" cy="29" r="24" fill="none" stroke="var(--sky-light)" stroke-width="7"/><circle cx="29" cy="29" r="24" fill="none" stroke="var(--mint)" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct))+'"/></svg><span>'+st.done+'/'+st.total+'</span></div></div>';
+    (all?'<img class="hstamp'+(ui.stampDay===key?'':' pop')+'" src="'+ENDIMG+'" alt="미션 컴플리트">':'<div class="hring" role="img" aria-label="'+st.done+'/'+st.total+' 완료"><svg viewBox="0 0 58 58"><circle cx="29" cy="29" r="24" fill="none" stroke="var(--sky-light)" stroke-width="7"/><circle cx="29" cy="29" r="24" fill="none" stroke="var(--mint)" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct))+'"/></svg><span>'+st.done+'/'+st.total+'</span></div>')+'</div>';
+  ui.stampDay=all?key:null;
   var T=[['today','오늘'],['routines','요일 설정'],['stats','📊 분석'],['rewards','🎁 보상함'],['settings','⚙️ 설정']];
   h+='<div class="seg" role="tablist" id="mainTabs">'+T.map(function(x){return '<button class="mtab'+(ui.tab===x[0]?' on':'')+'" data-tab="'+x[0]+'" role="tab" aria-selected="'+(ui.tab===x[0])+'">'+x[1]+'</button>';}).join('')+'</div>';
   hd.innerHTML=h;
@@ -793,6 +809,7 @@ function doneListHtml(pid,days,today){
   });
   return h+'</div>';
 }
+function dayHash(k){var h=7,i;for(i=0;i<k.length;i++)h=(h*31+k.charCodeAt(i))%100003;return h;}
 function renderStats(){
   var pid=DB.cur,today=todayKey(),mon=addDays(mondayOf(today),7*ui.statWeek),days=[0,1,2,3,4,5,6].map(function(i){return addDays(mon,i);});
   var totD=0,totT=0,overN=0,estT=0,actT=0;
@@ -800,7 +817,7 @@ function renderStats(){
     var s=dayStats(pid,k),future=k>today;
     if(!future){totD+=s.done;totT+=s.total;overN+=s.over;estT+=s.estT;actT+=s.actT;}
     var rate=s.total?s.done/s.total:0,wd=parseKey(k).getDay();
-    return '<div class="bcol'+(k===today?' today':'')+'"><div class="btrack"><i class="'+(s.total&&s.done===s.total?'full':'')+'" style="height:'+(future?0:Math.round(rate*100))+'%"></i></div><div class="bl">'+WD[wd]+'</div><div class="bn">'+(future||!s.total?'–':s.done+'/'+s.total)+'</div></div>';
+    return '<div class="bcol'+(k===today?' today':'')+'">'+(!future&&s.total&&s.done===s.total?'<img class="bstamp" src="'+CHEER_IMGS[dayHash(k)%CHEER_IMGS.length]+'" alt="" title="모두 완료!">':'')+'<div class="btrack"><i class="'+(s.total&&s.done===s.total?'full':'')+'" style="height:'+(future?0:Math.round(rate*100))+'%"></i></div><div class="bl">'+(parseKey(k).getMonth()+1)+'/'+parseKey(k).getDate()+' ('+WD[wd]+')</div><div class="bn">'+(future||!s.total?'–':s.done+'/'+s.total)+'</div></div>';
   });
   var rate=totT?Math.round(totD/totT*100):0,a=parseKey(days[0]),b=parseKey(days[6]);
   var label=(a.getMonth()+1)+'/'+a.getDate()+' ~ '+(b.getMonth()+1)+'/'+b.getDate();
@@ -822,15 +839,15 @@ var lastNew=null;
 var STG=['씨앗','새싹','줄기','꽃봉오리','꽃'],STG_AT=[0,1,7,14,20];
 function stageOf(w){return w>=20?4:w>=14?3:w>=7?2:w>=1?1:0;}
 function gOf(t){
-  if(!t.garden||typeof t.garden!=='object')t.garden={w:0,flower:Math.floor(Math.random()*12),done:false,total:0};
+  if(!t.garden||typeof t.garden!=='object')t.garden={w:0,flower:Math.floor(Math.random()*PLANT_N),done:false,total:0};
   t.garden.w=+t.garden.w||0;t.garden.total=+t.garden.total||0;
-  if(!(t.garden.flower>=0&&t.garden.flower<12))t.garden.flower=0;
+  if(!(t.garden.flower>=0&&t.garden.flower<PLANT_N))t.garden.flower=0;
   return t.garden;
 }
 function giveWater(t,n){
   var g=gOf(t),msg=null;
   for(var i=0;i<n;i++){
-    if(g.done){g.w=0;g.done=false;g.flower=Math.floor(Math.random()*12);}
+    if(g.done){var pf=g.flower,nf=Math.floor(Math.random()*PLANT_N);if(nf===pf)nf=(nf+1+Math.floor(Math.random()*(PLANT_N-1)))%PLANT_N;g.w=0;g.done=false;g.flower=nf;}
     g.w++;g.total++;
     if(g.w>=20){g.done=true;t.got.plant[g.flower]=(t.got.plant[g.flower]||0)+1;t.claims.plant++;lastNew='plant'+g.flower;msg='🌸 '+TREASURE.plant.items[g.flower][0]+' 꽃이 폈어요!';}
   }
@@ -844,7 +861,7 @@ function potSvg(g,sz){
   else if(st===1)plant='<path d="M60 78V62" stroke="#4f9d5c" stroke-width="3" fill="none"/><ellipse cx="53" cy="62" rx="8" ry="4" fill="#6bbf74" transform="rotate(-25 53 62)"/><ellipse cx="67" cy="62" rx="8" ry="4" fill="#6bbf74" transform="rotate(25 67 62)"/>';
   else if(st===2)plant='<path d="M60 78V42" stroke="#4f9d5c" stroke-width="4" fill="none"/><ellipse cx="50" cy="60" rx="10" ry="5" fill="#6bbf74" transform="rotate(-25 50 60)"/><ellipse cx="70" cy="54" rx="10" ry="5" fill="#6bbf74" transform="rotate(25 70 54)"/><ellipse cx="52" cy="46" rx="8" ry="4" fill="#7fcf88" transform="rotate(-25 52 46)"/><ellipse cx="68" cy="42" rx="8" ry="4" fill="#7fcf88" transform="rotate(25 68 42)"/>';
   else if(st===3)plant='<path d="M60 78V34" stroke="#4f9d5c" stroke-width="4" fill="none"/><ellipse cx="50" cy="62" rx="10" ry="5" fill="#6bbf74" transform="rotate(-25 50 62)"/><ellipse cx="70" cy="56" rx="10" ry="5" fill="#6bbf74" transform="rotate(25 70 56)"/><ellipse cx="60" cy="28" rx="9" ry="12" fill="#f08fb0"/><path d="M52 34q8 8 16 0" stroke="#4f9d5c" stroke-width="3" fill="none"/>';
-  else plant='<path d="M60 78V50" stroke="#4f9d5c" stroke-width="4" fill="none"/><ellipse cx="50" cy="66" rx="10" ry="5" fill="#6bbf74" transform="rotate(-25 50 66)"/><ellipse cx="70" cy="62" rx="10" ry="5" fill="#6bbf74" transform="rotate(25 70 62)"/><text x="60" y="52" font-size="44" text-anchor="middle">'+it[1]+'</text>';
+  else plant='<path d="M60 78V50" stroke="#4f9d5c" stroke-width="4" fill="none"/><ellipse cx="50" cy="66" rx="10" ry="5" fill="#6bbf74" transform="rotate(-25 50 66)"/><ellipse cx="70" cy="62" rx="10" ry="5" fill="#6bbf74" transform="rotate(25 70 62)"/>'+(it[2]?bloomSvg(it[2],60,42,25):'<text x="60" y="52" font-size="44" text-anchor="middle">'+it[1]+'</text>');
   return v+plant+pot+'</svg>';
 }
 function gardenHtml(t){
@@ -904,15 +921,17 @@ function cheerHtml(){
 }
 function treasureHtml(pid){
   var t=tOf(pid),k=t.sel,C=TREASURE[k],got=t.got[k],kinds=0,total=0,i;
-  for(i=0;i<12;i++)if(got[i]){kinds++;total+=got[i];}
-  var h='<div class="card"><h2>'+(k==='plant'?'내 정원':'내 보물함')+'</h2><div class="tcols">'+T_ORDER.map(function(x){return '<button class="tcol'+(x===k?' on':'')+'" data-act="tsel" data-id="'+x+'"><span class="ti">'+TREASURE[x].ico+'</span><span>'+TREASURE[x].name+'</span></button>';}).join('')+'</div>';
+  for(i=0;i<PLANT_N;i++)if(got[i]){kinds++;total+=got[i];}
+  var h='<div class="card"><h2>'+(k==='plant'?'내 정원':'내 보물함')+'</h2>'+(T_ORDER.length>1?'<div class="tcols">':'<div class="tcols" hidden>')+T_ORDER.map(function(x){return '<button class="tcol'+(x===k?' on':'')+'" data-act="tsel" data-id="'+x+'"><span class="ti">'+TREASURE[x].ico+'</span><span>'+TREASURE[x].name+'</span></button>';}).join('')+'</div>';
   var n=t.claims[k]%5,dots='';
-  if(k==='plant'){h+=gardenHtml(t);h+='<div class="tinfo">피운 꽃 <b>'+total+'</b>송이 · 종류 '+kinds+'/12</div>';}else{
+  if(k==='plant'){h+=gardenHtml(t);h+='<div class="tinfo">피운 꽃 <b>'+total+'</b>송이 · 종류 '+kinds+'/'+PLANT_N+'</div>';}else{
   for(i=0;i<4;i++)dots+='<i class="'+(i<n?'f':'')+'"></i>';dots+='<i class="sp'+(n===4?'':'')+'"></i>';
   h+='<div class="tinfo">모은 '+C.noun+' <b>'+total+'</b>개 · 종류 '+kinds+'/12 · 특별까지 <span class="tdots" aria-label="특별까지 '+(5-n)+'번">'+dots+'</span></div>';
   h+='<p class="muted" style="margin:0 0 14px">할 일 2개를 끝낼 때마다 '+C.noun+' 1개, 오늘 할 일을 모두 끝내면 보너스 상자가 열려요.</p>';}
+  h+='<button type="button" class="notehd dexhd" data-act="dextoggle" aria-expanded="'+!!ui.dexOpen+'">📖 식물 도감<span class="nb">'+kinds+'/'+PLANT_N+'</span><span class="ar">'+(ui.dexOpen?'접기 ▲':'펼치기 ▼')+'</span></button>';
+  if(!ui.dexOpen){lastNew=null;return h+'</div>';}
   h+='<div class="tgrid">';
-  for(i=0;i<12;i++){
+  for(i=0;i<PLANT_N;i++){
     var r=rarOf(i),g=got[i],lab=g?C.items[i][0]+(g>1?' ×'+g:''):(r==='spec'?'특별':r==='rare'?'희귀':'???');
     h+='<div class="titem'+(g?' got':'')+' '+r+(lastNew===k+i?' new':'')+'">'+(g>1?'<span class="tx">×'+g+'</span>':'')+'<span class="tm">'+(C.month?(i+1)+'월':'#'+(i+1))+'</span><span class="tc">'+(g?itemVis(k,i,36):'?')+'</span><span class="tn2">'+(g?C.items[i][0]:lab)+'</span></div>';
   }
@@ -1172,6 +1191,7 @@ document.addEventListener('click',function(e){
   var a=el.dataset.act,d=el.dataset.d,id=el.dataset.id,k=el.dataset.k;
   if(a==='prof'){DB.cur=id;ui.editId=null;ui.timerKey=null;save();render();}
   else if(a==='dnav'){ui.confirmReset=false;ui.confirmClear=false;ui.delKey=null;ui.date=d==='0'?todayKey():addDays(ui.date,+d);render();}
+  else if(a==='dextoggle'){ui.dexOpen=!ui.dexOpen;render();}
   else if(a==='notetoggle'){var nt0=document.getElementById('noteTxt');if(nt0)ui.noteDraft=nt0.value;ui.noteOpen=!ui.noteOpen;render();}
   else if(a==='noteadd'){var nt=document.getElementById('noteTxt'),tv=nt?nt.value.trim():'';if(!tv){toast('알림장 내용을 먼저 적어 주세요');if(nt)nt.focus();}else{var NL=notesOf(DB.cur,ui.date);var pn=parseNote(tv);NL.push({id:uid(),text:tv,at:Date.now(),tasks:pn.tasks,rest:pn.rest});DB.notes[DB.cur][ui.date]=NL;ui.noteDraft='';save();render();toast('알림장을 입력했어요');}}
   else if(a==='notechk'){var NC=notesOf(DB.cur,ui.date);NC.forEach(function(n){if(n.id===id)(n.tasks||[]).forEach(function(t){if(t.id===el.dataset.tid)t.done=!t.done;});});save();render();}
