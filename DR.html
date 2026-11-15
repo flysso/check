@@ -946,9 +946,10 @@ function renderRewards(){
   h+='<div class="card"><h2>🎁 보상함</h2><p class="sub">할 일을 끝내면 <b class="hl">'+PT_DONE+'P</b>, 예상 시간 안에 끝내면 <b class="hl">+'+PT_BONUS+'P</b> 보너스가 쌓여요.</p><div class="bal">'+bal+' <span class="muted">포인트</span></div></div>';
   h+='<div class="card"><h2>🛍️ 교환할 수 있는 보상</h2>';
   if(!items.length){h+='<div class="empty">아직 보상이 없어요.</div><div style="text-align:center"><button class="btn warn" data-act="sampleW">샘플 보상 넣어보기</button></div>';}
-  else h+='<div class="list">'+items.map(function(r){return '<div class="row2"><div><div class="nm">'+(r.emoji?'<span class="remo">'+esc(r.emoji)+'</span> ':'')+esc(r.name)+'</div><div class="ds">'+r.cost+'P</div></div><div><button class="btn sm" data-act="redeem" data-id="'+r.id+'">교환하기</button><button class="ic del" data-act="delrw" data-id="'+r.id+'" aria-label="삭제">🗑️</button></div></div>';}).join('')+'</div>';
+  else h+='<div class="list">'+items.map(function(r){return '<div class="row2"><div><div class="nm">'+(r.emoji?'<span class="remo">'+esc(r.emoji)+'</span> ':'')+esc(r.name)+'</div><div class="ds">'+r.cost+'P</div></div><div><button class="btn sm" data-act="redeem" data-id="'+r.id+'">교환하기</button><button class="ic" data-act="editrw" data-id="'+r.id+'" aria-label="수정">✏️</button><button class="ic del" data-act="delrw" data-id="'+r.id+'" aria-label="삭제">🗑️</button></div></div>';}).join('')+'</div>';
   h+='</div>';
-  h+='<div class="card mine"><h3>＋ 보상 추가</h3><div class="muted" style="margin-bottom:6px">이모티콘 고르기</div><div class="chips" id="rwEmo">'+rwEmoChips()+'</div><div class="addrow"><input id="wName" class="txt" maxlength="40" placeholder="보상 이름 (예: 게임 10분)" aria-label="보상 이름"><input id="wCost" class="minp" type="number" min="1" max="9999" value="50" aria-label="필요 포인트" style="width:84px"><span class="muted">P</span><button class="btn" data-act="addrw">추가</button></div><p class="err" id="wErr"></p></div>';
+  var erw=ui.rwEdit?items.filter(function(r){return r.id===ui.rwEdit;})[0]:null;
+  h+='<div class="card mine" id="rwForm"><h3>'+(erw?'✏️ 보상 수정':'＋ 보상 추가')+'</h3><div class="muted" style="margin-bottom:6px">이모티콘 고르기</div><div class="chips" id="rwEmo">'+rwEmoChips()+'</div><div class="addrow"><input id="wName" class="txt" maxlength="40" placeholder="보상 이름 (예: 게임 10분)" aria-label="보상 이름" value="'+(erw?esc(erw.name):'')+'"><input id="wCost" class="minp" type="number" min="1" max="9999" value="'+(erw?erw.cost:50)+'" aria-label="필요 포인트" style="width:84px"><span class="muted">P</span><button class="btn" data-act="addrw">'+(erw?'저장':'추가')+'</button>'+(erw?'<button class="btn ghost" data-act="cancelrw">취소</button>':'')+'</div><p class="err" id="wErr"></p></div>';
   if(hist.length)h+='<div class="card"><h2>🧾 교환 기록</h2><div class="list">'+hist.map(function(r){return '<div class="row2"><div><div class="nm">'+(r.emoji?r.emoji+' ':'')+esc(r.name)+'</div><div class="ds">'+r.date+'</div></div><span class="tag bad">−'+r.cost+'P</span></div>';}).join('')+'</div></div>';
   return h;
 }
@@ -1295,8 +1296,12 @@ document.addEventListener('click',function(e){
     var n2=document.getElementById('wName').value.trim(),c=parseInt(document.getElementById('wCost').value,10),er=document.getElementById('wErr');
     if(!n2){er.textContent='보상 이름을 적어 주세요';return;}
     if(isNaN(c)||c<1||c>9999){er.textContent='포인트는 1~9999 사이로 넣어 주세요';return;}
+    var er0=ui.rwEdit?DB.rewards[DB.cur].filter(function(x){return x.id===ui.rwEdit;})[0]:null;
+    if(er0){er0.name=n2;er0.cost=c;er0.emoji=ui.rwEmoji;ui.rwEdit=null;ui.rwEmoji=null;save();render();toast('보상을 수정했어요');return;}
     DB.rewards[DB.cur].push({id:uid(),name:n2,cost:c,emoji:ui.rwEmoji});save();render();toast('보상을 추가했어요');
   }
+  else if(a==='editrw'){var rr=DB.rewards[DB.cur].filter(function(x){return x.id===id;})[0];if(rr){ui.rwEdit=id;ui.rwEmoji=rr.emoji||null;render();var fm=document.getElementById('rwForm');if(fm){fm.scrollIntoView({block:'center'});var wn=document.getElementById('wName');if(wn)wn.focus();}}}
+  else if(a==='cancelrw'){ui.rwEdit=null;ui.rwEmoji=null;render();}
   else if(a==='rwemo'){ui.rwEmoji=id;var ce=document.getElementById('rwEmo');if(ce)ce.innerHTML=rwEmoChips();}
   else if(a==='tsel'){tOf(DB.cur).sel=el.dataset.id;save();render();}
   else if(a==='resetask'){ui.confirmReset=true;render();}
@@ -1322,7 +1327,7 @@ document.addEventListener('click',function(e){
     if(b<rw.cost){toast('포인트가 모자라요 (필요 '+rw.cost+'P, 보유 '+b+'P)');return;}
     DB.redeemed[DB.cur].push({id:uid(),name:rw.name,cost:rw.cost,emoji:rw.emoji||'',date:todayKey()});save();render();toast((rw.emoji||'🎁')+' "'+rw.name+'" 교환 완료!');
   }
-  else if(a==='delrw'){DB.rewards[DB.cur]=DB.rewards[DB.cur].filter(function(x){return x.id!==id;});save();render();}
+  else if(a==='delrw'){DB.rewards[DB.cur]=DB.rewards[DB.cur].filter(function(x){return x.id!==id;});if(ui.rwEdit===id){ui.rwEdit=null;ui.rwEmoji=null;}save();render();}
   else if(a==='addprof'){
     var inp2=document.getElementById('pNew'),nm=inp2.value.trim(),pe=document.getElementById('pErr');
     if(!nm){pe.textContent='이름을 적어 주세요';return;}
