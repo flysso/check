@@ -725,7 +725,7 @@ function sortTasks(arr){
 function bonusHtml(pid){
   var L=bonusList(pid).filter(function(b){return b.date===ui.date&&b.k!=='h';}),sum=L.reduce(function(a,b){return a+(+b.pts||0);},0),when=ui.date===todayKey()?'오늘':'이날';
   var h='<div class="bonusbox"><div class="brow"><b>⭐ '+when+' 보너스 포인트</b>'+(L.length?'<span class="tag ok">+'+sum+'P</span>':'')+'<span style="flex:1"></span><button type="button" class="btn sm ghost" data-act="bonustoggle" aria-expanded="'+!!ui.bonusOpen+'">'+(ui.bonusOpen?'닫기':'＋ 추가 (엄마용)')+'</button></div>';
-  if(ui.bonusOpen)h+='<div class="brow" style="margin-top:8px"><input id="bPts" class="minp" type="number" min="-999" max="999" value="5" style="width:78px" aria-label="보너스 포인트"><span class="muted">P</span><input id="bMemo" class="txt" maxlength="30" placeholder="이유 (예: 동생 도와줬어요)" aria-label="이유"><button class="btn sm" data-act="bonusadd">주기</button></div>';
+  if(ui.bonusOpen)h+='<div class="brow" style="margin-top:8px"><input id="bPts" class="minp" type="number" min="-999" max="999" value="5" style="width:78px" aria-label="보너스 포인트"><span class="muted">P</span><input id="bMemo" class="txt" maxlength="30" placeholder="이유 (예: 엄마를 도와줬어요)" aria-label="이유"><button class="btn sm" data-act="bonusadd">주기</button></div>';
   h+=L.map(function(b){return '<div class="bl"><span>'+(b.pts>=0?'+':'')+b.pts+'P</span><span class="muted" style="flex:1">'+esc(b.memo||'보너스')+'</span><button class="ic del" data-act="bonusdel" data-id="'+b.id+'" aria-label="보너스 삭제">✕</button></div>';}).join('');
   return h+'</div>';
 }
