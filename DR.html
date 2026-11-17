@@ -332,6 +332,19 @@
   .lrow,.lrow2{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--border);font-size:14.5px;}
   .lrow:first-of-type{border-top:none;}
   .lst{color:var(--text-soft);white-space:nowrap;font-size:13.5px;}.lst.ok{color:#2f8a4a;}.lst.sk{opacity:.6;}
+  .cumbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;background:var(--sky-light);border-radius:14px;padding:8px 12px;margin:8px 0 12px;font-size:14px;color:var(--text);}
+  .cumbar b{font-size:16px;}.cumbar .sep{width:1px;height:14px;background:var(--border-strong);margin:0 6px;}
+  .brkov{position:fixed;inset:0;z-index:300;background:rgba(15,30,40,.5);display:flex;align-items:center;justify-content:center;padding:16px;}
+  .brkov.rest{background:rgba(30,70,130,.62);}
+  .brkcard{background:var(--card-bg);border-radius:24px;padding:24px 22px;max-width:360px;width:100%;text-align:center;box-shadow:var(--shadow-md);}
+  .brkcard h2{margin:6px 0;}.brkcard p{margin:4px 0 14px;color:var(--text-soft);}
+  .brkemo{font-size:40px;}.brkbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}.brkbtns.one{grid-template-columns:1fr;}.brkbtns .btn{padding:12px 6px;font-size:14.5px;white-space:nowrap;}
+  .brkcard.rest{border:3px solid #4aa3ff;}
+  .brkring{position:relative;width:200px;height:200px;margin:8px auto;}
+  .brkring svg{width:100%;height:100%;transform:rotate(-90deg);}
+  .brkring .rtrack{fill:none;stroke:#dcecff;stroke-width:12;}
+  .brkring .brkarc{fill:none;stroke:#4aa3ff;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .9s linear;}
+  .brkbig{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:42px;color:#2f7fe0;}
   .donebox{margin-top:16px;border-top:1px dashed var(--border-strong);padding-top:14px;}
   .dhead{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
   .dsort{display:flex;gap:6px;}
@@ -839,7 +852,7 @@ function normalize(db){
   if(!Array.isArray(db.cats)||!db.cats.length)db.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));
   db.cats=db.cats.filter(function(c){return c&&typeof c.id==='string'&&typeof c.name==='string';}).map(function(c){var dc=DEFAULT_CATS.filter(function(d){return d.id===c.id;})[0];return {id:c.id,name:c.name,icon:ICONS[c.icon]?c.icon:'star',color:LC.indexOf(c.color)>-1?c.color:(dc?dc.color:'gray')};});
   if(!db.cats.some(function(c){return c.id==='etc';}))db.cats.push({id:'etc',name:'기타',icon:'star',color:'gray'});
-  db.settings=db.settings||{};if(db.settings.sound===undefined)db.settings.sound=true;if(db.settings.notify===undefined)db.settings.notify=false;
+  db.settings=db.settings||{};if(db.settings.sound===undefined)db.settings.sound=true;if(db.settings.notify===undefined)db.settings.notify=false;if(db.settings.brk===undefined)db.settings.brk=false;
   ['routines','logs','rewards','redeemed','treasure'].forEach(function(k){db[k]=db[k]||{};});
   db.notes=(db.notes&&typeof db.notes==='object')?db.notes:{};
   db.bonus=(db.bonus&&typeof db.bonus==='object'&&!Array.isArray(db.bonus))?db.bonus:{};
@@ -1078,6 +1091,7 @@ function renderToday(){
   var h='';
   h+=noteHtml();
   h+='<div class="card"><h2>✅ 할 일</h2>';
+  if(isToday)h+='<div class="cumbar">⏱ 오늘 누적 <b id="cumToday">'+fmt(todayAcc())+'</b></div>';
   if(isToday&&tasks.length)h+=bannerHtml()+cheerHtml();
   h+=bonusHtml(pid);
   if(!tasks.length){
@@ -1356,6 +1370,7 @@ function renderSettings(){
       (conf?'<span class="muted">기록이 모두 지워져요 </span><button class="btn sm danger" data-act="delprof2" data-id="'+p.id+'">삭제</button> <button class="btn sm ghost" data-act="delprofx">취소</button>':'<button class="ic del" data-act="delprof" data-id="'+p.id+'" aria-label="프로필 삭제">🗑️</button>')+'</div></div>';
   }).join('')+'</div>'+(ui.pEmoEdit?'<div class="cwrow" style="margin-top:10px"><span class="muted">이모티콘 고르기</span><div class="chips" id="pEmoE">'+pEmoChips('pemoset',(DB.profiles.filter(function(x){return x.id===ui.pEmoEdit;})[0]||{}).emoji)+'</div></div>':'')+'<div class="muted" style="margin:12px 0 6px">새 프로필 이모티콘</div><div class="chips" id="pEmoN">'+pEmoChips('pemonew',ui.pEmo||EMOJI[DB.profiles.length%EMOJI.length])+'</div><div class="addrow" style="margin-top:12px"><input id="pNew" class="txt" maxlength="12" placeholder="새 프로필 이름" aria-label="새 프로필 이름"><button class="btn" data-act="addprof">프로필 추가</button></div><p class="err" id="pErr"></p></div>';
   h+='<div class="card"><h2>🏷️ 라벨</h2><p class="sub">할 일에 붙이는 라벨을 늘리거나 지울 수 있어요. 라벨을 지우면 그 라벨을 쓰던 할 일은 「기타」로 보여요.</p><div class="chips">'+DB.cats.map(function(c){return '<span class="chip lbl cc lc-'+lcOf(c)+(ui.colorEdit===c.id?' on':'')+'"><button class="lbn" data-act="coledit" data-id="'+c.id+'" aria-label="'+esc(c.name)+' 색 바꾸기" aria-pressed="'+(ui.colorEdit===c.id)+'">'+iconSvg(c.icon,16)+' '+esc(c.name)+'</button>'+(c.id==='etc'?'':'<button class="lbl-x" data-act="lbldel" data-id="'+c.id+'" aria-label="'+esc(c.name)+' 라벨 삭제">✕</button>')+'</span>';}).join('')+'</div>'+(ui.colorEdit&&catOf(ui.colorEdit).id===ui.colorEdit?'<div class="cwrow"><span class="muted">'+esc(catOf(ui.colorEdit).name)+' 색</span>'+colorChips(lcOf(catOf(ui.colorEdit)),'colset',ui.colorEdit)+'</div>':'<p class="muted" style="margin:-4px 0 12px">라벨을 누르면 색을 바꿀 수 있어요.</p>')+lblForm('s')+'</div>';
+  h+='<div class="card"><h2>☕ 쉬는 시간</h2><p class="sub">켜면 오늘 공부 타이머가 50분 쌓일 때마다 "조금 쉬었다 할까?"를 물어봐요. 쉬기로 하면 타이머가 멈추고 10분 쉬는 타이머가 돌아요. 끄면 아무것도 묻지 않아요.</p><div class="addrow"><button class="chip'+(DB.settings.brk?' on':'')+'" data-act="brktoggle">☕ 쉬는 시간 알림 '+(DB.settings.brk?'켜짐':'꺼짐')+'</button></div></div>';
   h+='<div class="card"><h2>🔔 알림</h2><p class="sub">타이머가 예상 시간을 넘으면 알려주고, 할 일을 완료할 때도 소리가 나요. 소리를 끄면 둘 다 조용해져요. 화면이 꺼져 있거나 다른 앱을 쓰는 중엔 소리가 안 날 수 있어요.</p><div class="addrow"><button class="chip'+(DB.settings.sound?' on':'')+'" data-act="sound">'+sndIcon(DB.settings.sound)+' 소리 '+(DB.settings.sound?'켜짐':'꺼짐')+'</button><button class="btn ghost sm" data-act="sndtest" data-id="one">▶ 완료 소리 듣기</button><button class="btn ghost sm" data-act="sndtest" data-id="all">▶ 하루 완료 소리 듣기</button><button class="btn ghost sm" data-act="sndtest" data-id="time">▶ 시간 끝 소리 듣기</button><button class="chip'+(DB.settings.notify?' on':'')+'" data-act="notiperm">🔔 브라우저 알림 '+(DB.settings.notify?'켜짐':'꺼짐')+'</button></div></div>';
   var syc=SY.code||'';
   h+='<div class="card"><h2>🔄 기기 연동</h2><p class="sub">태블릿과 폰이 같은 기록을 보게 해요. 두 기기에 <b>같은 코드</b>를 넣으면 돼요. 코드를 아는 사람은 기록을 볼 수 있으니 다른 사람에게 알려 주지 마세요.</p>'+
@@ -1437,7 +1452,7 @@ function renderTimer(){
   var t=findTask(ui.timerKey);
   if(!t||ui.tab!=='today'){ui.timerKey=null;return renderToday();}
   return '<div class="card" id="tmCard" style="cursor:pointer"><div class="tmtop"><span class="tlbl">집중모드</span><button class="btn ghost sm" data-act="tback">← 목록</button></div><div class="tmhead"><h2>'+lbTag(t.cat)+''+esc(t.name)+'</h2><span class="tag">예상 '+t.min+'분</span></div>'+
-    '<div class="tmtimes"><div><div class="tlbl">현재 시각</div><div class="tbig" id="tmNow">--:--</div></div><div style="text-align:right"><div class="tlbl">예상 종료</div><div class="tbig" id="tmEnd">--:--</div></div></div>'+
+    '<div class="cumbar">오늘 누적 <b id="tmCum">0:00</b><span class="sep"></span>휴식까지 <b id="tmNext">50:00</b></div><div class="tmtimes"><div><div class="tlbl">현재 시각</div><div class="tbig" id="tmNow">--:--</div></div><div style="text-align:right"><div class="tlbl">예상 종료</div><div class="tbig" id="tmEnd">--:--</div></div></div>'+
     '<div class="ringwrap"><button class="sndb'+(DB.settings.sound?'':' off')+'" data-act="tsound" id="tmSnd" aria-label="소리 켜기/끄기">'+sndIcon(DB.settings.sound)+'</button>'+
     '<svg viewBox="0 0 200 200" class="ring" role="img" aria-label="남은 시간 원형 표시"><circle class="rtrack" cx="100" cy="100" r="88"/><circle class="rarc" id="tmRing" cx="100" cy="100" r="88"/><image id="tmKnob" href="'+BUNNY+'" width="32" height="32" x="172" y="84" transform="rotate(90 188 100)" pointer-events="none"/></svg>'+
     '<button class="rcen" data-act="tpause" aria-label="타이머 일시정지 또는 계속"><span class="tlbl" id="tmLbl">남은 시간</span><span class="rbig" id="tmRem">0:00</span><span class="rpause" id="tmState">⏸ 일시정지</span></button></div>'+
@@ -1603,7 +1618,52 @@ function checkOver(){
     }
   });
 }
+var BRK_WORK=50*60,BRK_REST=10*60;
+function brkSt(){if(!DB.brk||typeof DB.brk!=='object')DB.brk={};var p=DB.cur,td=todayKey(),b=DB.brk[p];if(!b||b.d!==td)b=DB.brk[p]={d:td,mark:0,st:'none',end:0,k:null};return b;}
+function todayAcc(){var s=0;tasksFor(DB.cur,todayKey()).forEach(function(t){if(t.rec&&!t.rec.skip)s+=elapsed(t.rec);});return s;}
+function runningToday(){var r=null;tasksFor(DB.cur,todayKey()).forEach(function(t){if(t.rec&&t.rec.start)r=t;});return r;}
+function pauseAllToday(){tasksFor(DB.cur,todayKey()).forEach(function(o){if(o.rec&&o.rec.start){o.rec.acc+=(Date.now()-o.rec.start)/1000;o.rec.start=null;}});}
+function brkOv(){return document.getElementById('brkOv');}
+function brkClose(){var o=brkOv();if(o)o.remove();}
+var BRK_MSG=['50분 집중했어요!','{n} 대단해, 벌써 50분!','우와, 50분 쭉 했어요!','50분 완료! 정말 멋져요','엄청난 집중력이에요, 50분!','{n} 최고! 50분 해냈어요','50분 동안 열공했네요!','집중왕 {n}, 50분 달성!'],brkLastM=-1;
+function brkMsg(){var i=Math.floor(Math.random()*BRK_MSG.length);if(i===brkLastM)i=(i+1)%BRK_MSG.length;brkLastM=i;var cp=DB.profiles.filter(function(x){return x.id===DB.cur;})[0];return esc(BRK_MSG[i].replace(/\{n\}/g,cp?cp.name:'친구'));}
+var brkLast=-1;
+function brkPet(){
+  var i=Math.floor(Math.random()*CHEER_IMGS.length);if(i===brkLast)i=(i+1)%CHEER_IMGS.length;brkLast=i;
+  return '<img src="'+CHEER_IMGS[i]+'" alt="" style="width:120px;height:auto;display:block;margin:0 auto">';
+}
+function brkBuild(b){
+  var o=brkOv();if(o&&o.dataset.st===b.st)return;if(o)o.remove();
+  if(b.st!=='ask'&&b.st!=='rest'&&b.st!=='back')return;
+  o=document.createElement('div');o.id='brkOv';o.className='brkov '+b.st;o.dataset.st=b.st;
+  if(b.st==='ask')o.innerHTML='<div class="brkcard"><div class="brkemo'+'">'+brkPet()+'</div><h2>'+brkMsg()+'</h2><p>조금 쉬었다 할까?</p><div class="brkbtns"><button class="btn" data-act="brkyes">응, 쉴래</button><button class="btn ghost" data-act="brkno">아니, 계속</button></div></div>';
+  else if(b.st==='back')o.innerHTML='<div class="brkcard"><div class="brkemo">'+brkPet()+'</div><h2>이제 다시 시작!</h2><p>쉬는 시간 끝! 다시 열공해요</p><div class="brkbtns one"><button class="btn" data-act="brkok">오케이</button></div></div>';
+  else o.innerHTML='<div class="brkcard rest"><div class="brkemo'+'">'+brkPet()+'</div><h2>쉬는 시간</h2><div class="brkring"><svg viewBox="0 0 200 200"><circle class="rtrack" cx="100" cy="100" r="88"/><circle class="rarc brkarc" id="brkArc" cx="100" cy="100" r="88"/></svg><div class="brkbig" id="brkRem">10:00</div></div><p>눈도 쉬고, 물도 마시고, 기지개도 켜요</p><button class="btn ghost" data-act="brkskip">쉬는 시간 끝내기</button></div>';
+  document.body.appendChild(o);
+}
+function endRest(early){
+  var b=brkSt();b.st='back';b.end=0;if(!early)playTimeUp();save();brkBuild(b);
+}
+function resumeAfterRest(){
+  var b=brkSt(),t=null;
+  tasksFor(DB.cur,todayKey()).forEach(function(x){if((x.kind+':'+x.id)===b.k)t=x;});
+  b.st='none';b.mark=todayAcc();brkClose();
+  if(t&&t.rec&&!t.rec.done&&!t.rec.skip){t.rec.start=Date.now();ui.tab='today';ui.date=todayKey();ui.timerKey=b.k;}
+  save();render();
+}
+function checkBreak(){
+  var b=brkSt(),now=Date.now(),acc=todayAcc();
+  if(!DB.settings.brk){if(b.st!=='none')b.st='none';brkClose();var tx0=fmt(acc);setText('cumToday',tx0);setText('tmCum',tx0);setText('tmNext','꺼짐');return;}
+  if(acc<b.mark)b.mark=acc;
+  if(b.st==='none'){var rt=runningToday();if(rt&&acc-b.mark>=BRK_WORK){b.st='ask';b.k=rt.kind+':'+rt.id;save();}}
+  if(b.st==='rest'&&now>=b.end){endRest(false);return;}
+  brkBuild(b);
+  if(b.st==='rest'){var rem=Math.max(0,(b.end-now)/1000);setText('brkRem',fmt(Math.ceil(rem)));var arc=document.getElementById('brkArc');if(arc){arc.style.strokeDasharray=RING_C;arc.style.strokeDashoffset=RING_C*(1-rem/BRK_REST);}}
+  var tx=fmt(acc);setText('cumToday',tx);setText('tmCum',tx);
+  setText('tmNext',b.st==='none'?(runningToday()?fmt(Math.max(0,BRK_WORK-(acc-b.mark))):'타이머 시작 후'):'—');
+}
 function tick(){
+  try{checkBreak();}catch(e){}
   if(ui.timerKey)updateTimerView();
   if(ui.tab==='today'&&ui.date===todayKey()&&!ui.timerKey){
     document.querySelectorAll('.pgw').forEach(function(w){var t=findTask(w.dataset.k);if(t&&t.rec&&t.rec.start)w.innerHTML=pgHtml(t);});
@@ -1680,6 +1740,10 @@ document.addEventListener('click',function(e){
   else if(a==='menu'){ui.menuKey=(ui.menuKey===k?null:k);render();}
   else if(a==='donetoggle'){ui.doneOpen=!ui.doneOpen;render();}
   else if(a==='stsub'){ui.stSub=id;render();}
+  else if(a==='brkyes'){var bb=brkSt();pauseAllToday();bb.st='rest';bb.end=Date.now()+BRK_REST*1000;save();render();checkBreak();}
+  else if(a==='brkno'){var bn=brkSt();bn.st='none';bn.mark=todayAcc();brkClose();save();toast('오 집중모드! 계속 가요 🔥');}
+  else if(a==='brkskip'){endRest(true);}
+  else if(a==='brkok'){resumeAfterRest();}
   else if(a==='cmprng'){ui.cmpRange=+id;render();}
   else if(a==='dsort'){ui.doneSort=id;render();}
   else if(a==='rowdel'){ui.delKey=k;ui.menuKey=null;render();}
@@ -1814,6 +1878,7 @@ document.addEventListener('click',function(e){
     ui.confirmDel=null;normalize(DB);save();render();toast('프로필을 지웠어요');
   }
   else if(a==='sndtest'){primeSnd();if(id==='time'){stopAllSnd();if(doneSnd)doneSnd.pause();playSnd(getTimeSnd());}else if(id==='all'){if(doneSnd)doneSnd.pause();playSnd(getSnd(true));}else{stopAllSnd();playSnd(getSnd(false));}if(!DB.settings.sound)toast('지금은 소리가 꺼져 있어서 완료할 때는 안 나와요');}
+  else if(a==='brktoggle'){DB.settings.brk=!DB.settings.brk;if(!DB.settings.brk){var bq=brkSt();if(bq.st!=='none'){bq.st='none';bq.end=0;}brkClose();}else{brkSt().mark=todayAcc();}save();render();toast(DB.settings.brk?'쉬는 시간 알림을 켰어요':'쉬는 시간 알림을 껐어요');}
   else if(a==='sound'){DB.settings.sound=!DB.settings.sound;if(DB.settings.sound){audio();beep();}save();render();}
   else if(a==='notiperm'){
     if(DB.settings.notify){DB.settings.notify=false;save();render();return;}
